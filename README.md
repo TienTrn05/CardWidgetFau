@@ -1,18 +1,15 @@
-# CardWidgetFau
+# CarWidget
 
-# carwidget
+Dự án Flutter cho màn hình thiết kế widget, kết hợp Swift và WidgetKit để hiển thị widget trên iOS/CarPlay.
 
-A new Flutter project.
+- [Cấu trúc thư mục, danh sách chức năng và ranh giới Flutter/Swift](docs/architecture.md)
+- Ứng dụng hiện vẫn là Flutter starter. Các thư mục mới là khung để triển khai theo từng tính năng; chưa có BLoC, native bridge hay WidgetKit target hoạt động.
 
-## Getting Started
+## Bắt đầu
 
-This project is a starting point for a Flutter application.
+```sh
+flutter pub get
+flutter run
+```
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+WidgetKit extension cần được thêm vào `ios/Runner.xcodeproj` bằng Xcode trên macOS. Xem các bước trong tài liệu kiến trúc.
