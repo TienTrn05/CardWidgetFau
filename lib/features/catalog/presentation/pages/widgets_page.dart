@@ -1,3 +1,4 @@
+import 'package:carwidget/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:carwidget/core/ui/car_ui.dart';
 
@@ -29,20 +30,17 @@ class _WidgetsPageState extends State<WidgetsPage> {
       const PageHeading(
         eyebrow: 'YOUR DASHBOARD',
         title: 'Widgets',
-        subtitle: 'Chọn giao diện đồng hành trên mỗi chuyến đi.',
+        subtitle: 'Choose a look for every drive.',
       ),
       const SizedBox(height: 22),
-      SectionTitle(
-        'Đang xem trước',
-        action: '${selected + 1} / ${names.length}',
-      ),
+      SectionTitle('Previewing', action: '${selected + 1} / ${names.length}'),
       const SizedBox(height: 12),
       Container(
         height: 190,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
-          gradient: const LinearGradient(colors: [Color(0xFF373F2D), panel]),
+          gradient: AppGradients.preview,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +56,7 @@ class _WidgetsPageState extends State<WidgetsPage> {
             const Spacer(),
             Row(
               children: [
-                Icon(icons[selected], color: lime, size: 58),
+                Icon(icons[selected], color: AppColors.green, size: 58),
                 const Spacer(),
                 const Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -73,7 +71,7 @@ class _WidgetsPageState extends State<WidgetsPage> {
                     Text(
                       'READY TO GO',
                       style: TextStyle(
-                        color: lime,
+                        color: AppColors.green,
                         fontSize: 10,
                         letterSpacing: 1.5,
                       ),
@@ -91,7 +89,7 @@ class _WidgetsPageState extends State<WidgetsPage> {
         ),
       ),
       const SizedBox(height: 28),
-      const SectionTitle('Khám phá mẫu', action: 'Chạm để xem'),
+      const SectionTitle('Explore templates', action: 'Tap to preview'),
       const SizedBox(height: 12),
       GridView.builder(
         shrinkWrap: true,
@@ -116,7 +114,7 @@ class _WidgetsPageState extends State<WidgetsPage> {
                 Icon(
                   icons[index],
                   size: 36,
-                  color: index.isEven ? lime : Colors.white,
+                  color: index.isEven ? AppColors.green : AppColors.white,
                 ),
                 Text(
                   names[index],

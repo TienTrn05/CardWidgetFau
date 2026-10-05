@@ -1,3 +1,4 @@
+import 'package:carwidget/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:carwidget/core/ui/car_ui.dart';
 
@@ -30,7 +31,7 @@ class _SoundsPageState extends State<SoundsPage> {
       const PageHeading(
         eyebrow: 'SET THE MOOD',
         title: 'Sounds',
-        subtitle: 'Chọn âm thanh phù hợp với phong cách lái xe.',
+        subtitle: 'Choose a sound to match your drive.',
       ),
       const SizedBox(height: 22),
       Container(
@@ -39,7 +40,11 @@ class _SoundsPageState extends State<SoundsPage> {
         decoration: tileDecoration(),
         child: Column(
           children: [
-            const Icon(Icons.graphic_eq_rounded, color: lime, size: 72),
+            const Icon(
+              Icons.graphic_eq_rounded,
+              color: AppColors.green,
+              size: 72,
+            ),
             const SizedBox(height: 10),
             Text(
               names[selected],
@@ -47,14 +52,14 @@ class _SoundsPageState extends State<SoundsPage> {
             ),
             const SizedBox(height: 4),
             const Text(
-              'Đã chọn · Chưa có file âm thanh để phát thử',
-              style: TextStyle(color: muted, fontSize: 12),
+              'Selected · Audio preview unavailable',
+              style: TextStyle(color: AppColors.muted, fontSize: 12),
             ),
           ],
         ),
       ),
       const SizedBox(height: 28),
-      const SectionTitle('Thư viện âm thanh', action: '4 mẫu'),
+      const SectionTitle('Sound library', action: '4 sounds'),
       const SizedBox(height: 12),
       for (var index = 0; index < names.length; index++) ...[
         ListTile(
@@ -62,17 +67,19 @@ class _SoundsPageState extends State<SoundsPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18),
             side: BorderSide(
-              color: selected == index ? lime : Colors.transparent,
+              color: selected == index
+                  ? AppColors.green
+                  : AppColors.transparent,
             ),
           ),
-          tileColor: panel,
+          tileColor: AppColors.surface,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 5,
           ),
           leading: CircleAvatar(
-            backgroundColor: lime.withValues(alpha: .12),
-            child: Icon(icons[index], color: lime),
+            backgroundColor: AppColors.greenTile,
+            child: Icon(icons[index], color: AppColors.green),
           ),
           title: Text(
             names[index],
@@ -83,7 +90,7 @@ class _SoundsPageState extends State<SoundsPage> {
             selected == index
                 ? Icons.check_circle_rounded
                 : Icons.circle_outlined,
-            color: selected == index ? lime : muted,
+            color: selected == index ? AppColors.green : AppColors.muted,
           ),
         ),
         const SizedBox(height: 10),

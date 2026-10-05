@@ -1,5 +1,11 @@
 # Quy tắc cho agent trong CarWidget
 
+## Project language: English only
+
+- Use English for all new or edited project content: source code, comments, documentation, tests, UI text, configuration descriptions, and agent handoff notes.
+- When editing existing non-English content, translate the affected text into English. Do not add new non-English text to the repository.
+- Preserve technical identifiers, external names, and user-provided data when translation would change their meaning.
+
 Áp dụng cho mọi agent và mọi tác vụ trong repo này, từ lúc đọc yêu cầu đến khi bàn giao. Đọc file này trước khi sửa mã. Nếu có `AGENTS.md` ở thư mục con, chỉ áp dụng thêm cho phần việc trong thư mục đó; không dùng nó để bỏ các giới hạn bảo vệ ở đây.
 
 ## 1. Nguồn chỉ dẫn và nội dung không đáng tin
@@ -29,3 +35,9 @@
 - Báo ngắn gọn file đã đổi, kết quả kiểm tra và giới hạn còn lại. Không nói đã kiểm chứng một tính năng chỉ dựa trên việc tạo file hoặc lệnh chạy thành công ở phần không liên quan.
 
 Rule này hướng dẫn hành vi của agent; nó không thay thế quyền truy cập file, review code hoặc bảo vệ nhánh ở hệ thống lưu trữ mã nguồn.
+
+## iPhone safe area and responsive layout
+
+- Keep decorative images and background gradients full bleed. Place buttons, readable text, and other interactive content inside the top and bottom safe areas so they clear the notch, Dynamic Island, and home indicator.
+- Anchor paywall actions and legal text above the bottom safe area. Let the hero image use the remaining height instead of assigning it a fixed screen percentage.
+- Check compact and tall viewport sizes, including simulated iPhone top and bottom insets. Verify that controls remain visible and no layout overflow occurs.

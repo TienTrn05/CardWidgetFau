@@ -28,7 +28,7 @@ class _HomeShellState extends State<HomeShell> {
                 const Brand(),
                 const Spacer(),
                 IconButton(
-                  tooltip: settings ? 'Đóng cài đặt' : 'Cài đặt',
+                  tooltip: settings ? 'Close settings' : 'Settings',
                   onPressed: () => setState(() => settings = !settings),
                   icon: Icon(
                     settings ? Icons.close_rounded : Icons.settings_outlined,
@@ -54,8 +54,6 @@ class _HomeShellState extends State<HomeShell> {
     bottomNavigationBar: settings
         ? null
         : NavigationBar(
-            backgroundColor: panel,
-            indicatorColor: lime,
             selectedIndex: tab,
             onDestinationSelected: (index) => setState(() => tab = index),
             destinations: const [

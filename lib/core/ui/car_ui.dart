@@ -1,9 +1,5 @@
+import 'package:carwidget/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-
-const ink = Color(0xFF0D0F12);
-const panel = Color(0xFF1A1D22);
-const lime = Color(0xFFD9FC65);
-const muted = Color(0xFF9EA3AD);
 
 class PageScroll extends StatelessWidget {
   const PageScroll({super.key, required this.children});
@@ -36,7 +32,7 @@ class PageHeading extends StatelessWidget {
       Text(
         eyebrow,
         style: const TextStyle(
-          color: lime,
+          color: AppColors.green,
           fontSize: 11,
           letterSpacing: 2.3,
           fontWeight: FontWeight.w800,
@@ -45,7 +41,10 @@ class PageHeading extends StatelessWidget {
       const SizedBox(height: 7),
       Text(title, style: Theme.of(context).textTheme.headlineLarge),
       const SizedBox(height: 8),
-      Text(subtitle, style: const TextStyle(color: muted, height: 1.45)),
+      Text(
+        subtitle,
+        style: const TextStyle(color: AppColors.muted, height: 1.45),
+      ),
     ],
   );
 }
@@ -57,7 +56,11 @@ class Brand extends StatelessWidget {
   Widget build(BuildContext context) => const Row(
     mainAxisSize: MainAxisSize.min,
     children: [
-      Icon(Icons.directions_car_filled_rounded, size: 25, color: lime),
+      Icon(
+        Icons.directions_car_filled_rounded,
+        size: 25,
+        color: AppColors.green,
+      ),
       SizedBox(width: 9),
       Text(
         'CARWIDGET',
@@ -82,7 +85,7 @@ class Feature extends StatelessWidget {
     padding: const EdgeInsets.symmetric(vertical: 7),
     child: Row(
       children: [
-        Icon(icon, color: lime, size: 21),
+        Icon(icon, color: AppColors.green, size: 21),
         const SizedBox(width: 12),
         Expanded(child: Text(label, style: const TextStyle(fontSize: 14))),
       ],
@@ -107,7 +110,7 @@ class HeroPreview extends StatelessWidget {
           height: size * .8,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: lime.withValues(alpha: .1),
+            color: AppColors.greenHalo,
           ),
         ),
         Transform.rotate(
@@ -117,7 +120,11 @@ class HeroPreview extends StatelessWidget {
             height: size * .56,
             decoration: tileDecoration(),
             child: const Center(
-              child: Icon(Icons.speed_rounded, color: lime, size: 88),
+              child: Icon(
+                Icons.speed_rounded,
+                color: AppColors.green,
+                size: 88,
+              ),
             ),
           ),
         ),
@@ -134,7 +141,7 @@ class HeroPreview extends StatelessWidget {
               children: [
                 Icon(
                   Icons.directions_car_filled_rounded,
-                  color: lime,
+                  color: AppColors.green,
                   size: 38,
                 ),
                 SizedBox(height: 5),
@@ -168,15 +175,18 @@ class SectionTitle extends StatelessWidget {
       ),
       const SizedBox(width: 8),
       if (action != null)
-        Text(action!, style: const TextStyle(color: lime, fontSize: 12)),
+        Text(
+          action!,
+          style: const TextStyle(color: AppColors.green, fontSize: 12),
+        ),
     ],
   );
 }
 
 BoxDecoration tileDecoration({bool selected = false}) => BoxDecoration(
-  color: panel,
+  color: AppColors.surface,
   borderRadius: BorderRadius.circular(22),
   border: Border.all(
-    color: selected ? lime : Colors.white.withValues(alpha: .06),
+    color: selected ? AppColors.green : AppColors.subtleBorder,
   ),
 );

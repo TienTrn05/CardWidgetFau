@@ -1,3 +1,4 @@
+import 'package:carwidget/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:carwidget/core/ui/car_ui.dart';
 
@@ -16,11 +17,6 @@ class _CardsPageState extends State<CardsPage> {
     'AFTER DARK',
     'FIND YOUR WAY',
   ];
-  final colors = const [
-    Color(0xFFADCF51),
-    Color(0xFF819ED6),
-    Color(0xFFFFA879),
-  ];
 
   @override
   Widget build(BuildContext context) => PageScroll(
@@ -28,7 +24,7 @@ class _CardsPageState extends State<CardsPage> {
       const PageHeading(
         eyebrow: 'EXPRESS YOURSELF',
         title: 'Cards',
-        subtitle: 'Một chút cá tính cho mỗi hành trình.',
+        subtitle: 'A little personality for every journey.',
       ),
       const SizedBox(height: 24),
       for (var index = 0; index < titles.length; index++) ...[
@@ -41,18 +37,12 @@ class _CardsPageState extends State<CardsPage> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: selected == index ? lime : Colors.transparent,
+                color: selected == index
+                    ? AppColors.green
+                    : AppColors.transparent,
                 width: 2,
               ),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  colors[index].withValues(alpha: .84),
-                  colors[index].withValues(alpha: .25),
-                  panel,
-                ],
-              ),
+              gradient: AppGradients.gold,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,6 +53,7 @@ class _CardsPageState extends State<CardsPage> {
                       child: Text(
                         captions[index],
                         style: const TextStyle(
+                          color: AppColors.background,
                           fontSize: 10,
                           letterSpacing: 2,
                           fontWeight: FontWeight.w700,
@@ -75,15 +66,21 @@ class _CardsPageState extends State<CardsPage> {
                           ? Icons.check_circle_rounded
                           : Icons.circle_outlined,
                       size: 22,
+                      color: AppColors.background,
                     ),
                   ],
                 ),
                 const Spacer(),
-                const Icon(Icons.directions_car_filled_rounded, size: 36),
+                const Icon(
+                  Icons.directions_car_filled_rounded,
+                  size: 36,
+                  color: AppColors.background,
+                ),
                 const SizedBox(height: 8),
                 Text(
                   titles[index],
                   style: const TextStyle(
+                    color: AppColors.background,
                     fontSize: 25,
                     fontWeight: FontWeight.w800,
                   ),
@@ -95,8 +92,8 @@ class _CardsPageState extends State<CardsPage> {
         const SizedBox(height: 14),
       ],
       const Text(
-        'Chạm vào card để chọn mẫu xem trước.',
-        style: TextStyle(color: muted, fontSize: 12),
+        'Tap a card to preview it.',
+        style: TextStyle(color: AppColors.muted, fontSize: 12),
       ),
     ],
   );
