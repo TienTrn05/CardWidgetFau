@@ -2,7 +2,7 @@
     <application
         android:label="carwidget"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@drawable/app_icon_0">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -20,11 +20,80 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+            <!-- Flutter tooling discovers only activity launch filters. The scheme keeps
+                 this explicit debug launch target out of the device launcher. -->
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <data android:scheme="carwidget-flutter-launch" />
             </intent-filter>
         </activity>
+        <activity-alias
+            android:name=".LauncherIcon0"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@drawable/app_icon_0"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".LauncherIcon1"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/app_icon_1"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".LauncherIcon2"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/app_icon_2"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".LauncherIcon3"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/app_icon_3"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".LauncherIcon4"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/app_icon_4"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".LauncherIcon5"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/app_icon_5"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

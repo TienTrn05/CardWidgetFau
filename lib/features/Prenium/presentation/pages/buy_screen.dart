@@ -2,7 +2,7 @@ import 'package:carwidget/app/theme/app_theme.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:carwidget/features/premium/presentation/widgets/plan_card.dart';
+import 'package:carwidget/features/Prenium/presentation/widgets/plan_card.dart';
 
 class BuyScreen extends StatefulWidget {
   const BuyScreen({super.key, required this.onContinue});

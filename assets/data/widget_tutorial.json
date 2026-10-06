@@ -1,0 +1,166 @@
+{
+  "title": "Steps",
+  "stepLabel": "Step",
+  "imagePlaceholderLabel": "Step image",
+  "noteLabel": "Note",
+  "tabs": [
+    {
+      "id": "carplay_sounds",
+      "title": "CarPlay Sounds",
+      "steps": [
+        {
+          "instruction": "Open the Shortcuts app.",
+          "images": [
+            {
+              "asset": "assets/images/step1_cardsound.jpg",
+              "aspectRatio": 1.565217,
+              "placeholderIcon": "search",
+              "placeholderTone": "dark"
+            }
+          ]
+        },
+        {
+          "instruction": "Tap the New Automation button.",
+          "images": [
+            {
+              "asset": "assets/images/step2_cardsound.jpg",
+              "aspectRatio": 1.3248,
+              "placeholderIcon": "add",
+              "placeholderTone": "light"
+            }
+          ]
+        },
+        {
+          "instruction": "Scroll down the list and select CarPlay.",
+          "images": [
+            {
+              "asset": "assets/images/step3_cardsound.jpg",
+              "aspectRatio": 1.435009,
+              "placeholderIcon": "list",
+              "placeholderTone": "light"
+            }
+          ]
+        },
+        {
+          "instruction": "Choose Is Connected and Run Immediately, then tap Next.",
+          "images": [
+            {
+              "asset": "assets/images/step4_cardsound.jpg",
+              "aspectRatio": 0.916944,
+              "placeholderIcon": "list",
+              "placeholderTone": "light"
+            }
+          ]
+        },
+        {
+          "instruction": "Search for and select the Car Widget app.",
+          "images": [
+            {
+              "asset": "assets/images/step5_cardsound.jpg",
+              "aspectRatio": 1.08094,
+              "placeholderIcon": "list",
+              "placeholderTone": "light"
+            }
+          ]
+        },
+        {
+          "instruction": "Choose the Play Connect Sound action to finish.",
+          "images": [
+            {
+              "asset": "assets/images/step6_cardsound.jpg",
+              "aspectRatio": 1.425129,
+              "placeholderIcon": "list",
+              "placeholderTone": "light"
+            },
+            {
+              "asset": "assets/images/step7_cardsound.jpg",
+              "aspectRatio": 1.574144,
+              "placeholderIcon": "list",
+              "placeholderTone": "light"
+            }
+          ]
+        }
+      ],
+      "note": "To set up a disconnect sound, simply repeat these steps, but select Is Disconnected in Step 4 and choose Play Disconnect Sound in Step 6."
+    },
+    {
+      "id": "home_sounds",
+      "title": "Home Sounds",
+      "steps": [
+        {
+          "instruction": "Open the Shortcuts app.",
+          "images": [
+            {
+              "asset": "assets/images/step1_cardsound.jpg",
+              "aspectRatio": 1.565217,
+              "placeholderIcon": "image",
+              "placeholderTone": "dark"
+            }
+          ]
+        },
+        {
+          "instruction": "Tap the New Automation button.",
+          "images": [
+            {
+              "asset": "assets/images/step2_cardsound.jpg",
+              "aspectRatio": 1.3248,
+              "placeholderIcon": "image",
+              "placeholderTone": "light"
+            }
+          ]
+        },
+        {
+          "instruction": "Scroll down and select Arrive from the list.",
+          "images": [
+            {
+              "asset": "assets/images/step3_cardsound.jpg",
+              "aspectRatio": 1.435009,
+              "placeholderIcon": "image",
+              "placeholderTone": "light"
+            }
+          ]
+        },
+        {
+          "instruction": "Tap Location to set your specific address(e.g., your home). Choose Any Time and Run Immediately, then tap Next.",
+          "images": [
+            {
+              "asset": "assets/images/step4_homesound.jpg",
+              "aspectRatio": 0.958333,
+              "placeholderIcon": "image",
+              "placeholderTone": "light"
+            }
+          ]
+        },
+        {
+          "instruction": "Search for and select the Car Widget app.",
+          "images": [
+            {
+              "asset": "assets/images/step5_cardsound.jpg",
+              "aspectRatio": 1.08094,
+              "placeholderIcon": "image",
+              "placeholderTone": "light"
+            }
+          ]
+        },
+        {
+          "instruction": "Choose your desired sound action (like Play home Arrival Sound) to finish.",
+          "images": [
+            {
+              "asset": "assets/images/step6_cardsound.jpg",
+              "aspectRatio": 1.425129,
+              "placeholderIcon": "image",
+              "placeholderTone": "light"
+            },
+            {
+              "asset": "assets/images/step7_homesound.jpg",
+              "aspectRatio": 1.091391,
+              "placeholderIcon": "image",
+              "placeholderTone": "light"
+            }
+          ]
+        }
+      ],
+      "note": "to set up a sound for when you leave home, repeat these steps but select Leave in Step 3"
+    }
+  ]
+}
