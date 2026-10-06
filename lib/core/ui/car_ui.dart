@@ -1,5 +1,15 @@
 import 'package:carwidget/app/theme/app_theme.dart';
+import 'package:carwidget/features/settings/data/app_icon_preference.dart';
 import 'package:flutter/material.dart';
+
+const appIconPreviewAssets = <String>[
+  'ios/Runner/Assets.xcassets/CarIcon.appiconset/Icon-App-60x60@3x.png',
+  'ios/Runner/Assets.xcassets/AppIcon1.appiconset/Icon-App-60x60@3x.png',
+  'ios/Runner/Assets.xcassets/AppIcon2.appiconset/Icon-App-60x60@3x.png',
+  'ios/Runner/Assets.xcassets/AppIcon3.appiconset/Icon-App-60x60@3x.png',
+  'ios/Runner/Assets.xcassets/AppIcon4.appiconset/Icon-App-60x60@3x.png',
+  'ios/Runner/Assets.xcassets/AppIcon5.appiconset/Icon-App-60x60@3x.png',
+];
 
 class PageScroll extends StatelessWidget {
   const PageScroll({super.key, required this.children});
@@ -53,16 +63,22 @@ class Brand extends StatelessWidget {
   const Brand({super.key});
 
   @override
-  Widget build(BuildContext context) => const Row(
+  Widget build(BuildContext context) => Row(
     mainAxisSize: MainAxisSize.min,
     children: [
-      Icon(
-        Icons.directions_car_filled_rounded,
-        size: 25,
-        color: AppColors.green,
+      ValueListenableBuilder<int>(
+        valueListenable: AppIconPreference.selected,
+        builder: (context, selection, _) => ClipRRect(
+          borderRadius: BorderRadius.circular(5),
+          child: Image.asset(
+            appIconPreviewAssets[selection],
+            width: 25,
+            height: 25,
+          ),
+        ),
       ),
-      SizedBox(width: 9),
-      Text(
+      const SizedBox(width: 9),
+      const Text(
         'CARWIDGET',
         style: TextStyle(
           fontWeight: FontWeight.w900,
@@ -171,7 +187,10 @@ class SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) => Row(
     children: [
       Expanded(
-        child: Text(title, style: Theme.of(context).textTheme.titleLarge),
+        child: Text(
+          title,
+          style: const TextStyle(color: AppColors.muted, fontSize: 16),
+        ),
       ),
       const SizedBox(width: 8),
       if (action != null)

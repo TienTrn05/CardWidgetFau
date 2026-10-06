@@ -19,35 +19,34 @@ class _HomeShellState extends State<HomeShell> {
   @override
   Widget build(BuildContext context) => Scaffold(
     body: SafeArea(
-      child: Column(
+      child: IndexedStack(
+        index: settings ? 1 : 0,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 14, 16, 8),
-            child: Row(
-              children: [
-                const Brand(),
-                const Spacer(),
-                IconButton(
-                  tooltip: settings ? 'Close settings' : 'Settings',
-                  onPressed: () => setState(() => settings = !settings),
-                  icon: Icon(
-                    settings ? Icons.close_rounded : Icons.settings_outlined,
-                  ),
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 14, 16, 8),
+                child: Row(
+                  children: [
+                    const Brand(),
+                    const Spacer(),
+                    IconButton(
+                      tooltip: 'Settings',
+                      onPressed: () => setState(() => settings = true),
+                      icon: const Icon(Icons.settings_outlined),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              Expanded(
+                child: IndexedStack(
+                  index: tab,
+                  children: const [WidgetsPage(), SoundsPage(), CardsPage()],
+                ),
+              ),
+            ],
           ),
-          Expanded(
-            child: IndexedStack(
-              index: settings ? 3 : tab,
-              children: const [
-                WidgetsPage(),
-                SoundsPage(),
-                CardsPage(),
-                SettingsPage(),
-              ],
-            ),
-          ),
+          SettingsPage(onBack: () => setState(() => settings = false)),
         ],
       ),
     ),

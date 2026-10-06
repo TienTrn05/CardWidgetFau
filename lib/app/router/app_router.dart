@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:carwidget/features/onboarding/presentation/pages/loading_screen.dart';
-import 'package:carwidget/features/premium/presentation/pages/buy_screen.dart';
+import 'package:carwidget/features/Prenium/presentation/pages/buy_screen.dart';
 import 'home_shell.dart';
 
 enum AppRoute { loading, buy, home }

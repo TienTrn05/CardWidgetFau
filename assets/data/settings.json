@@ -1,0 +1,28 @@
+{
+  "title": "Settings",
+  "sections": [
+    {
+      "title": "GENERAL",
+      "items": [
+        { "id": "restore_purchase", "title": "Restore Purchase", "icon": "purchase" },
+        { "id": "change_icon", "title": "Change icon", "icon": "icon" }
+      ]
+    },
+    {
+      "title": "GUIDE",
+      "items": [
+        { "id": "widget_tutorial", "title": "Widget Tutorial", "icon": "info" },
+        { "id": "video_tutorial", "title": "Video Tutorial", "icon": "video" }
+      ]
+    },
+    {
+      "title": "ADVANCE",
+      "items": [
+        { "id": "share_app", "title": "Share App", "icon": "share" },
+        { "id": "send_feedback", "title": "Send a Feedback", "icon": "feedback" },
+        { "id": "terms_privacy", "title": "Term & Privacy", "icon": "terms" },
+        { "id": "device_id", "title": "Device ID", "icon": "device" }
+      ]
+    }
+  ]
+}
