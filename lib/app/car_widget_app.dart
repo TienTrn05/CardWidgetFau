@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carwidget/app/theme/app_theme.dart';
-import 'app_flow.dart';
+import 'router/app_router.dart';
 
 class CarWidgetApp extends StatelessWidget {
   const CarWidgetApp({super.key});
@@ -10,6 +10,6 @@ class CarWidgetApp extends StatelessWidget {
     title: 'CarWidget',
     debugShowCheckedModeBanner: false,
     theme: AppTheme.dark,
-    home: const AppFlow(),
+    home: const AppRouter(),
   );
 }
