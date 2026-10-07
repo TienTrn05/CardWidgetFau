@@ -1,0 +1,836 @@
+import 'dart:math' as math;
+
+import 'package:carwidget/app/theme/app_theme.dart';
+import 'package:carwidget/features/catalog/data/models/saved_widget_model.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
+import 'package:carwidget/features/settings/presentation/widgets/tutorial_sheet.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+final _savedWidgets = ValueNotifier<List<SavedWidgetModel>>(
+  initialSavedWidgetModels,
+);
+final carPlayPreviewQueue = ValueNotifier<List<SavedWidgetModel?>>([
+  null,
+  null,
+]);
+final _previewSelectionOrder = <String>[];
+
+void _enqueueWidgetForCarPlayPreview(SavedWidgetModel widget) {
+  final slots = List<SavedWidgetModel?>.of(carPlayPreviewQueue.value);
+  if (slots.any((queuedWidget) => queuedWidget?.id == widget.id)) return;
+
+  final emptySlot = slots.indexOf(null);
+  if (emptySlot >= 0) {
+    slots[emptySlot] = widget;
+  } else {
+    final oldestId = _previewSelectionOrder.removeAt(0);
+    final oldestSlot = slots.indexWhere(
+      (queuedWidget) => queuedWidget?.id == oldestId,
+    );
+    slots[oldestSlot >= 0 ? oldestSlot : 0] = widget;
+  }
+  _previewSelectionOrder.add(widget.id);
+  carPlayPreviewQueue.value = slots;
+}
+
+void _removeSavedWidgetAt(int index) {
+  if (index < 0 || index >= _savedWidgets.value.length) return;
+  final widgets = List<SavedWidgetModel>.of(_savedWidgets.value);
+  final removedWidget = widgets.removeAt(index);
+  _savedWidgets.value = widgets;
+  carPlayPreviewQueue.value = carPlayPreviewQueue.value
+      .map((widget) => widget?.id == removedWidget.id ? null : widget)
+      .toList();
+  _previewSelectionOrder.remove(removedWidget.id);
+}
+
+void _removeWidgetFromPreview(String widgetId) {
+  carPlayPreviewQueue.value = carPlayPreviewQueue.value
+      .map((widget) => widget?.id == widgetId ? null : widget)
+      .toList();
+  _previewSelectionOrder.remove(widgetId);
+}
+
+Future<void> _showWidgetPreview(
+  BuildContext context, {
+  required int initialIndex,
+}) => showDialog<void>(
+  context: context,
+  barrierColor: Colors.black.withValues(alpha: .86),
+  builder: (_) => _WidgetPreviewDialog(initialIndex: initialIndex),
+);
+
+Future<void> showSavedWidgetPreview(
+  BuildContext context,
+  SavedWidgetModel widget,
+) {
+  final index = _savedWidgets.value.indexWhere(
+    (savedWidget) => savedWidget.id == widget.id,
+  );
+  if (index < 0) return Future<void>.value();
+  return _showWidgetPreview(context, initialIndex: index);
+}
+
+Future<void> showFirstSavedWidgetPreview(BuildContext context) {
+  if (_savedWidgets.value.isEmpty) return Future<void>.value();
+  return _showWidgetPreview(context, initialIndex: 0);
+}
+
+Future<void> _pickWidgetImage(BuildContext context) async {
+  try {
+    final selectedImage = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+      maxWidth: 1600,
+      maxHeight: 1600,
+    );
+    if (selectedImage == null || !context.mounted) return;
+
+    final imageBytes = await selectedImage.readAsBytes();
+    if (!context.mounted) return;
+
+    final widget = SavedWidgetModel(
+      id: 'photo_${DateTime.now().microsecondsSinceEpoch}',
+      label: 'PHOTO',
+      imageBytes: imageBytes,
+    );
+    _savedWidgets.value = [..._savedWidgets.value, widget];
+  } catch (_) {
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(content: Text('Could not open the photo library.')),
+      );
+  }
+}
+
+class MyWidgetsSection extends StatelessWidget {
+  const MyWidgetsSection({super.key});
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      _TutorialBanner(onTap: () => showTutorialSheet(context)),
+      const SizedBox(height: 28),
+      Row(
+        children: [
+          const Expanded(
+            child: Text(
+              'My Widgets',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          Material(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(22),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(22),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(builder: (_) => const MyWidgetsPage()),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 17,
+                  vertical: 8,
+                ),
+                child: Text(
+                  'See All',
+                  style: const TextStyle(
+                    color: AppColors.green,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 14),
+      const _WidgetsCarousel(),
+    ],
+  );
+}
+
+class MyWidgetsPage extends StatelessWidget {
+  const MyWidgetsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      backgroundColor: AppColors.background,
+      surfaceTintColor: Colors.transparent,
+      centerTitle: true,
+      title: const Text(
+        'My Widgets',
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+      ),
+      leading: IconButton(
+        tooltip: 'Back',
+        onPressed: () => Navigator.of(context).pop(),
+        icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+      ),
+    ),
+    body: SafeArea(
+      top: false,
+      child: ValueListenableBuilder<List<SavedWidgetModel>>(
+        valueListenable: _savedWidgets,
+        builder: (context, widgets, _) => GridView.builder(
+          padding: const EdgeInsets.fromLTRB(18, 14, 18, 24),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+            childAspectRatio: 1,
+          ),
+          itemCount: widgets.length,
+          itemBuilder: (context, index) {
+            final widget = widgets[index];
+            return Stack(
+              children: [
+                Positioned.fill(
+                  child: _SavedWidgetCard(
+                    widgetId: widget.id,
+                    onTap: () =>
+                        _showWidgetPreview(context, initialIndex: index),
+                    child: SavedWidgetArtwork(widget: widget),
+                  ),
+                ),
+                Positioned(
+                  top: 7,
+                  right: 7,
+                  child: Material(
+                    color: const Color(0xCC080D12),
+                    shape: const CircleBorder(),
+                    child: InkWell(
+                      customBorder: const CircleBorder(),
+                      onTap: () {
+                        _removeSavedWidgetAt(index);
+                      },
+                      child: const SizedBox.square(
+                        dimension: 25,
+                        child: Icon(Icons.close_rounded, size: 17),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    ),
+  );
+}
+
+class _TutorialBanner extends StatelessWidget {
+  const _TutorialBanner({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Material(
+    color: const Color(0xFF252D33),
+    borderRadius: BorderRadius.circular(23),
+    child: InkWell(
+      borderRadius: BorderRadius.circular(23),
+      onTap: onTap,
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 45),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(23),
+          border: Border.all(color: const Color(0xFF46525A), width: 1.2),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 30,
+              height: 30,
+              decoration: const BoxDecoration(
+                color: AppColors.green,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.info_rounded,
+                color: AppColors.background,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 14),
+            const Expanded(
+              child: Text(
+                'How to Add Widget to CarPlay?',
+                maxLines: 2,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  height: 1.15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+class _WidgetsCarousel extends StatelessWidget {
+  const _WidgetsCarousel();
+
+  @override
+  Widget build(BuildContext context) =>
+      ValueListenableBuilder<List<SavedWidgetModel>>(
+        valueListenable: _savedWidgets,
+        builder: (context, widgets, _) => LayoutBuilder(
+          builder: (context, constraints) {
+            final cardSize = carPlayWidgetPreviewSize(
+              context,
+              constraints.maxWidth,
+            );
+            return SizedBox(
+              height: cardSize,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                clipBehavior: Clip.none,
+                itemCount: widgets.length + 1,
+                separatorBuilder: (_, _) => const SizedBox(width: 12),
+                itemBuilder: (context, index) => SizedBox.square(
+                  dimension: cardSize,
+                  child: index == 0
+                      ? _AddWidgetTile(onTap: () => _pickWidgetImage(context))
+                      : _SavedWidgetCard(
+                          widgetId: widgets[index - 1].id,
+                          onTap: () => _showWidgetPreview(
+                            context,
+                            initialIndex: index - 1,
+                          ),
+                          child: SavedWidgetArtwork(widget: widgets[index - 1]),
+                        ),
+                ),
+              ),
+            );
+          },
+        ),
+      );
+}
+
+class _AddWidgetTile extends StatelessWidget {
+  const _AddWidgetTile({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => CustomPaint(
+    foregroundPainter: _DashedBorderPainter(),
+    child: GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 66,
+              height: 66,
+              child: Stack(
+                children: [
+                  Positioned(
+                    left: 18,
+                    top: 7,
+                    child: Transform.rotate(
+                      angle: .12,
+                      child: Container(
+                        width: 47,
+                        height: 54,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF008C61),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: 8,
+                    top: 3,
+                    child: Transform.rotate(
+                      angle: -.12,
+                      child: Container(
+                        width: 47,
+                        height: 54,
+                        decoration: BoxDecoration(
+                          color: AppColors.green,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.add_rounded,
+                          color: AppColors.background,
+                          size: 38,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 13),
+            const Text(
+              'Add Widget',
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+class _DashedBorderPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    final path = Path()
+      ..addRRect(
+        RRect.fromRectAndRadius(rect.deflate(1.5), const Radius.circular(24)),
+      );
+    final paint = Paint()
+      ..color = AppColors.green
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.5;
+
+    for (final metric in path.computeMetrics()) {
+      var distance = 0.0;
+      while (distance < metric.length) {
+        final dashEnd = (distance + 8).clamp(0, metric.length).toDouble();
+        canvas.drawPath(metric.extractPath(distance, dashEnd), paint);
+        distance += 15;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+class _SavedWidgetCard extends StatelessWidget {
+  const _SavedWidgetCard({
+    required this.widgetId,
+    required this.child,
+    this.onTap,
+  });
+
+  final String widgetId;
+  final Widget child;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) =>
+      ValueListenableBuilder<List<SavedWidgetModel?>>(
+        valueListenable: carPlayPreviewQueue,
+        builder: (context, selectedWidgets, _) {
+          final isSelected = selectedWidgets.any(
+            (widget) => widget?.id == widgetId,
+          );
+          return Material(
+            color: const Color(0xFF20272D),
+            borderRadius: BorderRadius.circular(24),
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(24),
+              child: Ink(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: isSelected
+                        ? AppColors.green
+                        : const Color(0xFF303940),
+                    width: isSelected ? 2 : 1,
+                  ),
+                ),
+                child: Center(child: child),
+              ),
+            ),
+          );
+        },
+      );
+}
+
+class SavedWidgetArtwork extends StatelessWidget {
+  const SavedWidgetArtwork({super.key, required this.widget});
+
+  final SavedWidgetModel widget;
+
+  @override
+  Widget build(BuildContext context) {
+    final imageBytes = widget.imageBytes;
+    if (imageBytes == null) return _AbarthArtwork(label: widget.label);
+
+    return SizedBox.expand(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(23),
+        child: Image.memory(
+          imageBytes,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => const Icon(
+            Icons.broken_image_outlined,
+            color: AppColors.muted,
+            size: 36,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AbarthArtwork extends StatelessWidget {
+  const _AbarthArtwork({this.label = 'ABARTH'});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => FittedBox(
+    fit: BoxFit.contain,
+    child: SizedBox(
+      width: 138,
+      height: 154,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          const Icon(Icons.shield_rounded, color: Colors.black, size: 148),
+          const Icon(Icons.shield_rounded, color: Color(0xFFE9C900), size: 136),
+          Positioned(
+            top: 29,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 2),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1975A6),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: label == 'ABARTH' ? 15 : 12,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.2,
+                ),
+              ),
+            ),
+          ),
+          const Positioned(
+            top: 56,
+            child: Icon(Icons.bolt_rounded, color: Colors.black, size: 66),
+          ),
+          Positioned(
+            bottom: 23,
+            child: Container(
+              width: 59,
+              height: 22,
+              decoration: BoxDecoration(
+                color: const Color(0xFFB51720),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: const Icon(
+                Icons.speed_rounded,
+                color: Colors.black,
+                size: 20,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+class _WidgetPreviewDialog extends StatefulWidget {
+  const _WidgetPreviewDialog({required this.initialIndex});
+
+  final int initialIndex;
+
+  @override
+  State<_WidgetPreviewDialog> createState() => _WidgetPreviewDialogState();
+}
+
+class _WidgetPreviewDialogState extends State<_WidgetPreviewDialog> {
+  late int _currentIndex = widget.initialIndex;
+
+  @override
+  Widget build(
+    BuildContext context,
+  ) => ValueListenableBuilder<List<SavedWidgetModel>>(
+    valueListenable: _savedWidgets,
+    builder: (context, widgets, _) {
+      if (widgets.isEmpty) return const SizedBox.shrink();
+
+      final currentIndex = _currentIndex.clamp(0, widgets.length - 1);
+      final currentWidget = widgets[currentIndex];
+      final screenSize = MediaQuery.sizeOf(context);
+
+      return Dialog(
+        backgroundColor: const Color(0xFF101019),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: FractionallySizedBox(
+          widthFactor: 1,
+          heightFactor: .985,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 48,
+                  child: Row(
+                    children: [
+                      IconButton(
+                        tooltip: 'Close preview',
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.close_rounded, size: 25),
+                      ),
+                      const Expanded(
+                        child: Text(
+                          'Preview Widget',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 19,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: 'About the preview',
+                        onPressed: () => _showPreviewInfo(context),
+                        icon: const Icon(
+                          Icons.info_rounded,
+                          color: AppColors.green,
+                          size: 25,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    'This only updates the preview. CarPlay setup is done separately.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 14, height: 1.35),
+                  ),
+                ),
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, stageConstraints) {
+                      final previewSize =
+                          math
+                              .max(
+                                0.0,
+                                math.min(
+                                  360.0,
+                                  math.min(
+                                    screenSize.width - 72,
+                                    stageConstraints.maxHeight - 42,
+                                  ),
+                                ),
+                              )
+                              .toDouble() *
+                          .7;
+                      return Stack(
+                        alignment: Alignment.center,
+                        clipBehavior: Clip.none,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox.square(
+                                dimension: previewSize,
+                                child: _SavedWidgetCard(
+                                  widgetId: currentWidget.id,
+                                  child: SavedWidgetArtwork(
+                                    widget: currentWidget,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 17),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  for (
+                                    var index = 0;
+                                    index < widgets.length;
+                                    index++
+                                  )
+                                    GestureDetector(
+                                      onTap: () =>
+                                          setState(() => _currentIndex = index),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 4,
+                                          vertical: 6,
+                                        ),
+                                        child: AnimatedContainer(
+                                          duration: const Duration(
+                                            milliseconds: 160,
+                                          ),
+                                          width: index == currentIndex ? 9 : 7,
+                                          height: 7,
+                                          decoration: BoxDecoration(
+                                            color: index == currentIndex
+                                                ? AppColors.green
+                                                : const Color(0xFF59606B),
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: IconButton.filled(
+                              tooltip: 'Previous widget',
+                              onPressed: currentIndex > 0
+                                  ? () => setState(() => _currentIndex--)
+                                  : null,
+                              style: IconButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: AppColors.background,
+                                disabledBackgroundColor: Colors.transparent,
+                                disabledForegroundColor: AppColors.surface,
+                              ),
+                              icon: const Icon(
+                                Icons.chevron_left_rounded,
+                                size: 28,
+                              ),
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: IconButton.filled(
+                              tooltip: 'Next widget',
+                              onPressed: currentIndex < widgets.length - 1
+                                  ? () => setState(() => _currentIndex++)
+                                  : null,
+                              style: IconButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: AppColors.background,
+                                disabledBackgroundColor: Colors.transparent,
+                                disabledForegroundColor: AppColors.surface,
+                              ),
+                              icon: const Icon(
+                                Icons.chevron_right_rounded,
+                                size: 28,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: FilledButton(
+                    onPressed: () {
+                      _enqueueWidgetForCarPlayPreview(currentWidget);
+                      Navigator.of(context).pop();
+                    },
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.green,
+                      foregroundColor: AppColors.background,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: const Text(
+                      'Select Widget',
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: FilledButton(
+                    onPressed: () => _showEditNotice(context),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.surface,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: const Text(
+                      'Edit Widget',
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => _removeCurrentWidget(currentWidget),
+                  style: TextButton.styleFrom(foregroundColor: AppColors.muted),
+                  child: const Text('Remove from Preview'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+
+  void _removeCurrentWidget(SavedWidgetModel widget) {
+    _removeWidgetFromPreview(widget.id);
+    Navigator.of(context).pop();
+  }
+
+  void _showPreviewInfo(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        content: const Text(
+          'This only updates the preview. CarPlay setup is done separately.',
+          textAlign: TextAlign.center,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Got it'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showEditNotice(BuildContext context) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        const SnackBar(content: Text('Widget editing is coming soon.')),
+      );
+  }
+}
