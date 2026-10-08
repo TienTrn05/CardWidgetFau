@@ -1,8 +1,13 @@
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:carwidget/app/theme/app_theme.dart';
 import 'package:carwidget/features/catalog/data/models/saved_widget_model.dart';
+import 'package:carwidget/features/catalog/data/services/device_location_service.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/brand_car_image_options.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/brand_car_font_options.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/image_crop_dialog.dart';
 import 'package:carwidget/features/settings/presentation/widgets/tutorial_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -15,6 +20,122 @@ final carPlayPreviewQueue = ValueNotifier<List<SavedWidgetModel?>>([
   null,
 ]);
 final _previewSelectionOrder = <String>[];
+final _brandCarLayouts = ValueNotifier<Map<String, BrandCarLayout>>({});
+ValueNotifier<Map<String, BrandCarLayout>> get brandCarLayouts =>
+    _brandCarLayouts;
+var _brandCarCopySequence = 0;
+
+String brandCarDraftLayoutId(String widgetId) => 'draft:$widgetId';
+
+BrandCarLayout _brandCarLayoutFor(String widgetId) =>
+    _brandCarLayouts.value[widgetId] ?? const BrandCarLayout();
+
+void _setBrandCarElementPosition(
+  String widgetId,
+  BrandCarElement element,
+  WidgetElementPosition position,
+) {
+  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value);
+  layouts[widgetId] = _brandCarLayoutFor(
+    widgetId,
+  ).withPosition(element, position);
+  _brandCarLayouts.value = layouts;
+}
+
+void setBrandCarBrandScale(String layoutId, double scale) {
+  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value);
+  layouts[layoutId] = _brandCarLayoutFor(layoutId).withBrandScale(scale);
+  _brandCarLayouts.value = layouts;
+}
+
+void setBrandCarImage(String layoutId, int imageIndex) {
+  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value);
+  layouts[layoutId] = _brandCarLayoutFor(
+    layoutId,
+  ).withCarImageIndex(imageIndex);
+  _brandCarLayouts.value = layouts;
+}
+
+void setBrandCarCustomImage(String layoutId, Uint8List bytes) {
+  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value);
+  layouts[layoutId] = _brandCarLayoutFor(layoutId).withCarImageBytes(bytes);
+  _brandCarLayouts.value = layouts;
+}
+
+void setBrandCarImageScale(String layoutId, double scale) {
+  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value);
+  layouts[layoutId] = _brandCarLayoutFor(layoutId).withCarScale(scale);
+  _brandCarLayouts.value = layouts;
+}
+
+void setBrandCarGreetingNickname(String layoutId, String nickname) {
+  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value);
+  layouts[layoutId] = _brandCarLayoutFor(
+    layoutId,
+  ).withGreetingNickname(nickname);
+  _brandCarLayouts.value = layouts;
+}
+
+void setBrandCarGreetingFont(String layoutId, int fontIndex) {
+  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value);
+  layouts[layoutId] = _brandCarLayoutFor(
+    layoutId,
+  ).withGreetingFontIndex(fontIndex);
+  _brandCarLayouts.value = layouts;
+}
+
+void setBrandCarGreetingColor(String layoutId, int colorValue) {
+  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value);
+  layouts[layoutId] = _brandCarLayoutFor(
+    layoutId,
+  ).withGreetingColorValue(colorValue);
+  _brandCarLayouts.value = layouts;
+}
+
+void setBrandCarBorderColor(String layoutId, int? colorValue) {
+  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value);
+  layouts[layoutId] = _brandCarLayoutFor(layoutId).withBorderColor(colorValue);
+  _brandCarLayouts.value = layouts;
+}
+
+void setBrandCarBorderOpacity(String layoutId, double opacity) {
+  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value);
+  layouts[layoutId] = _brandCarLayoutFor(layoutId).withBorderOpacity(opacity);
+  _brandCarLayouts.value = layouts;
+}
+
+void resetBrandCarWidgetLayout(String widgetId) {
+  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value)
+    ..remove(widgetId);
+  _brandCarLayouts.value = layouts;
+}
+
+void addBrandCarWidgetToMyWidgets(
+  BuildContext context,
+  SavedWidgetModel template,
+) {
+  final copyId =
+      '${template.id}_copy_${DateTime.now().microsecondsSinceEpoch}_${_brandCarCopySequence++}';
+  final draftLayoutId = brandCarDraftLayoutId(template.id);
+  final layoutId = 'saved:$copyId';
+  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value)
+    ..[layoutId] = _brandCarLayoutFor(draftLayoutId);
+  _brandCarLayouts.value = layouts;
+  _savedWidgets.value = [
+    ..._savedWidgets.value,
+    SavedWidgetModel(
+      id: copyId,
+      label: template.label,
+      imageBytes: template.imageBytes,
+      layoutId: layoutId,
+    ),
+  ];
+  ScaffoldMessenger.of(context)
+    ..hideCurrentSnackBar()
+    ..showSnackBar(
+      SnackBar(content: Text('${template.label} added to My Widgets.')),
+    );
+}
 
 void _enqueueWidgetForCarPlayPreview(SavedWidgetModel widget) {
   final slots = List<SavedWidgetModel?>.of(carPlayPreviewQueue.value);
@@ -39,6 +160,12 @@ void _removeSavedWidgetAt(int index) {
   final widgets = List<SavedWidgetModel>.of(_savedWidgets.value);
   final removedWidget = widgets.removeAt(index);
   _savedWidgets.value = widgets;
+  final layoutId = removedWidget.layoutId;
+  if (layoutId != null) {
+    final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value)
+      ..remove(layoutId);
+    _brandCarLayouts.value = layouts;
+  }
   carPlayPreviewQueue.value = carPlayPreviewQueue.value
       .map((widget) => widget?.id == removedWidget.id ? null : widget)
       .toList();
@@ -89,11 +216,13 @@ Future<void> _pickWidgetImage(BuildContext context) async {
 
     final imageBytes = await selectedImage.readAsBytes();
     if (!context.mounted) return;
+    final croppedImageBytes = await showImageCropDialog(context, imageBytes);
+    if (croppedImageBytes == null || !context.mounted) return;
 
     final widget = SavedWidgetModel(
       id: 'photo_${DateTime.now().microsecondsSinceEpoch}',
       label: 'PHOTO',
-      imageBytes: imageBytes,
+      imageBytes: croppedImageBytes,
     );
     _savedWidgets.value = [..._savedWidgets.value, widget];
   } catch (_) {
@@ -469,30 +598,292 @@ class _SavedWidgetCard extends StatelessWidget {
 }
 
 class SavedWidgetArtwork extends StatelessWidget {
-  const SavedWidgetArtwork({super.key, required this.widget});
+  const SavedWidgetArtwork({
+    super.key,
+    required this.widget,
+    this.isEditable = false,
+    this.layoutId,
+  });
 
   final SavedWidgetModel widget;
+  final bool isEditable;
+  final String? layoutId;
 
   @override
   Widget build(BuildContext context) {
     final imageBytes = widget.imageBytes;
-    if (imageBytes == null) return _AbarthArtwork(label: widget.label);
-
-    return SizedBox.expand(
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(23),
-        child: Image.memory(
-          imageBytes,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => const Icon(
-            Icons.broken_image_outlined,
-            color: AppColors.muted,
-            size: 36,
+    if (imageBytes != null) {
+      return SizedBox.expand(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(23),
+          child: Image.memory(
+            imageBytes,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => const Icon(
+              Icons.broken_image_outlined,
+              color: AppColors.muted,
+              size: 36,
+            ),
           ),
         ),
+      );
+    }
+
+    if (widget.id.startsWith('brand_car_')) {
+      return _BrandCarArtwork(
+        widget: widget,
+        layoutId: layoutId ?? widget.layoutId ?? widget.id,
+        isEditable: isEditable,
+      );
+    }
+
+    return _AbarthArtwork(label: widget.label);
+  }
+}
+
+class _BrandCarArtwork extends StatelessWidget {
+  const _BrandCarArtwork({
+    required this.widget,
+    required this.layoutId,
+    this.isEditable = false,
+  });
+
+  final SavedWidgetModel widget;
+  final String layoutId;
+  final bool isEditable;
+
+  @override
+  Widget build(BuildContext context) {
+    DeviceLocationService.loadIfNeeded();
+    return ValueListenableBuilder<Map<String, BrandCarLayout>>(
+      valueListenable: _brandCarLayouts,
+      builder: (context, layouts, _) => LayoutBuilder(
+        builder: (context, constraints) {
+          final inset = isEditable || layouts.containsKey(layoutId)
+              ? 1.0
+              : 12.0;
+          final canvasSize = Size(
+            math.max(0.0, constraints.maxWidth - inset * 2),
+            math.max(0.0, constraints.maxHeight - inset * 2),
+          );
+          final carSize = math.min(88.0, canvasSize.width * .54);
+          final layout = layouts[layoutId] ?? const BrandCarLayout();
+          final carImage =
+              brandCarImageOptions[layout.carImageIndex %
+                  brandCarImageOptions.length];
+          final carImageBytes = layout.carImageBytes;
+          final greetingFontFamily =
+              brandCarFontOptions[layout.greetingFontIndex
+                      .clamp(0, brandCarFontOptions.length - 1)
+                      .toInt()]
+                  .fontFamily;
+          final carArtwork = carImageBytes == null
+              ? Icon(
+                  carImage.icon,
+                  color: carImage.color,
+                  size: carSize * layout.carScale,
+                  shadows: const [
+                    Shadow(
+                      color: Colors.black54,
+                      blurRadius: 7,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                )
+              : Image.memory(
+                  carImageBytes,
+                  width: carSize * layout.carScale * 1.5,
+                  height: carSize * layout.carScale,
+                  fit: BoxFit.contain,
+                );
+          return Padding(
+            padding: EdgeInsets.all(inset),
+            child: Stack(
+              children: [
+                _brandCarElement(
+                  widgetId: layoutId,
+                  element: BrandCarElement.greeting,
+                  position: layout.greeting,
+                  size: canvasSize,
+                  editable: isEditable,
+                  child: Text(
+                    'Hello,\n${layout.greetingNickname}',
+                    style: TextStyle(
+                      color: Color(layout.greetingColorValue),
+                      fontFamily: greetingFontFamily,
+                      fontSize: 16,
+                      height: 1.1,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                _brandCarElement(
+                  widgetId: layoutId,
+                  element: BrandCarElement.brand,
+                  position: layout.brand,
+                  size: canvasSize,
+                  editable: isEditable,
+                  child: Text(
+                    widget.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: .58),
+                      fontSize: 15 * layout.brandScale,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+                _brandCarElement(
+                  widgetId: layoutId,
+                  element: BrandCarElement.car,
+                  position: layout.car,
+                  size: canvasSize,
+                  editable: isEditable,
+                  child: carArtwork,
+                ),
+                ValueListenableBuilder<String>(
+                  valueListenable: DeviceLocationService.cityName,
+                  builder: (context, cityName, _) => _brandCarElement(
+                    widgetId: layoutId,
+                    element: BrandCarElement.location,
+                    position: layout.location,
+                    size: canvasSize,
+                    editable: isEditable,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.location_on,
+                          color: Colors.white70,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 3),
+                        Text(
+                          cityName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: .8),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                if (layout.borderColorValue != null && layout.borderWidth > 0)
+                  Positioned.fill(
+                    child: Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: IgnorePointer(
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(24),
+                            border: Border.all(
+                              color: Color(
+                                layout.borderColorValue!,
+                              ).withValues(alpha: layout.borderOpacity),
+                              width: math.min(layout.borderWidth, 1.5),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
+
+  Widget _brandCarElement({
+    required String widgetId,
+    required BrandCarElement element,
+    required WidgetElementPosition position,
+    required Size size,
+    required bool editable,
+    required Widget child,
+  }) => _DraggableBrandCarElement(
+    key: ValueKey('$widgetId-${element.name}'),
+    widgetId: widgetId,
+    element: element,
+    position: position,
+    canvasSize: size,
+    editable: editable,
+    child: child,
+  );
+}
+
+class _DraggableBrandCarElement extends StatefulWidget {
+  const _DraggableBrandCarElement({
+    super.key,
+    required this.widgetId,
+    required this.element,
+    required this.position,
+    required this.canvasSize,
+    required this.editable,
+    required this.child,
+  });
+
+  final String widgetId;
+  final BrandCarElement element;
+  final WidgetElementPosition position;
+  final Size canvasSize;
+  final bool editable;
+  final Widget child;
+
+  @override
+  State<_DraggableBrandCarElement> createState() =>
+      _DraggableBrandCarElementState();
+}
+
+class _DraggableBrandCarElementState extends State<_DraggableBrandCarElement> {
+  void _onPanUpdate(DragUpdateDetails details) {
+    final width = math.max(widget.canvasSize.width, 1);
+    final height = math.max(widget.canvasSize.height, 1);
+    final currentPosition = _brandCarLayoutFor(
+      widget.widgetId,
+    ).positionFor(widget.element);
+    _setBrandCarElementPosition(
+      widget.widgetId,
+      widget.element,
+      currentPosition.movedBy(
+        details.delta.dx * 2 / width,
+        details.delta.dy * 2 / height,
+        maxAbsX: 1,
+        maxAbsY: 1,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => Align(
+    alignment: Alignment(widget.position.x, widget.position.y),
+    child: GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onPanUpdate: widget.editable ? _onPanUpdate : null,
+      child: DecoratedBox(
+        decoration: widget.editable
+            ? BoxDecoration(
+                border: Border.all(
+                  color: AppColors.green.withValues(alpha: .8),
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.circular(7),
+              )
+            : const BoxDecoration(),
+        child: Padding(
+          padding: EdgeInsets.all(widget.editable ? 4 : 0),
+          child: widget.child,
+        ),
+      ),
+    ),
+  );
 }
 
 class _AbarthArtwork extends StatelessWidget {

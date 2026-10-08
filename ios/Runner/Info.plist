@@ -26,6 +26,8 @@
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Select a photo to create a CarPlay widget.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Show your current city on widget previews while you use the app.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
