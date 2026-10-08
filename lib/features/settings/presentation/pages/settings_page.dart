@@ -2,6 +2,7 @@ import 'package:carwidget/app/theme/app_theme.dart';
 import 'package:carwidget/features/settings/data/app_icon_preference.dart';
 import 'package:carwidget/features/settings/data/app_sharing.dart';
 import 'package:carwidget/features/settings/data/device_identity.dart';
+import 'package:carwidget/features/settings/data/external_links.dart';
 import 'package:carwidget/features/settings/data/settings_content.dart';
 import 'package:carwidget/features/settings/presentation/pages/change_icon_page.dart';
 import 'package:carwidget/features/settings/presentation/pages/widget_tutorial_page.dart';
@@ -68,6 +69,40 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
+  Future<void> _openExternalLink(Future<void> Function() open) async {
+    try {
+      await open();
+    } on PlatformException catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(error.message ?? 'Could not open the link.'),
+            ),
+          );
+      }
+    } on MissingPluginException {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text('This feature needs the latest app build.'),
+            ),
+          );
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            const SnackBar(content: Text('Could not open the link.')),
+          );
+      }
+    }
+  }
+
   void _showUnavailable(BuildContext context, String title) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
@@ -88,6 +123,10 @@ class _SettingsPageState extends State<SettingsPage> {
         showTutorialSheet(context);
       case 'share_app':
         _shareApp();
+      case 'send_feedback':
+        _openExternalLink(ExternalLinks.openFeedback);
+      case 'terms_privacy':
+        _openExternalLink(ExternalLinks.openLegal);
       case 'device_id':
         _copyDeviceId();
       default:
