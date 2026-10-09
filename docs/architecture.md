@@ -26,7 +26,7 @@ Các thao tác **sửa/xoá/chọn widget**, onboarding và cài đặt là đ�
 
 ```text
 lib/
-  main.dart                   # Entry point; hiện còn Flutter starter
+  main.dart                   # Entry point
   app/
     di/                       # Đăng ký repository, service, BLoC
     router/                   # Route và deep link
@@ -44,6 +44,7 @@ lib/
     media/{data,domain,presentation}/
     startup_sounds/{data,domain,presentation}/
     premium/{data,domain,presentation}/
+    cards/presentation/       # UI bộ sưu tập card minh họa
     settings/{data,domain,presentation}/
 assets/{images,stickers,sounds,templates}/
 ios/
