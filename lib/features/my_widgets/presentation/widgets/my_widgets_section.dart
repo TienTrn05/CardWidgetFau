@@ -680,26 +680,50 @@ class _BrandCarArtwork extends StatelessWidget {
                     position: layout.location,
                     size: canvasSize,
                     editable: isEditable,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.location_on,
-                          color: Colors.white70,
-                          size: 14,
-                        ),
-                        const SizedBox(width: 3),
-                        Text(
-                          cityName,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: .8),
-                            fontSize: 11,
-                            fontWeight: FontWeight.w500,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: canvasSize.width * .76,
+                      ),
+                      child: Tooltip(
+                        message: cityName == 'Location unavailable'
+                            ? 'Tap to retry location'
+                            : cityName,
+                        child: InkWell(
+                          onTap: cityName == 'Location unavailable'
+                              ? DeviceLocationService.retry
+                              : null,
+                          borderRadius: BorderRadius.circular(8),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 2,
+                              vertical: 1,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.location_on,
+                                  color: Colors.white70,
+                                  size: 14,
+                                ),
+                                const SizedBox(width: 3),
+                                Flexible(
+                                  child: Text(
+                                    cityName,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Colors.white.withValues(alpha: .8),
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),

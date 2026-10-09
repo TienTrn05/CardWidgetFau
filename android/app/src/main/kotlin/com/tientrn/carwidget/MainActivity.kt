@@ -1,13 +1,18 @@
 package com.tientrn.carwidget
 
+import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.MailTo
+import android.net.Uri
+import android.os.Build
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.io.File
 import java.util.UUID
+import java.util.Locale
 
 class MainActivity : FlutterActivity() {
     private val iconPreferences by lazy { getSharedPreferences("launcher_icon", MODE_PRIVATE) }
@@ -72,6 +77,61 @@ class MainActivity : FlutterActivity() {
                 }
                 startActivity(Intent.createChooser(intent, "Share CarWidget"))
                 result.success(null)
+            }
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "carwidget/external_links")
+            .setMethodCallHandler { call, result ->
+                if (call.method == "getDeviceInfo") {
+                    val appVersion = try {
+                        val info = packageManager.getPackageInfo(packageName, 0)
+                        val build = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                            info.longVersionCode
+                        } else {
+                            @Suppress("DEPRECATION")
+                            info.versionCode.toLong()
+                        }
+                        "${info.versionName} ($build)"
+                    } catch (error: PackageManager.NameNotFoundException) {
+                        "Unknown"
+                    }
+                    result.success(mapOf(
+                        "model" to "${Build.MANUFACTURER} ${Build.MODEL}",
+                        "osVersion" to "Android ${Build.VERSION.RELEASE}",
+                        "appVersion" to appVersion,
+                        "bundleId" to packageName,
+                        "language" to Locale.getDefault().toLanguageTag()
+                    ))
+                    return@setMethodCallHandler
+                }
+                val value = call.arguments as? String
+                val uri = value?.let(Uri::parse)
+                if (call.method != "open" || uri == null ||
+                    uri.scheme !in listOf("mailto", "https")) {
+                    result.error("invalid_url", "Invalid external link.", null)
+                    return@setMethodCallHandler
+                }
+                try {
+                    if (uri.scheme == "mailto") {
+                        val mail = MailTo.parse(uri.toString())
+                        val recipient = mail.to ?: ""
+                        val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+                            data = Uri.parse("mailto:$recipient")
+                            putExtra(Intent.EXTRA_EMAIL, arrayOf(recipient))
+                            putExtra(Intent.EXTRA_SUBJECT, mail.subject ?: "")
+                            putExtra(Intent.EXTRA_TEXT, mail.body ?: "")
+                        }
+                        startActivity(Intent.createChooser(emailIntent, "Send feedback"))
+                    } else {
+                        startActivity(Intent(Intent.ACTION_VIEW, uri))
+                    }
+                    result.success(null)
+                } catch (error: ActivityNotFoundException) {
+                    val message = if (uri.scheme == "mailto") {
+                        "Install or set up a mail app to send feedback."
+                    } else {
+                        "Could not open the link."
+                    }
+                    result.error("open_failed", message, null)
+                }
             }
     }
 

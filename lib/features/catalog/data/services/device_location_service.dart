@@ -14,6 +14,12 @@ class DeviceLocationService {
     _loadFuture ??= _loadCityName();
   }
 
+  static void retry() {
+    if (cityName.value == 'Finding location…') return;
+    cityName.value = 'Finding location…';
+    _loadFuture = _loadCityName();
+  }
+
   static Future<void> _loadCityName() async {
     try {
       if (!await Geolocator.isLocationServiceEnabled()) {
