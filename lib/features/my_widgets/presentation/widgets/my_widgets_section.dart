@@ -1,5 +1,4 @@
 import 'dart:math' as math;
-import 'dart:typed_data';
 
 import 'package:carwidget/app/theme/app_theme.dart';
 import 'package:carwidget/features/catalog/data/models/saved_widget_model.dart';
@@ -8,6 +7,8 @@ import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_
 import 'package:carwidget/features/catalog/presentation/widgets/brand_car_image_options.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/brand_car_font_options.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/image_crop_dialog.dart';
+import 'package:carwidget/features/editor/data/services/brand_car_layout_store.dart';
+import 'package:carwidget/features/editor/domain/models/brand_car_layout.dart';
 import 'package:carwidget/features/settings/presentation/widgets/tutorial_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -20,96 +21,7 @@ final carPlayPreviewQueue = ValueNotifier<List<SavedWidgetModel?>>([
   null,
 ]);
 final _previewSelectionOrder = <String>[];
-final _brandCarLayouts = ValueNotifier<Map<String, BrandCarLayout>>({});
-ValueNotifier<Map<String, BrandCarLayout>> get brandCarLayouts =>
-    _brandCarLayouts;
 var _brandCarCopySequence = 0;
-
-String brandCarDraftLayoutId(String widgetId) => 'draft:$widgetId';
-
-BrandCarLayout _brandCarLayoutFor(String widgetId) =>
-    _brandCarLayouts.value[widgetId] ?? const BrandCarLayout();
-
-void _setBrandCarElementPosition(
-  String widgetId,
-  BrandCarElement element,
-  WidgetElementPosition position,
-) {
-  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value);
-  layouts[widgetId] = _brandCarLayoutFor(
-    widgetId,
-  ).withPosition(element, position);
-  _brandCarLayouts.value = layouts;
-}
-
-void setBrandCarBrandScale(String layoutId, double scale) {
-  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value);
-  layouts[layoutId] = _brandCarLayoutFor(layoutId).withBrandScale(scale);
-  _brandCarLayouts.value = layouts;
-}
-
-void setBrandCarImage(String layoutId, int imageIndex) {
-  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value);
-  layouts[layoutId] = _brandCarLayoutFor(
-    layoutId,
-  ).withCarImageIndex(imageIndex);
-  _brandCarLayouts.value = layouts;
-}
-
-void setBrandCarCustomImage(String layoutId, Uint8List bytes) {
-  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value);
-  layouts[layoutId] = _brandCarLayoutFor(layoutId).withCarImageBytes(bytes);
-  _brandCarLayouts.value = layouts;
-}
-
-void setBrandCarImageScale(String layoutId, double scale) {
-  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value);
-  layouts[layoutId] = _brandCarLayoutFor(layoutId).withCarScale(scale);
-  _brandCarLayouts.value = layouts;
-}
-
-void setBrandCarGreetingNickname(String layoutId, String nickname) {
-  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value);
-  layouts[layoutId] = _brandCarLayoutFor(
-    layoutId,
-  ).withGreetingNickname(nickname);
-  _brandCarLayouts.value = layouts;
-}
-
-void setBrandCarGreetingFont(String layoutId, int fontIndex) {
-  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value);
-  layouts[layoutId] = _brandCarLayoutFor(
-    layoutId,
-  ).withGreetingFontIndex(fontIndex);
-  _brandCarLayouts.value = layouts;
-}
-
-void setBrandCarGreetingColor(String layoutId, int colorValue) {
-  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value);
-  layouts[layoutId] = _brandCarLayoutFor(
-    layoutId,
-  ).withGreetingColorValue(colorValue);
-  _brandCarLayouts.value = layouts;
-}
-
-void setBrandCarBorderColor(String layoutId, int? colorValue) {
-  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value);
-  layouts[layoutId] = _brandCarLayoutFor(layoutId).withBorderColor(colorValue);
-  _brandCarLayouts.value = layouts;
-}
-
-void setBrandCarBorderOpacity(String layoutId, double opacity) {
-  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value);
-  layouts[layoutId] = _brandCarLayoutFor(layoutId).withBorderOpacity(opacity);
-  _brandCarLayouts.value = layouts;
-}
-
-void resetBrandCarWidgetLayout(String widgetId) {
-  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value)
-    ..remove(widgetId);
-  _brandCarLayouts.value = layouts;
-}
-
 void addBrandCarWidgetToMyWidgets(
   BuildContext context,
   SavedWidgetModel template,
@@ -118,9 +30,7 @@ void addBrandCarWidgetToMyWidgets(
       '${template.id}_copy_${DateTime.now().microsecondsSinceEpoch}_${_brandCarCopySequence++}';
   final draftLayoutId = brandCarDraftLayoutId(template.id);
   final layoutId = 'saved:$copyId';
-  final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value)
-    ..[layoutId] = _brandCarLayoutFor(draftLayoutId);
-  _brandCarLayouts.value = layouts;
+  copyBrandCarLayout(draftLayoutId, layoutId);
   _savedWidgets.value = [
     ..._savedWidgets.value,
     SavedWidgetModel(
@@ -162,9 +72,7 @@ void _removeSavedWidgetAt(int index) {
   _savedWidgets.value = widgets;
   final layoutId = removedWidget.layoutId;
   if (layoutId != null) {
-    final layouts = Map<String, BrandCarLayout>.of(_brandCarLayouts.value)
-      ..remove(layoutId);
-    _brandCarLayouts.value = layouts;
+    removeBrandCarLayout(layoutId);
   }
   carPlayPreviewQueue.value = carPlayPreviewQueue.value
       .map((widget) => widget?.id == removedWidget.id ? null : widget)
@@ -327,6 +235,7 @@ class MyWidgetsPage extends StatelessWidget {
                 Positioned.fill(
                   child: _SavedWidgetCard(
                     widgetId: widget.id,
+                    layoutId: widget.layoutId,
                     onTap: () =>
                         _showWidgetPreview(context, initialIndex: index),
                     child: SavedWidgetArtwork(widget: widget),
@@ -439,6 +348,7 @@ class _WidgetsCarousel extends StatelessWidget {
                       ? _AddWidgetTile(onTap: () => _pickWidgetImage(context))
                       : _SavedWidgetCard(
                           widgetId: widgets[index - 1].id,
+                          layoutId: widgets[index - 1].layoutId,
                           onTap: () => _showWidgetPreview(
                             context,
                             initialIndex: index - 1,
@@ -558,11 +468,13 @@ class _SavedWidgetCard extends StatelessWidget {
   const _SavedWidgetCard({
     required this.widgetId,
     required this.child,
+    this.layoutId,
     this.onTap,
   });
 
   final String widgetId;
   final Widget child;
+  final String? layoutId;
   final VoidCallback? onTap;
 
   @override
@@ -573,25 +485,42 @@ class _SavedWidgetCard extends StatelessWidget {
           final isSelected = selectedWidgets.any(
             (widget) => widget?.id == widgetId,
           );
-          return Material(
-            color: const Color(0xFF20272D),
-            borderRadius: BorderRadius.circular(24),
-            child: InkWell(
-              onTap: onTap,
-              borderRadius: BorderRadius.circular(24),
-              child: Ink(
-                decoration: BoxDecoration(
+          return ValueListenableBuilder<Map<String, BrandCarLayout>>(
+            valueListenable: brandCarLayouts,
+            builder: (context, layouts, _) {
+              final layout = layoutId == null ? null : layouts[layoutId];
+              final customBorderColor = layout?.borderColorValue;
+              final borderColor = customBorderColor != null
+                  ? Color(
+                      customBorderColor,
+                    ).withValues(alpha: layout!.borderOpacity)
+                  : isSelected
+                  ? AppColors.green
+                  : const Color(0xFF303940);
+              final borderWidth = customBorderColor != null
+                  ? math.min(layout!.borderWidth, 1.5)
+                  : isSelected
+                  ? 2.0
+                  : 1.0;
+              return Material(
+                color: const Color(0xFF20272D),
+                borderRadius: BorderRadius.circular(24),
+                child: InkWell(
+                  onTap: onTap,
                   borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: isSelected
-                        ? AppColors.green
-                        : const Color(0xFF303940),
-                    width: isSelected ? 2 : 1,
+                  child: Ink(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(
+                        color: borderColor,
+                        width: borderWidth,
+                      ),
+                    ),
+                    child: Center(child: child),
                   ),
                 ),
-                child: Center(child: child),
-              ),
-            ),
+              );
+            },
           );
         },
       );
@@ -656,7 +585,7 @@ class _BrandCarArtwork extends StatelessWidget {
   Widget build(BuildContext context) {
     DeviceLocationService.loadIfNeeded();
     return ValueListenableBuilder<Map<String, BrandCarLayout>>(
-      valueListenable: _brandCarLayouts,
+      valueListenable: brandCarLayouts,
       builder: (context, layouts, _) => LayoutBuilder(
         builder: (context, constraints) {
           final inset = isEditable || layouts.containsKey(layoutId)
@@ -774,7 +703,9 @@ class _BrandCarArtwork extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (layout.borderColorValue != null && layout.borderWidth > 0)
+                if (isEditable &&
+                    layout.borderColorValue != null &&
+                    layout.borderWidth > 0)
                   Positioned.fill(
                     child: Padding(
                       padding: const EdgeInsets.all(4),
@@ -846,10 +777,10 @@ class _DraggableBrandCarElementState extends State<_DraggableBrandCarElement> {
   void _onPanUpdate(DragUpdateDetails details) {
     final width = math.max(widget.canvasSize.width, 1);
     final height = math.max(widget.canvasSize.height, 1);
-    final currentPosition = _brandCarLayoutFor(
+    final currentPosition = brandCarLayoutFor(
       widget.widgetId,
     ).positionFor(widget.element);
-    _setBrandCarElementPosition(
+    setBrandCarElementPosition(
       widget.widgetId,
       widget.element,
       currentPosition.movedBy(
@@ -1050,6 +981,7 @@ class _WidgetPreviewDialogState extends State<_WidgetPreviewDialog> {
                                 dimension: previewSize,
                                 child: _SavedWidgetCard(
                                   widgetId: currentWidget.id,
+                                  layoutId: currentWidget.layoutId,
                                   child: SavedWidgetArtwork(
                                     widget: currentWidget,
                                   ),

@@ -5,7 +5,7 @@ import 'package:carwidget/core/ui/car_ui.dart';
 import 'package:carwidget/features/catalog/data/models/saved_widget_model.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/brand_car_section.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
-import 'package:carwidget/features/catalog/presentation/widgets/my_widgets_section.dart';
+import 'package:carwidget/features/my_widgets/presentation/widgets/my_widgets_section.dart';
 
 class WidgetsPage extends StatelessWidget {
   const WidgetsPage({super.key});
