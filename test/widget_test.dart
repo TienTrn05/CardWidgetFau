@@ -15,6 +15,84 @@ void main() {
     await WidgetTutorialContent.load();
   });
 
+  testWidgets('Settings opens feedback email and legal website', (
+    tester,
+  ) async {
+    const channel = MethodChannel('carwidget/external_links');
+    const identityChannel = MethodChannel('carwidget/device_identity');
+    final opened = <String>[];
+    var diagnosticsUnavailable = false;
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (
+      call,
+    ) async {
+      switch (call.method) {
+        case 'getDeviceInfo':
+          if (diagnosticsUnavailable) {
+            throw PlatformException(code: 'unavailable');
+          }
+          return {
+            'model': 'iPhone11,8',
+            'osVersion': 'iOS 18.7.10',
+            'appVersion': '1.0 (7)',
+            'bundleId': 'com.example.carwidget',
+            'language': 'en',
+          };
+        case 'open':
+          opened.add(call.arguments as String);
+          return null;
+        default:
+          fail('Unexpected method: ${call.method}');
+      }
+    });
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      identityChannel,
+      (call) async => diagnosticsUnavailable ? null : 'support-id-123',
+    );
+    addTearDown(() {
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        channel,
+        null,
+      );
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        identityChannel,
+        null,
+      );
+    });
+
+    await tester.pumpWidget(MaterialApp(home: SettingsPage(onBack: () {})));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Send a Feedback'));
+    await tester.tap(find.text('Send a Feedback'));
+    await tester.pump();
+    await tester.ensureVisible(find.text('Term & Privacy'));
+    await tester.tap(find.text('Term & Privacy'));
+    await tester.pump();
+
+    expect(opened, hasLength(2));
+    final email = Uri.parse(opened.first);
+    expect(email.scheme, 'mailto');
+    expect(email.path, 'maixuantruongcvdev@gmail.com');
+    expect(email.queryParameters['subject'], 'CarWidget feedback');
+    final body = email.queryParameters['body']!;
+    expect(body, contains('Device ID: support-id-123'));
+    expect(body, contains('Phone model: iPhone11,8'));
+    expect(body, contains('OS version: iOS 18.7.10'));
+    expect(body, contains('App version: 1.0 (7)'));
+    expect(body, contains('Bundle ID: com.example.carwidget'));
+    expect(body, contains('Premium: Unknown'));
+    expect(body, contains('Language: en'));
+    expect(body, contains('Content:'));
+    expect(opened.last, 'https://mxtapp.website/');
+
+    diagnosticsUnavailable = true;
+    await tester.tap(find.text('Send a Feedback'));
+    await tester.pump();
+    expect(opened, hasLength(3));
+    final fallbackBody = Uri.parse(opened.last).queryParameters['body']!;
+    expect(fallbackBody, contains('Device ID: Unknown'));
+    expect(fallbackBody, contains('Phone model: Unknown'));
+  });
+
   test('tutorial images are bundled with the app', () async {
     final content = await WidgetTutorialContent.load();
     final assets = content.tabs

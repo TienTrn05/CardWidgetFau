@@ -49,23 +49,8 @@ class ExternalLinks {
           'subject=${Uri.encodeComponent('CarWidget feedback')}'
           '&body=${Uri.encodeComponent(body)}',
     );
-    try {
-      await _open(uri);
-    } on PlatformException {
-      await _open(_feedbackWebComposer(body));
-    } on MissingPluginException {
-      await _open(_feedbackWebComposer(body));
-    }
+    await _open(uri);
   }
-
-  static Uri _feedbackWebComposer(String body) =>
-      Uri.https('mail.google.com', '/mail/', {
-        'view': 'cm',
-        'fs': '1',
-        'to': 'maixuantruongcvdev@gmail.com',
-        'su': 'CarWidget feedback',
-        'body': body,
-      });
 
   static Future<void> openLegal() => _open(legal);
 
