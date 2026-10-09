@@ -32,9 +32,9 @@ class BrandCarLayout {
     this.greetingNickname = 'Speed',
     this.greetingFontIndex = 0,
     this.greetingColorValue = 0xFFFFFFFF,
-    this.borderColorValue,
+    this.borderGradientIndex,
     this.borderOpacity = 1,
-    this.borderWidth = 2,
+    this.borderWidth = 3,
   });
 
   final WidgetElementPosition greeting;
@@ -48,7 +48,7 @@ class BrandCarLayout {
   final String greetingNickname;
   final int greetingFontIndex;
   final int greetingColorValue;
-  final int? borderColorValue;
+  final int? borderGradientIndex;
   final double borderOpacity;
   final double borderWidth;
 
@@ -76,7 +76,7 @@ class BrandCarLayout {
       greetingNickname: greetingNickname,
       greetingFontIndex: greetingFontIndex,
       greetingColorValue: greetingColorValue,
-      borderColorValue: borderColorValue,
+      borderGradientIndex: borderGradientIndex,
       borderOpacity: borderOpacity,
       borderWidth: borderWidth,
     ),
@@ -92,7 +92,7 @@ class BrandCarLayout {
       greetingNickname: greetingNickname,
       greetingFontIndex: greetingFontIndex,
       greetingColorValue: greetingColorValue,
-      borderColorValue: borderColorValue,
+      borderGradientIndex: borderGradientIndex,
       borderOpacity: borderOpacity,
       borderWidth: borderWidth,
     ),
@@ -108,7 +108,7 @@ class BrandCarLayout {
       greetingNickname: greetingNickname,
       greetingFontIndex: greetingFontIndex,
       greetingColorValue: greetingColorValue,
-      borderColorValue: borderColorValue,
+      borderGradientIndex: borderGradientIndex,
       borderOpacity: borderOpacity,
       borderWidth: borderWidth,
     ),
@@ -124,7 +124,7 @@ class BrandCarLayout {
       greetingNickname: greetingNickname,
       greetingFontIndex: greetingFontIndex,
       greetingColorValue: greetingColorValue,
-      borderColorValue: borderColorValue,
+      borderGradientIndex: borderGradientIndex,
       borderOpacity: borderOpacity,
       borderWidth: borderWidth,
     ),
@@ -142,7 +142,7 @@ class BrandCarLayout {
     greetingNickname: greetingNickname,
     greetingFontIndex: greetingFontIndex,
     greetingColorValue: greetingColorValue,
-    borderColorValue: borderColorValue,
+    borderGradientIndex: borderGradientIndex,
     borderOpacity: borderOpacity,
     borderWidth: borderWidth,
   );
@@ -159,7 +159,7 @@ class BrandCarLayout {
     greetingNickname: greetingNickname,
     greetingFontIndex: greetingFontIndex,
     greetingColorValue: greetingColorValue,
-    borderColorValue: borderColorValue,
+    borderGradientIndex: borderGradientIndex,
     borderOpacity: borderOpacity,
     borderWidth: borderWidth,
   );
@@ -176,7 +176,7 @@ class BrandCarLayout {
     greetingNickname: greetingNickname,
     greetingFontIndex: greetingFontIndex,
     greetingColorValue: greetingColorValue,
-    borderColorValue: borderColorValue,
+    borderGradientIndex: borderGradientIndex,
     borderOpacity: borderOpacity,
     borderWidth: borderWidth,
   );
@@ -193,7 +193,7 @@ class BrandCarLayout {
     greetingNickname: greetingNickname,
     greetingFontIndex: greetingFontIndex,
     greetingColorValue: greetingColorValue,
-    borderColorValue: borderColorValue,
+    borderGradientIndex: borderGradientIndex,
     borderOpacity: borderOpacity,
     borderWidth: borderWidth,
   );
@@ -210,7 +210,7 @@ class BrandCarLayout {
     greetingNickname: nickname,
     greetingFontIndex: greetingFontIndex,
     greetingColorValue: greetingColorValue,
-    borderColorValue: borderColorValue,
+    borderGradientIndex: borderGradientIndex,
     borderOpacity: borderOpacity,
     borderWidth: borderWidth,
   );
@@ -227,6 +227,9 @@ class BrandCarLayout {
     greetingNickname: greetingNickname,
     greetingFontIndex: index,
     greetingColorValue: greetingColorValue,
+    borderGradientIndex: borderGradientIndex,
+    borderOpacity: borderOpacity,
+    borderWidth: borderWidth,
   );
 
   BrandCarLayout withGreetingColorValue(int value) => BrandCarLayout(
@@ -241,12 +244,12 @@ class BrandCarLayout {
     greetingNickname: greetingNickname,
     greetingFontIndex: greetingFontIndex,
     greetingColorValue: value,
-    borderColorValue: borderColorValue,
+    borderGradientIndex: borderGradientIndex,
     borderOpacity: borderOpacity,
     borderWidth: borderWidth,
   );
 
-  BrandCarLayout withBorderColor(int? value) => BrandCarLayout(
+  BrandCarLayout withBorderGradientIndex(int? value) => BrandCarLayout(
     greeting: greeting,
     brand: brand,
     car: car,
@@ -258,7 +261,7 @@ class BrandCarLayout {
     greetingNickname: greetingNickname,
     greetingFontIndex: greetingFontIndex,
     greetingColorValue: greetingColorValue,
-    borderColorValue: value,
+    borderGradientIndex: value,
     borderOpacity: borderOpacity,
     borderWidth: borderWidth,
   );
@@ -275,7 +278,7 @@ class BrandCarLayout {
     greetingNickname: greetingNickname,
     greetingFontIndex: greetingFontIndex,
     greetingColorValue: greetingColorValue,
-    borderColorValue: borderColorValue,
+    borderGradientIndex: borderGradientIndex,
     borderOpacity: value,
     borderWidth: borderWidth,
   );

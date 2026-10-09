@@ -68,9 +68,11 @@ void setBrandCarGreetingColor(String layoutId, int colorValue) {
   brandCarLayouts.value = layouts;
 }
 
-void setBrandCarBorderColor(String layoutId, int? colorValue) {
+void setBrandCarBorderGradient(String layoutId, int? gradientIndex) {
   final layouts = Map<String, BrandCarLayout>.of(brandCarLayouts.value);
-  layouts[layoutId] = brandCarLayoutFor(layoutId).withBorderColor(colorValue);
+  layouts[layoutId] = brandCarLayoutFor(
+    layoutId,
+  ).withBorderGradientIndex(gradientIndex);
   brandCarLayouts.value = layouts;
 }
 

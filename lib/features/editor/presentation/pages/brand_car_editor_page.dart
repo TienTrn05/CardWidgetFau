@@ -1,13 +1,15 @@
-import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:carwidget/app/theme/app_theme.dart';
+import 'package:carwidget/features/catalog/data/models/logo_widget_model.dart';
 import 'package:carwidget/features/catalog/data/models/saved_widget_model.dart';
 import 'package:carwidget/features/editor/data/services/brand_car_layout_store.dart';
 import 'package:carwidget/features/editor/domain/models/brand_car_layout.dart';
+import 'package:carwidget/features/editor/presentation/widgets/brand_car_border_style.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/brand_car_image_options.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/brand_car_font_options.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/image_crop_dialog.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
 import 'package:carwidget/features/my_widgets/presentation/widgets/my_widgets_section.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -18,29 +20,50 @@ void showBrandCarWidgetEditor(BuildContext context, SavedWidgetModel widget) {
     barrierDismissible: false,
     builder: (_) => Dialog.fullscreen(
       backgroundColor: AppColors.background,
-      child: _BrandCarWidgetPreviewDialog(widget: widget),
+      child: BrandCarEditorPage(
+        model: widget,
+        layoutId: brandCarDraftLayoutId(widget.id),
+      ),
     ),
   );
 }
 
-class _BrandCarWidgetPreviewDialog extends StatefulWidget {
-  const _BrandCarWidgetPreviewDialog({required this.widget});
+Future<void> openSavedBrandCarWidgetEditor(
+  BuildContext context,
+  SavedWidgetModel widget,
+) => Navigator.of(context).push<void>(
+  MaterialPageRoute<void>(
+    builder: (_) => BrandCarEditorPage(
+      model: widget,
+      layoutId: widget.layoutId ?? widget.id,
+      isSavedWidget: true,
+    ),
+  ),
+);
 
-  final SavedWidgetModel widget;
+class BrandCarEditorPage extends StatefulWidget {
+  const BrandCarEditorPage({
+    super.key,
+    required this.model,
+    required this.layoutId,
+    this.isSavedWidget = false,
+  });
+
+  final SavedWidgetModel model;
+  final String layoutId;
+  final bool isSavedWidget;
 
   @override
-  State<_BrandCarWidgetPreviewDialog> createState() =>
-      _BrandCarWidgetPreviewDialogState();
+  State<BrandCarEditorPage> createState() => _BrandCarEditorPageState();
 }
 
-class _BrandCarWidgetPreviewDialogState
-    extends State<_BrandCarWidgetPreviewDialog> {
+class _BrandCarEditorPageState extends State<BrandCarEditorPage> {
   var _selectedTab = 0;
 
   @override
-  Widget build(BuildContext context) => ColoredBox(
-    color: AppColors.background,
-    child: SafeArea(
+  Widget build(BuildContext context) => Scaffold(
+    backgroundColor: AppColors.background,
+    body: SafeArea(
       child: Column(
         children: [
           SizedBox(
@@ -48,8 +71,8 @@ class _BrandCarWidgetPreviewDialogState
             child: Stack(
               alignment: Alignment.center,
               children: [
-                const Text(
-                  'Preview',
+                Text(
+                  widget.isSavedWidget ? 'Edit Widget' : 'Preview',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                 ),
@@ -66,9 +89,8 @@ class _BrandCarWidgetPreviewDialogState
                     const Spacer(),
                     IconButton(
                       tooltip: 'Reset widget layout',
-                      onPressed: () => resetBrandCarWidgetLayout(
-                        brandCarDraftLayoutId(widget.widget.id),
-                      ),
+                      onPressed: () =>
+                          resetBrandCarWidgetLayout(widget.layoutId),
                       icon: const Icon(Icons.restart_alt_rounded, size: 21),
                     ),
                     IconButton(
@@ -77,8 +99,10 @@ class _BrandCarWidgetPreviewDialogState
                         context: context,
                         builder: (context) => AlertDialog(
                           backgroundColor: AppColors.surface,
-                          content: const Text(
-                            'Add this car design to My Widgets to use it in your CarPlay preview.',
+                          content: Text(
+                            widget.isSavedWidget
+                                ? 'Changes update this widget in My Widgets and your CarPlay preview.'
+                                : 'Add this car design to My Widgets to use it in your CarPlay preview.',
                             textAlign: TextAlign.center,
                           ),
                           actions: [
@@ -104,28 +128,20 @@ class _BrandCarWidgetPreviewDialogState
             flex: 2,
             child: LayoutBuilder(
               builder: (context, constraints) {
-                final previewSize = math
-                    .min(constraints.maxWidth - 24, constraints.maxHeight - 24)
-                    .clamp(0.0, double.infinity)
-                    .toDouble();
+                final previewSize = editorWidgetPreviewSize(constraints);
                 return Column(
                   children: [
                     Expanded(
                       child: Center(
                         child: SizedBox.square(
                           dimension: previewSize,
-                          child: Material(
-                            color: const Color(0xFF20272D),
-                            borderRadius: BorderRadius.circular(28),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(28),
-                              child: SavedWidgetArtwork(
-                                widget: widget.widget,
-                                isEditable: true,
-                                layoutId: brandCarDraftLayoutId(
-                                  widget.widget.id,
-                                ),
-                              ),
+                          child: BrandCarPreviewFrame(
+                            layoutId: widget.layoutId,
+                            contentPadding: EdgeInsets.zero,
+                            child: SavedWidgetArtwork(
+                              widget: widget.model,
+                              isEditable: true,
+                              layoutId: widget.layoutId,
                             ),
                           ),
                         ),
@@ -139,7 +155,9 @@ class _BrandCarWidgetPreviewDialogState
           Expanded(
             flex: 3,
             child: _BrandCarCustomizationPanel(
-              widget: widget.widget,
+              model: widget.model,
+              layoutId: widget.layoutId,
+              isSavedWidget: widget.isSavedWidget,
               selectedTab: _selectedTab,
               onTabSelected: (tab) => setState(() => _selectedTab = tab),
             ),
@@ -152,18 +170,21 @@ class _BrandCarWidgetPreviewDialogState
 
 class _BrandCarCustomizationPanel extends StatelessWidget {
   const _BrandCarCustomizationPanel({
-    required this.widget,
+    required this.model,
+    required this.layoutId,
+    required this.isSavedWidget,
     required this.selectedTab,
     required this.onTabSelected,
   });
 
-  final SavedWidgetModel widget;
+  final SavedWidgetModel model;
+  final String layoutId;
+  final bool isSavedWidget;
   final int selectedTab;
   final ValueChanged<int> onTabSelected;
 
   @override
   Widget build(BuildContext context) {
-    final layoutId = brandCarDraftLayoutId(widget.id);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(22, 18, 22, 18),
@@ -185,137 +206,153 @@ class _BrandCarCustomizationPanel extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (selectedTab == 0) ...[
-                        const Text(
-                          'Select Car Logo',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Container(
-                          width: 88,
-                          height: 88,
-                          decoration: BoxDecoration(
-                            color: AppColors.background,
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: AppColors.green,
-                              width: 2,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 220),
+                  switchInCurve: Curves.easeOutCubic,
+                  switchOutCurve: Curves.easeInCubic,
+                  transitionBuilder: (child, animation) => FadeTransition(
+                    opacity: animation,
+                    child: SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(0.025, 0),
+                        end: Offset.zero,
+                      ).animate(animation),
+                      child: child,
+                    ),
+                  ),
+                  child: SingleChildScrollView(
+                    key: ValueKey(selectedTab),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (selectedTab == 0) ...[
+                          const Text(
+                            'Select Car Logo',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            widget.label,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 1,
-                            ),
-                          ),
-                        ),
-                      ] else if (selectedTab == 1) ...[
-                        const Text(
-                          'Select Car Image',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        _CarImageChooser(
-                          selectedIndex: layout.carImageIndex,
-                          isCustomImageSelected: layout.carImageBytes != null,
-                          customImageBytes: layout.carImageBytes,
-                          onSelected: (index) =>
-                              setBrandCarImage(layoutId, index),
-                          onAddImage: () async {
-                            final selected = await ImagePicker().pickImage(
-                              source: ImageSource.gallery,
-                              imageQuality: 95,
-                            );
-                            if (selected == null || !context.mounted) return;
-                            final imageBytes = await selected.readAsBytes();
-                            if (!context.mounted) return;
-                            final croppedImage = await showImageCropDialog(
-                              context,
-                              imageBytes,
-                            );
-                            if (croppedImage != null && context.mounted) {
-                              setBrandCarCustomImage(layoutId, croppedImage);
-                            }
-                          },
-                        ),
-                      ] else if (selectedTab == 2) ...[
-                        _BrandCarTextControls(
-                          layout: layout,
-                          onNicknameChanged: (value) =>
-                              setBrandCarGreetingNickname(layoutId, value),
-                          onFontChanged: (value) =>
-                              setBrandCarGreetingFont(layoutId, value),
-                          onColorChanged: (value) =>
-                              setBrandCarGreetingColor(layoutId, value),
-                        ),
-                      ] else if (selectedTab == 3) ...[
-                        _BrandCarBorderControls(
-                          layout: layout,
-                          onColorChanged: (value) =>
-                              setBrandCarBorderColor(layoutId, value),
-                          onOpacityChanged: (value) =>
-                              setBrandCarBorderOpacity(layoutId, value),
-                        ),
-                      ],
-                      if (selectedTab < 2) ...[
-                        const SizedBox(height: 20),
-                        Row(
-                          children: [
-                            const Text(
-                              'Size',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
+                          const SizedBox(height: 12),
+                          Container(
+                            width: 88,
+                            height: 88,
+                            decoration: BoxDecoration(
+                              color: AppColors.background,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: AppColors.green,
+                                width: 2,
                               ),
                             ),
-                            const Spacer(),
-                            Text(
-                              '${(scale * 100).round()}%',
+                            alignment: Alignment.center,
+                            child: Text(
+                              model.label,
+                              textAlign: TextAlign.center,
                               style: const TextStyle(
-                                color: AppColors.muted,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
+                                color: Colors.white70,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 1,
                               ),
                             ),
-                          ],
-                        ),
-                        SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                            activeTrackColor: AppColors.green,
-                            inactiveTrackColor: const Color(0xFF3A424A),
-                            thumbColor: Colors.white,
-                            overlayColor: AppColors.green.withValues(
-                              alpha: .14,
+                          ),
+                        ] else if (selectedTab == 1) ...[
+                          const Text(
+                            'Select Car Image',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
                             ),
-                            trackHeight: 4,
                           ),
-                          child: Slider(
-                            min: .6,
-                            max: 3,
-                            divisions: 24,
-                            value: scale.clamp(.6, 3),
-                            onChanged: (value) => selectedTab == 0
-                                ? setBrandCarBrandScale(layoutId, value)
-                                : setBrandCarImageScale(layoutId, value),
+                          const SizedBox(height: 12),
+                          _CarImageChooser(
+                            selectedIndex: layout.carImageIndex,
+                            isCustomImageSelected: layout.carImageBytes != null,
+                            customImageBytes: layout.carImageBytes,
+                            onSelected: (index) =>
+                                setBrandCarImage(layoutId, index),
+                            onAddImage: () async {
+                              final selected = await ImagePicker().pickImage(
+                                source: ImageSource.gallery,
+                                imageQuality: 95,
+                              );
+                              if (selected == null || !context.mounted) return;
+                              final imageBytes = await selected.readAsBytes();
+                              if (!context.mounted) return;
+                              final croppedImage = await showImageCropDialog(
+                                context,
+                                imageBytes,
+                              );
+                              if (croppedImage != null && context.mounted) {
+                                setBrandCarCustomImage(layoutId, croppedImage);
+                              }
+                            },
                           ),
-                        ),
+                        ] else if (selectedTab == 2) ...[
+                          _BrandCarTextControls(
+                            layout: layout,
+                            onNicknameChanged: (value) =>
+                                setBrandCarGreetingNickname(layoutId, value),
+                            onFontChanged: (value) =>
+                                setBrandCarGreetingFont(layoutId, value),
+                            onColorChanged: (value) =>
+                                setBrandCarGreetingColor(layoutId, value),
+                          ),
+                        ] else if (selectedTab == 3) ...[
+                          _BrandCarBorderControls(
+                            layout: layout,
+                            onGradientChanged: (value) =>
+                                setBrandCarBorderGradient(layoutId, value),
+                            onOpacityChanged: (value) =>
+                                setBrandCarBorderOpacity(layoutId, value),
+                          ),
+                        ],
+                        if (selectedTab < 2) ...[
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              const Text(
+                                'Size',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const Spacer(),
+                              Text(
+                                '${(scale * 100).round()}%',
+                                style: const TextStyle(
+                                  color: AppColors.muted,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              activeTrackColor: AppColors.green,
+                              inactiveTrackColor: const Color(0xFF3A424A),
+                              thumbColor: Colors.white,
+                              overlayColor: AppColors.green.withValues(
+                                alpha: .14,
+                              ),
+                              trackHeight: 4,
+                            ),
+                            child: Slider(
+                              min: .6,
+                              max: 3,
+                              divisions: 24,
+                              value: scale.clamp(.6, 3),
+                              onChanged: (value) => selectedTab == 0
+                                  ? setBrandCarBrandScale(layoutId, value)
+                                  : setBrandCarImageScale(layoutId, value),
+                            ),
+                          ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -325,7 +362,9 @@ class _BrandCarCustomizationPanel extends StatelessWidget {
                 height: 58,
                 child: FilledButton(
                   onPressed: () {
-                    addBrandCarWidgetToMyWidgets(context, widget);
+                    if (!isSavedWidget) {
+                      addBrandCarWidgetToMyWidgets(model);
+                    }
                     Navigator.of(context).pop();
                   },
                   style: FilledButton.styleFrom(
@@ -335,8 +374,8 @@ class _BrandCarCustomizationPanel extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
-                  child: const Text(
-                    'Add to My Widget',
+                  child: Text(
+                    isSavedWidget ? 'Save Changes' : 'Add to My Widget',
                     style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
                   ),
                 ),
@@ -352,12 +391,12 @@ class _BrandCarCustomizationPanel extends StatelessWidget {
 class _BrandCarBorderControls extends StatelessWidget {
   const _BrandCarBorderControls({
     required this.layout,
-    required this.onColorChanged,
+    required this.onGradientChanged,
     required this.onOpacityChanged,
   });
 
   final BrandCarLayout layout;
-  final ValueChanged<int?> onColorChanged;
+  final ValueChanged<int?> onGradientChanged;
   final ValueChanged<double> onOpacityChanged;
 
   @override
@@ -365,7 +404,7 @@ class _BrandCarBorderControls extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       const Text(
-        'Border Color',
+        'Border Gradient',
         style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
       ),
       const SizedBox(height: 10),
@@ -373,16 +412,17 @@ class _BrandCarBorderControls extends StatelessWidget {
         spacing: 10,
         runSpacing: 10,
         children: [
-          _BorderColorSwatch(
-            colorValue: null,
-            selected: layout.borderColorValue == null,
-            onTap: () => onColorChanged(null),
+          _BorderGradientSwatch(
+            colors: null,
+            selected: layout.borderGradientIndex == null,
+            onTap: () => onGradientChanged(null),
           ),
-          for (final colorValue in _borderColors)
-            _BorderColorSwatch(
-              colorValue: colorValue,
-              selected: layout.borderColorValue == colorValue,
-              onTap: () => onColorChanged(colorValue),
+          for (var index = 0; index < logoBorderGradients.length; index++)
+            _BorderGradientSwatch(
+              colors: logoBorderGradients[index],
+              opacity: layout.borderOpacity,
+              selected: layout.borderGradientIndex == index,
+              onTap: () => onGradientChanged(index),
             ),
         ],
       ),
@@ -423,47 +463,47 @@ SliderThemeData _brandCarSliderTheme(BuildContext context) =>
       trackHeight: 4,
     );
 
-const _borderColors = <int>[
-  0xFF527BED,
-  0xFFF44336,
-  0xFFFF9800,
-  0xFF29B6F6,
-  0xFF00D99A,
-  0xFFFFC107,
-  0xFFEC4899,
-  0xFFAB47BC,
-];
-
-class _BorderColorSwatch extends StatelessWidget {
-  const _BorderColorSwatch({
-    required this.colorValue,
+class _BorderGradientSwatch extends StatelessWidget {
+  const _BorderGradientSwatch({
+    required this.colors,
     required this.selected,
     required this.onTap,
+    this.opacity = 1,
   });
 
-  final int? colorValue;
+  final List<Color>? colors;
   final bool selected;
+  final double opacity;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) => GestureDetector(
     onTap: onTap,
     child: Container(
-      width: 38,
-      height: 38,
-      padding: const EdgeInsets.all(3),
+      width: 48,
+      height: 48,
+      padding: EdgeInsets.all(selected ? 3 : 0),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: selected ? Border.all(color: AppColors.green, width: 2) : null,
+        border: selected
+            ? Border.all(color: AppColors.green, width: 2)
+            : colors == null
+            ? Border.all(color: const Color(0xFFB0B7BD), width: 1.5)
+            : null,
       ),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: colorValue == null
-              ? const Color(0xFF39414A)
-              : Color(colorValue!),
+          color: colors == null ? AppColors.surface : null,
           shape: BoxShape.circle,
+          gradient: colors == null
+              ? null
+              : LinearGradient(
+                  colors: colors!
+                      .map((color) => color.withValues(alpha: opacity))
+                      .toList(),
+                ),
         ),
-        child: colorValue == null
+        child: colors == null
             ? const Icon(Icons.remove_rounded, color: Colors.white70, size: 21)
             : null,
       ),
@@ -929,41 +969,58 @@ class _BrandCarEditorTabs extends StatelessWidget {
         color: const Color(0xFF39414C),
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Row(
+      child: Stack(
+        fit: StackFit.expand,
         children: [
-          for (var index = 0; index < labels.length; index++)
-            Expanded(
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: index < 4 ? () => onTabSelected(index) : null,
+          AnimatedAlign(
+            alignment: Alignment(-1 + 2 * selectedTab / (labels.length - 1), 0),
+            duration: const Duration(milliseconds: 280),
+            curve: Curves.easeInOutCubic,
+            child: FractionallySizedBox(
+              widthFactor: 1 / labels.length,
+              heightFactor: 1,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: index == selectedTab
-                          ? Colors.white
-                          : Colors.transparent,
+                ),
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              for (var index = 0; index < labels.length; index++)
+                Expanded(
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => onTabSelected(index),
                       borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      labels[index],
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: index == selectedTab
-                            ? AppColors.background
-                            : AppColors.muted,
-                        fontSize: 13,
-                        fontWeight: index == selectedTab
-                            ? FontWeight.w700
-                            : FontWeight.w500,
+                      child: Center(
+                        child: AnimatedDefaultTextStyle(
+                          duration: const Duration(milliseconds: 180),
+                          curve: Curves.easeOut,
+                          style: TextStyle(
+                            color: index == selectedTab
+                                ? AppColors.background
+                                : AppColors.muted,
+                            fontSize: 13,
+                            fontWeight: index == selectedTab
+                                ? FontWeight.w700
+                                : FontWeight.w500,
+                          ),
+                          child: Text(
+                            labels[index],
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ),
+            ],
+          ),
         ],
       ),
     );

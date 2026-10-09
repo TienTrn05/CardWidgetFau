@@ -3,8 +3,15 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:carwidget/core/ui/car_ui.dart';
 import 'package:carwidget/features/catalog/data/models/saved_widget_model.dart';
+import 'package:carwidget/features/catalog/data/models/logo_widget_model.dart';
+import 'package:carwidget/features/catalog/data/models/widget_type.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/brand_car_section.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/logos_section.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/video_widgets_section.dart';
+import 'package:carwidget/features/editor/data/services/brand_car_layout_store.dart';
+import 'package:carwidget/features/editor/domain/models/brand_car_layout.dart';
+import 'package:carwidget/features/editor/presentation/widgets/brand_car_border_style.dart';
 import 'package:carwidget/features/my_widgets/presentation/widgets/my_widgets_section.dart';
 
 class WidgetsPage extends StatelessWidget {
@@ -25,6 +32,10 @@ class WidgetsPage extends StatelessWidget {
       const MyWidgetsSection(),
       const SizedBox(height: 30),
       const BrandCarSection(),
+      const SizedBox(height: 30),
+      const LogosSection(),
+      const SizedBox(height: 30),
+      const VideoWidgetsSection(),
     ],
   );
 }
@@ -238,50 +249,92 @@ class _CarPlayWidgetCard extends StatelessWidget {
   Widget build(BuildContext context) => GestureDetector(
     onTap: onTap,
     behavior: HitTestBehavior.opaque,
-    child: Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: widget == null
-            ? const Color(0x22FFFFFF)
-            : const Color(0xFF20272D),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0x77FFFFFF), width: 1.2),
-      ),
-      child: widget == null
-          ? Center(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text(
-                      'Preview\nno Widget',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        height: 1.1,
-                        fontWeight: FontWeight.w600,
+    child: ValueListenableBuilder<Map<String, BrandCarLayout>>(
+      valueListenable: brandCarLayouts,
+      builder: (context, layouts, _) {
+        final brandCarLayout = widget?.layoutId == null
+            ? null
+            : layouts[widget!.layoutId];
+        final brandCarGradientIndex = brandCarLayout?.borderGradientIndex;
+        final borderGradientIndex =
+            widget?.borderGradientIndex ??
+            (widget?.type == WidgetType.carLogoAndName
+                ? brandCarGradientIndex
+                : null);
+        final borderOpacity = widget?.type == WidgetType.carLogoAndName
+            ? brandCarLayout?.borderOpacity ?? 1.0
+            : widget?.borderOpacity ?? 1.0;
+        final gradientColors = borderGradientIndex == null
+            ? null
+            : widget?.type == WidgetType.carLogoAndName
+            ? brandCarBorderGradientColors(borderGradientIndex, borderOpacity)
+            : logoBorderGradients[borderGradientIndex %
+                      logoBorderGradients.length]
+                  .map((color) => color.withValues(alpha: borderOpacity))
+                  .toList();
+
+        return Container(
+          padding: EdgeInsets.all(gradientColors == null ? 10 : 2),
+          decoration: BoxDecoration(
+            color: gradientColors != null
+                ? null
+                : widget == null
+                ? const Color(0x22FFFFFF)
+                : const Color(0xFF20272D),
+            gradient: gradientColors == null
+                ? null
+                : LinearGradient(colors: gradientColors),
+            borderRadius: BorderRadius.circular(20),
+            border: gradientColors == null
+                ? Border.all(color: const Color(0x77FFFFFF), width: 1.2)
+                : null,
+          ),
+          child: Container(
+            padding: EdgeInsets.all(gradientColors == null ? 0 : 8),
+            decoration: gradientColors == null
+                ? null
+                : BoxDecoration(
+                    color: const Color(0xFF20272D),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+            child: widget == null
+                ? Center(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'Preview\nno Widget',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                              height: 1.1,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 9),
+                          Text(
+                            'See your widget will\nlook on CarPlay',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: .92),
+                              fontSize: 15,
+                              height: 1.18,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 9),
-                    Text(
-                      'See your widget will\nlook on CarPlay',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: .92),
-                        fontSize: 15,
-                        height: 1.18,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          : ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: SavedWidgetArtwork(widget: widget!),
-            ),
+                  )
+                : ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: SavedWidgetArtwork(widget: widget!),
+                  ),
+          ),
+        );
+      },
     ),
   );
 }

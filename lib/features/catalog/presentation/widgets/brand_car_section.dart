@@ -83,18 +83,25 @@ class BrandCarWidgetsPage extends StatelessWidget {
       top: false,
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final crossAxisCount = constraints.maxWidth >= 700 ? 4 : 2;
+          final cardSize = carPlayWidgetPreviewSize(
+            context,
+            constraints.maxWidth - 48,
+          );
           return GridView.builder(
-            padding: const EdgeInsets.fromLTRB(18, 14, 18, 24),
+            padding: const EdgeInsets.fromLTRB(24, 14, 24, 24),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount,
+              crossAxisCount: 2,
               crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 1,
+              mainAxisSpacing: 18,
+              mainAxisExtent: cardSize,
             ),
             itemCount: brandCarWidgetModels.length,
-            itemBuilder: (context, index) =>
-                _BrandCarWidgetTile(widget: brandCarWidgetModels[index]),
+            itemBuilder: (context, index) => Center(
+              child: SizedBox.square(
+                dimension: cardSize,
+                child: _BrandCarWidgetTile(widget: brandCarWidgetModels[index]),
+              ),
+            ),
           );
         },
       ),

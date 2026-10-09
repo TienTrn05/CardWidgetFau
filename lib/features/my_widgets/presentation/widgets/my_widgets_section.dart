@@ -1,31 +1,36 @@
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:carwidget/app/theme/app_theme.dart';
 import 'package:carwidget/features/catalog/data/models/saved_widget_model.dart';
+import 'package:carwidget/features/catalog/data/models/widget_type.dart';
+import 'package:carwidget/features/catalog/data/models/logo_widget_model.dart';
 import 'package:carwidget/features/catalog/data/services/device_location_service.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
+import 'package:carwidget/features/catalog/presentation/pages/logo_widget_editor_page.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/brand_car_image_options.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/brand_car_font_options.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/image_crop_dialog.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/logo_widget_content.dart';
 import 'package:carwidget/features/editor/data/services/brand_car_layout_store.dart';
 import 'package:carwidget/features/editor/domain/models/brand_car_layout.dart';
+import 'package:carwidget/features/editor/presentation/pages/brand_car_editor_page.dart';
+import 'package:carwidget/features/editor/presentation/widgets/brand_car_border_style.dart';
 import 'package:carwidget/features/settings/presentation/widgets/tutorial_sheet.dart';
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-final _savedWidgets = ValueNotifier<List<SavedWidgetModel>>(
-  initialSavedWidgetModels,
-);
+final _savedWidgets = ValueNotifier<List<SavedWidgetModel>>([]);
+ValueListenable<List<SavedWidgetModel>> get savedWidgetsListenable =>
+    _savedWidgets;
 final carPlayPreviewQueue = ValueNotifier<List<SavedWidgetModel?>>([
   null,
   null,
 ]);
 final _previewSelectionOrder = <String>[];
 var _brandCarCopySequence = 0;
-void addBrandCarWidgetToMyWidgets(
-  BuildContext context,
-  SavedWidgetModel template,
-) {
+void addBrandCarWidgetToMyWidgets(SavedWidgetModel template) {
   final copyId =
       '${template.id}_copy_${DateTime.now().microsecondsSinceEpoch}_${_brandCarCopySequence++}';
   final draftLayoutId = brandCarDraftLayoutId(template.id);
@@ -37,14 +42,56 @@ void addBrandCarWidgetToMyWidgets(
       id: copyId,
       label: template.label,
       imageBytes: template.imageBytes,
+      imageAsset: template.imageAsset,
       layoutId: layoutId,
+      type: template.type,
     ),
   ];
-  ScaffoldMessenger.of(context)
-    ..hideCurrentSnackBar()
-    ..showSnackBar(
-      SnackBar(content: Text('${template.label} added to My Widgets.')),
-    );
+}
+
+void addLogoWidgetToMyWidgets(
+  LogoWidgetModel template, {
+  required int? borderGradientIndex,
+  required double borderOpacity,
+}) {
+  final copyId =
+      '${template.id}_copy_${DateTime.now().microsecondsSinceEpoch}_${_brandCarCopySequence++}';
+  _savedWidgets.value = [
+    ..._savedWidgets.value,
+    SavedWidgetModel(
+      id: copyId,
+      label: template.nameLogo,
+      imageAsset: template.imageAsset,
+      type: template.type,
+      borderGradientIndex: borderGradientIndex,
+      borderOpacity: borderOpacity,
+      symbol: template.symbol,
+    ),
+  ];
+}
+
+void addVideoWidgetToMyWidgets({
+  required String videoPath,
+  required String videoName,
+  required int videoStartMs,
+  required int videoDurationMs,
+  required Uint8List videoThumbnail,
+}) {
+  final widgetId =
+      'video_${DateTime.now().microsecondsSinceEpoch}_${_brandCarCopySequence++}';
+  _savedWidgets.value = [
+    ..._savedWidgets.value,
+    SavedWidgetModel(
+      id: widgetId,
+      label: videoName,
+      type: WidgetType.video,
+      videoPath: videoPath,
+      videoName: videoName,
+      videoStartMs: videoStartMs,
+      videoDurationMs: videoDurationMs,
+      videoThumbnail: videoThumbnail,
+    ),
+  ];
 }
 
 void _enqueueWidgetForCarPlayPreview(SavedWidgetModel widget) {
@@ -131,6 +178,7 @@ Future<void> _pickWidgetImage(BuildContext context) async {
       id: 'photo_${DateTime.now().microsecondsSinceEpoch}',
       label: 'PHOTO',
       imageBytes: croppedImageBytes,
+      type: WidgetType.image,
     );
     _savedWidgets.value = [..._savedWidgets.value, widget];
   } catch (_) {
@@ -219,50 +267,59 @@ class MyWidgetsPage extends StatelessWidget {
       top: false,
       child: ValueListenableBuilder<List<SavedWidgetModel>>(
         valueListenable: _savedWidgets,
-        builder: (context, widgets, _) => GridView.builder(
-          padding: const EdgeInsets.fromLTRB(18, 14, 18, 24),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
-            childAspectRatio: 1,
-          ),
-          itemCount: widgets.length,
-          itemBuilder: (context, index) {
-            final widget = widgets[index];
-            return Stack(
-              children: [
-                Positioned.fill(
-                  child: _SavedWidgetCard(
-                    widgetId: widget.id,
-                    layoutId: widget.layoutId,
-                    onTap: () =>
-                        _showWidgetPreview(context, initialIndex: index),
-                    child: SavedWidgetArtwork(widget: widget),
-                  ),
+        builder: (context, widgets, _) => widgets.isEmpty
+            ? const Center(
+                child: Text(
+                  'No widgets yet. Add one from the catalog.',
+                  style: TextStyle(color: AppColors.muted, fontSize: 16),
+                  textAlign: TextAlign.center,
                 ),
-                Positioned(
-                  top: 7,
-                  right: 7,
-                  child: Material(
-                    color: const Color(0xCC080D12),
-                    shape: const CircleBorder(),
-                    child: InkWell(
-                      customBorder: const CircleBorder(),
-                      onTap: () {
-                        _removeSavedWidgetAt(index);
-                      },
-                      child: const SizedBox.square(
-                        dimension: 25,
-                        child: Icon(Icons.close_rounded, size: 17),
+              )
+            : GridView.builder(
+                padding: const EdgeInsets.fromLTRB(18, 14, 18, 24),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  childAspectRatio: 1,
+                ),
+                itemCount: widgets.length,
+                itemBuilder: (context, index) {
+                  final widget = widgets[index];
+                  return Stack(
+                    children: [
+                      Positioned.fill(
+                        child: _SavedWidgetCard(
+                          layoutId: widget.layoutId,
+                          borderGradientIndex: widget.borderGradientIndex,
+                          borderOpacity: widget.borderOpacity,
+                          onTap: () =>
+                              _showWidgetPreview(context, initialIndex: index),
+                          child: SavedWidgetArtwork(widget: widget),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
+                      Positioned(
+                        top: 7,
+                        right: 7,
+                        child: Material(
+                          color: const Color(0xCC080D12),
+                          shape: const CircleBorder(),
+                          child: InkWell(
+                            customBorder: const CircleBorder(),
+                            onTap: () {
+                              _removeSavedWidgetAt(index);
+                            },
+                            child: const SizedBox.square(
+                              dimension: 25,
+                              child: Icon(Icons.close_rounded, size: 17),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
       ),
     ),
   );
@@ -347,8 +404,10 @@ class _WidgetsCarousel extends StatelessWidget {
                   child: index == 0
                       ? _AddWidgetTile(onTap: () => _pickWidgetImage(context))
                       : _SavedWidgetCard(
-                          widgetId: widgets[index - 1].id,
                           layoutId: widgets[index - 1].layoutId,
+                          borderGradientIndex:
+                              widgets[index - 1].borderGradientIndex,
+                          borderOpacity: widgets[index - 1].borderOpacity,
                           onTap: () => _showWidgetPreview(
                             context,
                             initialIndex: index - 1,
@@ -370,7 +429,7 @@ class _AddWidgetTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => CustomPaint(
-    foregroundPainter: _DashedBorderPainter(),
+    foregroundPainter: const _DashedBorderPainter(),
     child: GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -438,6 +497,8 @@ class _AddWidgetTile extends StatelessWidget {
 }
 
 class _DashedBorderPainter extends CustomPainter {
+  const _DashedBorderPainter();
+
   @override
   void paint(Canvas canvas, Size size) {
     final rect = Offset.zero & size;
@@ -466,64 +527,131 @@ class _DashedBorderPainter extends CustomPainter {
 
 class _SavedWidgetCard extends StatelessWidget {
   const _SavedWidgetCard({
-    required this.widgetId,
     required this.child,
     this.layoutId,
+    this.borderGradientIndex,
+    this.borderOpacity = 1,
+    this.matchLogoPreviewStyle = false,
     this.onTap,
   });
 
-  final String widgetId;
   final Widget child;
   final String? layoutId;
+  final int? borderGradientIndex;
+  final double borderOpacity;
+  final bool matchLogoPreviewStyle;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) =>
-      ValueListenableBuilder<List<SavedWidgetModel?>>(
-        valueListenable: carPlayPreviewQueue,
-        builder: (context, selectedWidgets, _) {
-          final isSelected = selectedWidgets.any(
-            (widget) => widget?.id == widgetId,
-          );
-          return ValueListenableBuilder<Map<String, BrandCarLayout>>(
-            valueListenable: brandCarLayouts,
-            builder: (context, layouts, _) {
-              final layout = layoutId == null ? null : layouts[layoutId];
-              final customBorderColor = layout?.borderColorValue;
-              final borderColor = customBorderColor != null
-                  ? Color(
-                      customBorderColor,
-                    ).withValues(alpha: layout!.borderOpacity)
-                  : isSelected
-                  ? AppColors.green
-                  : const Color(0xFF303940);
-              final borderWidth = customBorderColor != null
-                  ? math.min(layout!.borderWidth, 1.5)
-                  : isSelected
-                  ? 2.0
-                  : 1.0;
-              return Material(
-                color: const Color(0xFF20272D),
-                borderRadius: BorderRadius.circular(24),
-                child: InkWell(
-                  onTap: onTap,
+      ValueListenableBuilder<Map<String, BrandCarLayout>>(
+        valueListenable: brandCarLayouts,
+        builder: (context, layouts, _) {
+          final layout = layoutId == null ? null : layouts[layoutId];
+          final brandCarGradientIndex = layout?.borderGradientIndex;
+          const borderColor = Color(0xFF303940);
+          final borderWidth = brandCarGradientIndex != null
+              ? math.min(layout!.borderWidth, 3.0)
+              : 1.0;
+          final gradientColors = borderGradientIndex == null
+              ? brandCarGradientIndex == null
+                    ? null
+                    : brandCarBorderGradientColors(
+                        brandCarGradientIndex,
+                        layout!.borderOpacity,
+                      )
+              : logoBorderGradients[borderGradientIndex! %
+                        logoBorderGradients.length]
+                    .map((color) => color.withValues(alpha: borderOpacity))
+                    .toList();
+          if (matchLogoPreviewStyle) {
+            return _LogoStyleSavedWidgetCard(
+              gradientColors: gradientColors,
+              onTap: onTap,
+              child: child,
+            );
+          }
+          return Material(
+            color: const Color(0xFF20272D),
+            borderRadius: BorderRadius.circular(24),
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(24),
+              child: Ink(
+                decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(24),
+                  color: gradientColors == null
+                      ? const Color(0xFF20272D)
+                      : null,
+                  gradient: gradientColors == null
+                      ? null
+                      : LinearGradient(colors: gradientColors),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(gradientColors == null ? 0 : 2),
                   child: Ink(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(
-                        color: borderColor,
-                        width: borderWidth,
-                      ),
+                      color: const Color(0xFF20272D),
+                      borderRadius: BorderRadius.circular(22),
+                      border: gradientColors == null
+                          ? Border.all(color: borderColor, width: borderWidth)
+                          : null,
                     ),
                     child: Center(child: child),
                   ),
                 ),
-              );
-            },
+              ),
+            ),
           );
         },
       );
+}
+
+class _LogoStyleSavedWidgetCard extends StatelessWidget {
+  const _LogoStyleSavedWidgetCard({
+    required this.gradientColors,
+    required this.child,
+    this.onTap,
+  });
+
+  final List<Color>? gradientColors;
+  final Widget child;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) => Material(
+    color: Colors.transparent,
+    borderRadius: BorderRadius.circular(42),
+    child: InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(42),
+      child: Ink(
+        decoration: BoxDecoration(
+          color: gradientColors == null ? const Color(0xFF252D33) : null,
+          borderRadius: BorderRadius.circular(42),
+          border: gradientColors == null
+              ? Border.all(color: const Color(0xFF39424A), width: 1.5)
+              : null,
+          gradient: gradientColors == null
+              ? null
+              : LinearGradient(colors: gradientColors!),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(gradientColors == null ? 1.5 : 3),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(39),
+            child: ColoredBox(
+              color: const Color(0xFF252D33),
+              child: Padding(
+                padding: const EdgeInsets.all(28),
+                child: Center(child: child),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 class SavedWidgetArtwork extends StatelessWidget {
@@ -540,6 +668,19 @@ class SavedWidgetArtwork extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.type == WidgetType.video) {
+      final thumbnail = widget.videoThumbnail;
+      if (thumbnail != null) {
+        return SizedBox.expand(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(23),
+            child: Image.memory(thumbnail, fit: BoxFit.cover),
+          ),
+        );
+      }
+      return _VideoWidgetArtwork(name: widget.videoName ?? widget.label);
+    }
+
     final imageBytes = widget.imageBytes;
     if (imageBytes != null) {
       return SizedBox.expand(
@@ -558,12 +699,46 @@ class SavedWidgetArtwork extends StatelessWidget {
       );
     }
 
-    if (widget.id.startsWith('brand_car_')) {
+    if (widget.type == WidgetType.logoAndName && widget.symbol != null) {
+      return LogoWidgetTileContent(
+        model: LogoWidgetModel(
+          id: widget.id,
+          nameLogo: widget.label,
+          symbol: widget.symbol!,
+          type: widget.type,
+          imageAsset: widget.imageAsset,
+        ),
+      );
+    }
+
+    final imageAsset = widget.imageAsset;
+    if (imageAsset != null) {
+      return SizedBox.expand(
+        child: Padding(
+          padding: const EdgeInsets.all(18),
+          child: Image.asset(
+            imageAsset,
+            fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) => const Icon(
+              Icons.broken_image_outlined,
+              color: AppColors.muted,
+              size: 36,
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (widget.type == WidgetType.carLogoAndName) {
       return _BrandCarArtwork(
         widget: widget,
         layoutId: layoutId ?? widget.layoutId ?? widget.id,
         isEditable: isEditable,
       );
+    }
+
+    if (widget.type == WidgetType.plate) {
+      return _PlateArtwork(label: widget.label);
     }
 
     return _AbarthArtwork(label: widget.label);
@@ -588,7 +763,9 @@ class _BrandCarArtwork extends StatelessWidget {
       valueListenable: brandCarLayouts,
       builder: (context, layouts, _) => LayoutBuilder(
         builder: (context, constraints) {
-          final inset = isEditable || layouts.containsKey(layoutId)
+          final inset = isEditable
+              ? 0.0
+              : layouts.containsKey(layoutId)
               ? 1.0
               : 12.0;
           final canvasSize = Size(
@@ -628,6 +805,7 @@ class _BrandCarArtwork extends StatelessWidget {
           return Padding(
             padding: EdgeInsets.all(inset),
             child: Stack(
+              fit: StackFit.expand,
               children: [
                 _brandCarElement(
                   widgetId: layoutId,
@@ -727,27 +905,6 @@ class _BrandCarArtwork extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (isEditable &&
-                    layout.borderColorValue != null &&
-                    layout.borderWidth > 0)
-                  Positioned.fill(
-                    child: Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: IgnorePointer(
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(24),
-                            border: Border.all(
-                              color: Color(
-                                layout.borderColorValue!,
-                              ).withValues(alpha: layout.borderOpacity),
-                              width: math.min(layout.borderWidth, 1.5),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
               ],
             ),
           );
@@ -902,6 +1059,82 @@ class _AbarthArtwork extends StatelessWidget {
   );
 }
 
+class _PlateArtwork extends StatelessWidget {
+  const _PlateArtwork({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Center(
+    child: Container(
+      width: 224,
+      height: 76,
+      margin: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE8EDF0),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFF111820), width: 5),
+      ),
+      alignment: Alignment.center,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          label,
+          style: const TextStyle(
+            color: Color(0xFF111820),
+            fontSize: 34,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 3,
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+class _VideoWidgetArtwork extends StatelessWidget {
+  const _VideoWidgetArtwork({required this.name});
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) => Center(
+    child: Padding(
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 54,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.green,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.play_arrow_rounded,
+              color: AppColors.background,
+              size: 34,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white70,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 class _WidgetPreviewDialog extends StatefulWidget {
   const _WidgetPreviewDialog({required this.initialIndex});
 
@@ -924,7 +1157,10 @@ class _WidgetPreviewDialogState extends State<_WidgetPreviewDialog> {
 
       final currentIndex = _currentIndex.clamp(0, widgets.length - 1);
       final currentWidget = widgets[currentIndex];
-      final screenSize = MediaQuery.sizeOf(context);
+      final mediaSize = MediaQuery.sizeOf(context);
+      final safeAreaInsets = MediaQuery.paddingOf(context);
+      final logoPreviewHeight =
+          (mediaSize.height - safeAreaInsets.vertical - 52) * 2 / 5;
 
       return Dialog(
         backgroundColor: const Color(0xFF101019),
@@ -981,19 +1217,16 @@ class _WidgetPreviewDialogState extends State<_WidgetPreviewDialog> {
                   child: LayoutBuilder(
                     builder: (context, stageConstraints) {
                       final previewSize =
-                          math
-                              .max(
-                                0.0,
-                                math.min(
-                                  360.0,
-                                  math.min(
-                                    screenSize.width - 72,
-                                    stageConstraints.maxHeight - 42,
-                                  ),
-                                ),
-                              )
-                              .toDouble() *
-                          .7;
+                          editorWidgetPreviewSize(
+                            BoxConstraints(
+                              maxWidth: stageConstraints.maxWidth,
+                              maxHeight: math.min(
+                                stageConstraints.maxHeight,
+                                math.max(0, logoPreviewHeight),
+                              ),
+                            ),
+                          ) *
+                          .9;
                       return Stack(
                         alignment: Alignment.center,
                         clipBehavior: Clip.none,
@@ -1004,8 +1237,11 @@ class _WidgetPreviewDialogState extends State<_WidgetPreviewDialog> {
                               SizedBox.square(
                                 dimension: previewSize,
                                 child: _SavedWidgetCard(
-                                  widgetId: currentWidget.id,
                                   layoutId: currentWidget.layoutId,
+                                  borderGradientIndex:
+                                      currentWidget.borderGradientIndex,
+                                  borderOpacity: currentWidget.borderOpacity,
+                                  matchLogoPreviewStyle: true,
                                   child: SavedWidgetArtwork(
                                     widget: currentWidget,
                                   ),
@@ -1119,7 +1355,16 @@ class _WidgetPreviewDialogState extends State<_WidgetPreviewDialog> {
                   width: double.infinity,
                   height: 56,
                   child: FilledButton(
-                    onPressed: () => _showEditNotice(context),
+                    onPressed: () {
+                      if (currentWidget.type == WidgetType.carLogoAndName) {
+                        openSavedBrandCarWidgetEditor(context, currentWidget);
+                      } else if (currentWidget.type == WidgetType.logoAndName &&
+                          currentWidget.symbol != null) {
+                        _editSavedLogoWidget(currentWidget);
+                      } else {
+                        _showEditNotice(context);
+                      }
+                    },
                     style: FilledButton.styleFrom(
                       backgroundColor: AppColors.surface,
                       foregroundColor: Colors.white,
@@ -1154,6 +1399,53 @@ class _WidgetPreviewDialogState extends State<_WidgetPreviewDialog> {
     Navigator.of(context).pop();
   }
 
+  Future<void> _editSavedLogoWidget(SavedWidgetModel savedWidget) async {
+    final result = await showDialog<LogoWidgetEditResult>(
+      context: context,
+      builder: (_) => Dialog.fullscreen(
+        backgroundColor: AppColors.background,
+        child: LogoWidgetEditorPage(
+          model: LogoWidgetModel(
+            id: savedWidget.id,
+            nameLogo: savedWidget.label,
+            symbol: savedWidget.symbol!,
+            type: savedWidget.type,
+            imageAsset: savedWidget.imageAsset,
+          ),
+          initialGradientIndex: savedWidget.borderGradientIndex,
+          initialBorderOpacity: savedWidget.borderOpacity,
+          isEditingSavedWidget: true,
+        ),
+      ),
+    );
+    if (!mounted || result == null) return;
+
+    SavedWidgetModel updateLogoStyle(SavedWidgetModel widget) =>
+        widget.id != savedWidget.id
+        ? widget
+        : SavedWidgetModel(
+            id: widget.id,
+            label: widget.label,
+            imageBytes: widget.imageBytes,
+            imageAsset: widget.imageAsset,
+            layoutId: widget.layoutId,
+            type: widget.type,
+            borderGradientIndex: result.borderGradientIndex,
+            borderOpacity: result.borderOpacity,
+            symbol: widget.symbol,
+            videoPath: widget.videoPath,
+            videoName: widget.videoName,
+            videoStartMs: widget.videoStartMs,
+            videoDurationMs: widget.videoDurationMs,
+            videoThumbnail: widget.videoThumbnail,
+          );
+
+    _savedWidgets.value = _savedWidgets.value.map(updateLogoStyle).toList();
+    carPlayPreviewQueue.value = carPlayPreviewQueue.value
+        .map((widget) => widget == null ? null : updateLogoStyle(widget))
+        .toList();
+  }
+
   void _showPreviewInfo(BuildContext context) {
     showDialog<void>(
       context: context,
@@ -1177,7 +1469,11 @@ class _WidgetPreviewDialogState extends State<_WidgetPreviewDialog> {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        const SnackBar(content: Text('Widget editing is coming soon.')),
+        const SnackBar(
+          content: Text(
+            'Editing is currently available for Logo and Brand Car widgets.',
+          ),
+        ),
       );
   }
 }
