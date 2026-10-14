@@ -1,18 +1,37 @@
 import Flutter
 import UIKit
 import Darwin
+import Contacts
 
 @main
-@objc class AppDelegate: FlutterAppDelegate {
+@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    GeneratedPluginRegistrant.register(with: self)
-    if let controller = window?.rootViewController as? FlutterViewController {
+    if Bundle.main.object(forInfoDictionaryKey: "UIApplicationSceneManifest") == nil {
+      registerAppPlugins(with: self)
+    }
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
+    registerAppPlugins(with: engineBridge.pluginRegistry)
+  }
+
+  private func registerAppPlugins(with registry: FlutterPluginRegistry) {
+    guard !registry.hasPlugin("CarWidgetAppChannels") else { return }
+    GeneratedPluginRegistrant.register(with: registry)
+    if let registrar = registry.registrar(forPlugin: "DrivingMap") {
+      registrar.register(
+        DrivingMapViewFactory(messenger: registrar.messenger()),
+        withId: "carwidget/driving_map_v1"
+      )
+    }
+    if let registrar = registry.registrar(forPlugin: "CarWidgetAppChannels") {
       let channel = FlutterMethodChannel(
         name: "carwidget/device_identity",
-        binaryMessenger: controller.binaryMessenger
+        binaryMessenger: registrar.messenger()
       )
       channel.setMethodCallHandler { call, result in
         guard call.method == "getOrCreateId" else {
@@ -30,7 +49,7 @@ import Darwin
       }
       let iconChannel = FlutterMethodChannel(
         name: "carwidget/app_icon_preference",
-        binaryMessenger: controller.binaryMessenger
+        binaryMessenger: registrar.messenger()
       )
       iconChannel.setMethodCallHandler { call, result in
         switch call.method {
@@ -63,32 +82,177 @@ import Darwin
       }
       let shareChannel = FlutterMethodChannel(
         name: "carwidget/share_app",
-        binaryMessenger: controller.binaryMessenger
+        binaryMessenger: registrar.messenger()
       )
-      shareChannel.setMethodCallHandler { call, result in
+      shareChannel.setMethodCallHandler { [weak registrar] call, result in
         guard call.method == "share" else {
           result(FlutterMethodNotImplemented)
           return
+        }
+        guard let controller = registrar?.viewController,
+              controller.viewIfLoaded?.window != nil else {
+          result(FlutterError(code: "share_unavailable", message: "Sharing is unavailable while the app is not visible.", details: nil))
+          return
+        }
+        var presenter = controller
+        while let presented = presenter.presentedViewController {
+          presenter = presented
         }
         let sheet = UIActivityViewController(
           activityItems: ["Check out CarWidget!"],
           applicationActivities: nil
         )
         if let popover = sheet.popoverPresentationController {
-          popover.sourceView = controller.view
+          popover.sourceView = presenter.view
           popover.sourceRect = CGRect(
-            x: controller.view.bounds.midX,
-            y: controller.view.bounds.midY,
+            x: presenter.view.bounds.midX,
+            y: presenter.view.bounds.midY,
             width: 1,
             height: 1
           )
         }
-        controller.present(sheet, animated: true)
+        presenter.present(sheet, animated: true)
         result(nil)
       }
+      let drivingAppsChannel = FlutterMethodChannel(
+        name: "carwidget/driving_apps",
+        binaryMessenger: registrar.messenger()
+      )
+      drivingAppsChannel.setMethodCallHandler { call, result in
+        guard call.method == "open", let app = call.arguments as? String else {
+          result(FlutterMethodNotImplemented)
+          return
+        }
+        let urlString: String
+        switch app {
+        case "calendar":
+          urlString = "calshow://"
+        case "maps":
+          urlString = "maps://"
+        case "findMy":
+          urlString = "findmy://"
+        case "messages":
+          urlString = "sms:"
+        case "music":
+          urlString = "music://"
+        case "weather":
+          urlString = "weather://"
+        case "settings":
+          urlString = UIApplication.openSettingsURLString
+        default:
+          result(FlutterError(code: "invalid_app", message: "This app cannot be opened.", details: nil))
+          return
+        }
+        guard let url = URL(string: urlString) else {
+          result(FlutterError(code: "invalid_url", message: "Could not create the app URL.", details: nil))
+          return
+        }
+        UIApplication.shared.open(url, options: [:]) { opened in
+          DispatchQueue.main.async {
+            if opened {
+              result(nil)
+            } else {
+              result(FlutterError(code: "app_unavailable", message: "The app is unavailable.", details: app))
+            }
+          }
+        }
+      }
+      let contactsChannel = FlutterMethodChannel(
+        name: "carwidget/contacts",
+        binaryMessenger: registrar.messenger()
+      )
+      contactsChannel.setMethodCallHandler { call, result in
+        switch call.method {
+        case "loadContacts":
+          self.loadDrivingContacts(result: result)
+        case "openSettings":
+          guard let url = URL(string: UIApplication.openSettingsURLString) else {
+            result(FlutterError(code: "settings_unavailable", message: "Could not open iPhone Settings.", details: nil))
+            return
+          }
+          UIApplication.shared.open(url, options: [:]) { opened in
+            DispatchQueue.main.async {
+              if opened {
+                result(nil)
+              } else {
+                result(FlutterError(code: "settings_unavailable", message: "Could not open iPhone Settings.", details: nil))
+              }
+            }
+          }
+        case "call":
+          guard let rawNumber = call.arguments as? String else {
+            result(FlutterError(code: "invalid_number", message: "A phone number is required.", details: nil))
+            return
+          }
+          self.callPhoneNumber(rawNumber, result: result)
+        default:
+          result(FlutterMethodNotImplemented)
+        }
+      }
+      // Temporarily disabled until the Apple Developer team provisions App Groups.
+      #if false
+      let widgetKitChannel = FlutterMethodChannel(
+        name: "carwidget/widgetkit_v1",
+        binaryMessenger: registrar.messenger()
+      )
+      widgetKitChannel.setMethodCallHandler { call, result in
+        switch call.method {
+        case "setSelectedWidgets":
+          guard let ids = call.arguments as? [String], ids.count == 2 else {
+            result(FlutterError(code: "invalid_selection", message: "Two widget selection slots are required.", details: nil))
+            return
+          }
+          do {
+            try SharedWidgetStore.setSelectedWidgets(
+              firstId: ids[0].isEmpty ? nil : ids[0],
+              secondId: ids[1].isEmpty ? nil : ids[1]
+            )
+            if #available(iOS 14.0, *) {
+              WidgetCenter.shared.reloadAllTimelines()
+            }
+            result(nil)
+          } catch {
+            result(FlutterError(code: "widget_selection_failed", message: error.localizedDescription, details: nil))
+          }
+        case "saveWidget":
+          guard let arguments = call.arguments as? [String: Any],
+                let id = arguments["id"] as? String,
+                let name = arguments["name"] as? String,
+                let imageData = (arguments["imageBytes"] as? FlutterStandardTypedData)?.data else {
+            result(FlutterError(code: "invalid_widget", message: "Widget data is incomplete.", details: nil))
+            return
+          }
+          do {
+            try SharedWidgetStore.saveImage(imageData, id: id, name: name)
+            if #available(iOS 14.0, *) {
+              WidgetCenter.shared.reloadAllTimelines()
+            }
+            result(nil)
+          } catch {
+            result(FlutterError(code: "widget_save_failed", message: error.localizedDescription, details: nil))
+          }
+        case "deleteWidget":
+          guard let id = call.arguments as? String else {
+            result(FlutterError(code: "invalid_widget", message: "A widget ID is required.", details: nil))
+            return
+          }
+          do {
+            try SharedWidgetStore.removeWidget(id: id)
+            if #available(iOS 14.0, *) {
+              WidgetCenter.shared.reloadAllTimelines()
+            }
+            result(nil)
+          } catch {
+            result(FlutterError(code: "widget_delete_failed", message: error.localizedDescription, details: nil))
+          }
+        default:
+          result(FlutterMethodNotImplemented)
+        }
+      }
+      #endif
       let externalLinksChannel = FlutterMethodChannel(
         name: "carwidget/external_links",
-        binaryMessenger: controller.binaryMessenger
+        binaryMessenger: registrar.messenger()
       )
       externalLinksChannel.setMethodCallHandler { call, result in
         if call.method == "getDeviceInfo" {
@@ -127,6 +291,105 @@ import Darwin
         }
       }
     }
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+
+  private func loadDrivingContacts(result: @escaping FlutterResult) {
+    let store = CNContactStore()
+    let status = CNContactStore.authorizationStatus(for: .contacts)
+
+    switch status {
+    case .authorized:
+      fetchDrivingContacts(from: store, permission: "authorized", result: result)
+    case .notDetermined:
+      store.requestAccess(for: .contacts) { granted, error in
+        if let error = error {
+          DispatchQueue.main.async {
+            result(FlutterError(code: "contacts_read_failed", message: error.localizedDescription, details: nil))
+          }
+        } else if granted {
+          self.fetchDrivingContacts(from: store, permission: "authorized", result: result)
+        } else {
+          DispatchQueue.main.async {
+            result(["status": "denied", "contacts": []])
+          }
+        }
+      }
+    default:
+      // CNAuthorizationStatus.limited is available on iOS 18; checking its raw
+      // value keeps this code buildable with the project's iOS 17 SDK.
+      if #available(iOS 18.0, *), status.rawValue == 4 {
+        fetchDrivingContacts(from: store, permission: "limited", result: result)
+      } else {
+        let permission = status == .restricted ? "restricted" : "denied"
+        DispatchQueue.main.async {
+          result(["status": permission, "contacts": []])
+        }
+      }
+    }
+  }
+
+  private func fetchDrivingContacts(
+    from store: CNContactStore,
+    permission: String,
+    result: @escaping FlutterResult
+  ) {
+    DispatchQueue.global(qos: .userInitiated).async {
+      let keys: [CNKeyDescriptor] = [
+        CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
+        CNContactPhoneNumbersKey as CNKeyDescriptor
+      ]
+      let request = CNContactFetchRequest(keysToFetch: keys)
+      var contacts: [[String: Any]] = []
+
+      do {
+        try store.enumerateContacts(with: request) { contact, _ in
+          let formattedName = CNContactFormatter.string(from: contact, style: .fullName)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+          let firstPhone = contact.phoneNumbers.first?.value.stringValue ?? ""
+          let name = formattedName.isEmpty ? (firstPhone.isEmpty ? "Unknown" : firstPhone) : formattedName
+          let initial = String(name.prefix(1)).uppercased()
+          contacts.append([
+            "name": name,
+            "initial": initial,
+            "phoneNumbers": contact.phoneNumbers.map { $0.value.stringValue }
+          ])
+        }
+        contacts.sort {
+          let left = $0["name"] as? String ?? ""
+          let right = $1["name"] as? String ?? ""
+          return left.localizedStandardCompare(right) == .orderedAscending
+        }
+        DispatchQueue.main.async {
+          result(["status": permission, "contacts": contacts])
+        }
+      } catch {
+        DispatchQueue.main.async {
+          result(FlutterError(code: "contacts_read_failed", message: error.localizedDescription, details: nil))
+        }
+      }
+    }
+  }
+
+  private func callPhoneNumber(_ rawNumber: String, result: @escaping FlutterResult) {
+    let number = rawNumber.filter { $0.isNumber || $0 == "+" || $0 == "*" || $0 == "#" }
+    guard number.contains(where: \.isNumber),
+          let encodedNumber = number.addingPercentEncoding(
+            withAllowedCharacters: CharacterSet(charactersIn: "0123456789+*")
+          ),
+          let url = URL(string: "tel:\(encodedNumber)") else {
+      result(FlutterError(code: "invalid_number", message: "Enter a valid phone number.", details: nil))
+      return
+    }
+
+    // iOS presents its native Call/Cancel confirmation for a tel: URL.
+    UIApplication.shared.open(url, options: [:]) { opened in
+      DispatchQueue.main.async {
+        if opened {
+          result(nil)
+        } else {
+          result(FlutterError(code: "call_unavailable", message: "Calls are unavailable on this device.", details: nil))
+        }
+      }
+    }
   }
 }

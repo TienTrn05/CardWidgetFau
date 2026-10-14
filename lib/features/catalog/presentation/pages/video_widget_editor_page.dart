@@ -13,10 +13,20 @@ class VideoWidgetEditorPage extends StatefulWidget {
     super.key,
     required this.videoPath,
     required this.videoName,
+    this.initialStartMs = 0,
+    this.initialDurationMs,
+    this.onAddVideoWidget,
+    this.onSaveEditedVideo,
   });
 
   final String videoPath;
   final String videoName;
+  final int initialStartMs;
+  final int? initialDurationMs;
+  final void Function(int startMs, int durationMs, Uint8List thumbnail)?
+  onAddVideoWidget;
+  final void Function(int startMs, int durationMs, Uint8List thumbnail)?
+  onSaveEditedVideo;
 
   @override
   State<VideoWidgetEditorPage> createState() => _VideoWidgetEditorPageState();
@@ -46,13 +56,22 @@ class _VideoWidgetEditorPageState extends State<VideoWidgetEditorPage> {
   Future<void> _initializeVideo() async {
     try {
       await _videoController.initialize();
+      await _videoController.setVolume(0);
       _totalDurationMs = _videoController.value.duration.inMilliseconds;
       if (_totalDurationMs <= 0) {
         throw const FormatException('The selected video has no duration.');
       }
-      _trimDurationMs = math.min(3000, _totalDurationMs);
+      _trimStartMs = widget.initialStartMs
+          .clamp(0, _totalDurationMs - 1)
+          .toInt();
+      final availableDurationMs = _totalDurationMs - _trimStartMs;
+      _trimDurationMs =
+          (widget.initialDurationMs ?? math.min(3000, availableDurationMs))
+              .clamp(1, availableDurationMs)
+              .toInt();
       _videoController.addListener(_handleVideoProgress);
       await _videoController.setLooping(false);
+      await _videoController.seekTo(Duration(milliseconds: _trimStartMs));
       if (mounted) {
         setState(() => _isLoading = false);
       }
@@ -226,6 +245,20 @@ class _VideoWidgetEditorPageState extends State<VideoWidgetEditorPage> {
       return;
     }
 
+    final saveEditedVideo = widget.onSaveEditedVideo;
+    if (saveEditedVideo != null) {
+      saveEditedVideo(_trimStartMs, _trimDurationMs, coverThumbnail);
+      if (!mounted) return;
+      Navigator.of(context).pop(true);
+      return;
+    }
+
+    final addVideoWidget = widget.onAddVideoWidget;
+    if (addVideoWidget == null) {
+      setState(() => _isSaving = false);
+      return;
+    }
+
     final didAddWidget = await Navigator.of(context).push<bool>(
       MaterialPageRoute<bool>(
         builder: (_) => VideoWidgetPreviewPage(
@@ -234,6 +267,7 @@ class _VideoWidgetEditorPageState extends State<VideoWidgetEditorPage> {
           videoStartMs: _trimStartMs,
           videoDurationMs: _trimDurationMs,
           videoThumbnail: coverThumbnail!,
+          onAddVideoWidget: addVideoWidget,
         ),
       ),
     );
@@ -264,86 +298,110 @@ class _VideoWidgetEditorPageState extends State<VideoWidgetEditorPage> {
     backgroundColor: AppColors.background,
     body: SafeArea(
       child: LayoutBuilder(
-        builder: (context, _) => Padding(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 52,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    const Text(
-                      'Edit Widget',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: IconButton(
-                        tooltip: 'Back',
-                        onPressed: () => Navigator.of(context).pop(),
-                        icon: const Icon(
-                          Icons.arrow_back_ios_new_rounded,
-                          size: 22,
+        builder: (context, constraints) {
+          const headerHeight = 52.0;
+          const durationOptionsHeight = 54.0;
+          const timelineHeight = 56.0;
+          const continueButtonHeight = 58.0;
+          const durationTimelineGap = 16.0;
+          const continueGap = 20.0;
+          const verticalPadding = 20.0;
+          final availableHeight =
+              constraints.maxHeight -
+              headerHeight -
+              durationOptionsHeight -
+              timelineHeight -
+              continueButtonHeight -
+              durationTimelineGap -
+              continueGap -
+              verticalPadding;
+          final previewHeight = math.min(
+            constraints.maxHeight * .6,
+            math.max(0.0, availableHeight),
+          );
+
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: headerHeight,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      const Text(
+                        'Edit Widget',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    child: _buildVideoPreview(),
-                  ),
-                ),
-              ),
-              _buildDurationOptions(),
-              const SizedBox(height: 22),
-              _buildTimeline(),
-              const Spacer(),
-              SizedBox(
-                width: double.infinity,
-                height: 58,
-                child: FilledButton(
-                  onPressed: _isLoading || _loadError != null || _isSaving
-                      ? null
-                      : _continue,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.green,
-                    foregroundColor: AppColors.background,
-                    disabledBackgroundColor: AppColors.green.withValues(
-                      alpha: .35,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(26),
-                    ),
-                  ),
-                  child: _isSaving
-                      ? const SizedBox.square(
-                          dimension: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            color: AppColors.background,
-                          ),
-                        )
-                      : const Text(
-                          'Continue',
-                          style: TextStyle(
-                            fontSize: 19,
-                            fontWeight: FontWeight.w700,
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: IconButton(
+                          tooltip: 'Back',
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: const Icon(
+                            Icons.arrow_back_ios_new_rounded,
+                            size: 22,
                           ),
                         ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
+                SizedBox(
+                  height: previewHeight,
+                  child: Center(child: _buildVideoPreview()),
+                ),
+                SizedBox(
+                  height: durationOptionsHeight,
+                  child: _buildDurationOptions(),
+                ),
+                const SizedBox(height: durationTimelineGap),
+                _buildTimeline(),
+                const SizedBox(height: continueGap),
+                SizedBox(
+                  width: double.infinity,
+                  height: continueButtonHeight,
+                  child: FilledButton(
+                    onPressed: _isLoading || _loadError != null || _isSaving
+                        ? null
+                        : _continue,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.green,
+                      foregroundColor: AppColors.background,
+                      disabledBackgroundColor: AppColors.green.withValues(
+                        alpha: .35,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(26),
+                      ),
+                    ),
+                    child: _isSaving
+                        ? const SizedBox.square(
+                            dimension: 22,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              color: AppColors.background,
+                            ),
+                          )
+                        : Text(
+                            widget.onSaveEditedVideo == null
+                                ? 'Continue'
+                                : 'Save Changes',
+                            style: const TextStyle(
+                              fontSize: 19,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     ),
   );
@@ -445,7 +503,7 @@ class _VideoWidgetEditorPageState extends State<VideoWidgetEditorPage> {
               ? null
               : _finishTimelineDrag,
           child: SizedBox(
-            height: 72,
+            height: 56,
             child: Stack(
               fit: StackFit.expand,
               children: [

@@ -13,6 +13,15 @@ class SavedWidgetModel {
     this.borderGradientIndex,
     this.borderOpacity = 1,
     this.symbol,
+    this.countryFlagCode,
+    this.footballTeamId,
+    this.synthwaveId,
+    this.affirmationText,
+    this.affirmationDate,
+    this.affirmationTextColorValue = 0xFF211917,
+    this.affirmationBackgroundColorValue = 0xFFF5D9CF,
+    this.affirmationEyebrow,
+    this.affirmationStyleIndex = 0,
     this.videoPath,
     this.videoName,
     this.videoStartMs = 0,
@@ -29,6 +38,15 @@ class SavedWidgetModel {
   final int? borderGradientIndex;
   final double borderOpacity;
   final String? symbol;
+  final String? countryFlagCode;
+  final String? footballTeamId;
+  final String? synthwaveId;
+  final String? affirmationText;
+  final DateTime? affirmationDate;
+  final int affirmationTextColorValue;
+  final int affirmationBackgroundColorValue;
+  final String? affirmationEyebrow;
+  final int affirmationStyleIndex;
   final String? videoPath;
   final String? videoName;
   final int videoStartMs;

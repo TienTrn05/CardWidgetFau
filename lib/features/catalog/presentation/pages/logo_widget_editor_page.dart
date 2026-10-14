@@ -140,7 +140,6 @@ class _LogoWidgetEditorPageState extends State<LogoWidgetEditorPage> {
                                   _GradientSwatch(
                                     colors: logoBorderGradients[index],
                                     selected: _gradientIndex == index,
-                                    opacity: _borderOpacity,
                                     onTap: () =>
                                         setState(() => _gradientIndex = index),
                                   ),
@@ -293,12 +292,10 @@ class _GradientSwatch extends StatelessWidget {
     required this.selected,
     required this.onTap,
     this.colors,
-    this.opacity = 1,
   });
 
   final List<Color>? colors;
   final bool selected;
-  final double opacity;
   final VoidCallback onTap;
 
   @override
@@ -320,13 +317,7 @@ class _GradientSwatch extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: colors == null ? AppColors.surface : null,
-          gradient: colors == null
-              ? null
-              : LinearGradient(
-                  colors: colors!
-                      .map((color) => color.withValues(alpha: opacity))
-                      .toList(),
-                ),
+          gradient: colors == null ? null : LinearGradient(colors: colors!),
         ),
         child: colors == null
             ? const Icon(Icons.remove_rounded, color: Colors.white70)

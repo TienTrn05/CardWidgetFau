@@ -2,8 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:carwidget/app/theme/app_theme.dart';
-import 'package:carwidget/features/my_widgets/presentation/widgets/my_widgets_section.dart'
-    show addVideoWidgetToMyWidgets;
+import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -15,6 +14,7 @@ class VideoWidgetPreviewPage extends StatefulWidget {
     required this.videoStartMs,
     required this.videoDurationMs,
     required this.videoThumbnail,
+    required this.onAddVideoWidget,
   });
 
   final String videoPath;
@@ -22,6 +22,8 @@ class VideoWidgetPreviewPage extends StatefulWidget {
   final int videoStartMs;
   final int videoDurationMs;
   final Uint8List videoThumbnail;
+  final void Function(int startMs, int durationMs, Uint8List thumbnail)
+  onAddVideoWidget;
 
   @override
   State<VideoWidgetPreviewPage> createState() => _VideoWidgetPreviewPageState();
@@ -32,6 +34,8 @@ class _VideoWidgetPreviewPageState extends State<VideoWidgetPreviewPage> {
   var _isReady = false;
   var _isSaving = false;
   var _loadFailed = false;
+  var _isRestarting = false;
+  var _isDisposed = false;
 
   int get _trimEndMs => widget.videoStartMs + widget.videoDurationMs;
 
@@ -45,6 +49,7 @@ class _VideoWidgetPreviewPageState extends State<VideoWidgetPreviewPage> {
   Future<void> _initializeVideo() async {
     try {
       await _videoController.initialize();
+      await _videoController.setVolume(0);
       await _videoController.setLooping(false);
       final durationMs = _videoController.value.duration.inMilliseconds;
       final startMs = widget.videoStartMs.clamp(0, durationMs);
@@ -52,6 +57,7 @@ class _VideoWidgetPreviewPageState extends State<VideoWidgetPreviewPage> {
       _videoController.addListener(_handlePlayback);
       if (!mounted) return;
       setState(() => _isReady = true);
+      await _videoController.play();
     } catch (_) {
       if (!mounted) return;
       setState(() => _loadFailed = true);
@@ -59,40 +65,43 @@ class _VideoWidgetPreviewPageState extends State<VideoWidgetPreviewPage> {
   }
 
   void _handlePlayback() {
+    if (_isDisposed || !mounted) return;
     if (!_videoController.value.isInitialized) return;
     if (_videoController.value.isPlaying &&
-        _videoController.value.position.inMilliseconds >= _trimEndMs) {
-      _videoController.pause();
-      _videoController.seekTo(Duration(milliseconds: widget.videoStartMs));
+        _videoController.value.position.inMilliseconds >= _trimEndMs &&
+        !_isRestarting) {
+      _restartTrimmedPlayback();
     }
     if (mounted) setState(() {});
   }
 
-  Future<void> _togglePreview() async {
-    if (!_isReady) return;
-    if (_videoController.value.isPlaying) {
+  Future<void> _restartTrimmedPlayback() async {
+    if (_isDisposed || !mounted || _isRestarting) return;
+    _isRestarting = true;
+    try {
       await _videoController.pause();
-      return;
-    }
-    final positionMs = _videoController.value.position.inMilliseconds;
-    if (positionMs < widget.videoStartMs || positionMs >= _trimEndMs) {
+      if (_isDisposed || !mounted) return;
       await _videoController.seekTo(
         Duration(milliseconds: widget.videoStartMs),
       );
+      if (!_isDisposed && mounted && !_isSaving) {
+        await _videoController.play();
+      }
+    } catch (_) {
+      // The controller can finish an in-flight operation as the page closes.
+    } finally {
+      _isRestarting = false;
     }
-    await _videoController.play();
   }
 
   Future<void> _addToMyWidgets() async {
     if (_isSaving) return;
     setState(() => _isSaving = true);
     await _videoController.pause();
-    addVideoWidgetToMyWidgets(
-      videoPath: widget.videoPath,
-      videoName: widget.videoName,
-      videoStartMs: widget.videoStartMs,
-      videoDurationMs: widget.videoDurationMs,
-      videoThumbnail: widget.videoThumbnail,
+    widget.onAddVideoWidget(
+      widget.videoStartMs,
+      widget.videoDurationMs,
+      widget.videoThumbnail,
     );
     if (!mounted) return;
     Navigator.of(context).pop(true);
@@ -119,6 +128,7 @@ class _VideoWidgetPreviewPageState extends State<VideoWidgetPreviewPage> {
 
   @override
   void dispose() {
+    _isDisposed = true;
     _videoController.removeListener(_handlePlayback);
     _videoController.dispose();
     super.dispose();
@@ -177,52 +187,40 @@ class _VideoWidgetPreviewPageState extends State<VideoWidgetPreviewPage> {
               Expanded(
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    final previewSize = constraints.maxWidth
-                        .clamp(0.0, constraints.maxHeight * .68)
-                        .clamp(0.0, 420.0);
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox.square(
-                          dimension: previewSize,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(30),
-                            child: Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                Image.memory(
-                                  widget.videoThumbnail,
+                    final previewSize =
+                        editorWidgetPreviewSize(constraints) * .9;
+                    return Center(
+                      child: SizedBox.square(
+                        dimension: previewSize,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(24),
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              Image.memory(
+                                widget.videoThumbnail,
+                                fit: BoxFit.cover,
+                              ),
+                              if (_isReady)
+                                FittedBox(
                                   fit: BoxFit.cover,
+                                  clipBehavior: Clip.hardEdge,
+                                  child: SizedBox(
+                                    width: _videoController.value.size.width,
+                                    height: _videoController.value.size.height,
+                                    child: VideoPlayer(_videoController),
+                                  ),
                                 ),
-                                if (_isReady)
-                                  FittedBox(
-                                    fit: BoxFit.cover,
-                                    clipBehavior: Clip.hardEdge,
-                                    child: SizedBox(
-                                      width: _videoController.value.size.width,
-                                      height:
-                                          _videoController.value.size.height,
-                                      child: VideoPlayer(_videoController),
-                                    ),
+                              if (!_isReady && !_loadFailed)
+                                const Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.green,
                                   ),
-                                if (!_isReady && !_loadFailed)
-                                  const Center(
-                                    child: CircularProgressIndicator(
-                                      color: AppColors.green,
-                                    ),
-                                  ),
-                              ],
-                            ),
+                                ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 18),
-                        _PreviewButton(
-                          isPlaying:
-                              _isReady && _videoController.value.isPlaying,
-                          enabled: _isReady,
-                          onTap: _togglePreview,
-                        ),
-                      ],
+                      ),
                     );
                   },
                 ),
@@ -261,51 +259,6 @@ class _VideoWidgetPreviewPageState extends State<VideoWidgetPreviewPage> {
               ),
             ],
           ),
-        ),
-      ),
-    ),
-  );
-}
-
-class _PreviewButton extends StatelessWidget {
-  const _PreviewButton({
-    required this.isPlaying,
-    required this.enabled,
-    required this.onTap,
-  });
-
-  final bool isPlaying;
-  final bool enabled;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => Material(
-    color: AppColors.surface,
-    borderRadius: BorderRadius.circular(20),
-    child: InkWell(
-      onTap: enabled ? onTap : null,
-      borderRadius: BorderRadius.circular(20),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              isPlaying
-                  ? Icons.pause_circle_outline_rounded
-                  : Icons.play_circle_outline_rounded,
-              color: AppColors.green,
-              size: 26,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              isPlaying ? 'Pause Preview' : 'Preview',
-              style: TextStyle(
-                color: enabled ? Colors.white : AppColors.muted,
-                fontSize: 17,
-              ),
-            ),
-          ],
         ),
       ),
     ),

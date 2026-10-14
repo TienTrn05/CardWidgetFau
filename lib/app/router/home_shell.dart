@@ -3,7 +3,7 @@ import 'package:carwidget/app/theme/app_theme.dart';
 import 'package:carwidget/core/ui/car_ui.dart';
 import 'package:carwidget/features/catalog/presentation/pages/widgets_page.dart';
 import 'package:carwidget/features/startup_sounds/presentation/pages/sounds_page.dart';
-import 'package:carwidget/features/cards/presentation/pages/cards_page.dart';
+import 'package:carwidget/features/cards/presentation/pages/my_car_page.dart';
 import 'package:carwidget/features/settings/presentation/pages/settings_page.dart';
 
 class HomeShell extends StatefulWidget {
@@ -45,13 +45,21 @@ class _HomeShellState extends State<HomeShell> {
                 padding: const EdgeInsets.fromLTRB(24, 14, 16, 8),
                 child: Row(
                   children: [
-                    const Brand(),
-                    const Spacer(),
-                    IconButton(
-                      tooltip: 'Settings',
-                      onPressed: () => setState(() => settings = true),
-                      icon: const Icon(Icons.settings_outlined),
-                    ),
+                    if (tab != 0)
+                      IconButton(
+                        tooltip: 'Settings',
+                        onPressed: () => setState(() => settings = true),
+                        icon: const Icon(Icons.settings_rounded),
+                      )
+                    else ...[
+                      const Brand(),
+                      const Spacer(),
+                      IconButton(
+                        tooltip: 'Settings',
+                        onPressed: () => setState(() => settings = true),
+                        icon: const Icon(Icons.settings_outlined),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -62,7 +70,7 @@ class _HomeShellState extends State<HomeShell> {
                   children: const [
                     _KeepAlivePage(child: WidgetsPage()),
                     _KeepAlivePage(child: SoundsPage()),
-                    _KeepAlivePage(child: CardsPage()),
+                    _KeepAlivePage(child: MyCarPage()),
                   ],
                 ),
               ),
@@ -166,9 +174,9 @@ class _BottomTaskbar extends StatelessWidget {
                         ),
                         Expanded(
                           child: _TaskbarDestination(
-                            icon: Icons.style_outlined,
-                            selectedIcon: Icons.style_rounded,
-                            label: 'Card',
+                            icon: Icons.directions_car_outlined,
+                            selectedIcon: Icons.directions_car_filled_rounded,
+                            label: 'My Car',
                             isSelected: selectedIndex == 2,
                             onTap: () => onDestinationSelected(2),
                           ),

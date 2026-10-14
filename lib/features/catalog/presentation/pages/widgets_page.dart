@@ -6,7 +6,13 @@ import 'package:carwidget/features/catalog/data/models/saved_widget_model.dart';
 import 'package:carwidget/features/catalog/data/models/logo_widget_model.dart';
 import 'package:carwidget/features/catalog/data/models/widget_type.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/brand_car_section.dart';
+import 'package:carwidget/features/cards/presentation/widgets/affirmations_section.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/country_flag_artwork.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/country_flags_section.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/football_teams_section.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/synthwave_artwork.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/synthwave_section.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/logos_section.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/video_widgets_section.dart';
 import 'package:carwidget/features/editor/data/services/brand_car_layout_store.dart';
@@ -36,6 +42,14 @@ class WidgetsPage extends StatelessWidget {
       const LogosSection(),
       const SizedBox(height: 30),
       const VideoWidgetsSection(),
+      const SizedBox(height: 30),
+      const CountryFlagsSection(),
+      const SizedBox(height: 30),
+      const FootballTeamsSection(),
+      const SizedBox(height: 30),
+      const SynthwaveSection(),
+      const SizedBox(height: 30),
+      const AffirmationsSection(),
     ],
   );
 }
@@ -272,9 +286,47 @@ class _CarPlayWidgetCard extends StatelessWidget {
                       logoBorderGradients.length]
                   .map((color) => color.withValues(alpha: borderOpacity))
                   .toList();
+        final isCountryFlag = widget?.type == WidgetType.countryFlag;
+
+        if (isCountryFlag && widget?.countryFlagCode != null) {
+          return CountryFlagArtworkFrame(
+            countryCode: widget!.countryFlagCode!,
+            borderGradientColors: gradientColors,
+            borderColor: const Color(0xFF647C83),
+            borderWidth: gradientColors == null ? 1.2 : 2,
+            borderRadius: 20,
+          );
+        }
+
+        if (widget?.type == WidgetType.synthwave &&
+            widget?.synthwaveId != null) {
+          return SynthwaveArtworkFrame(
+            synthwaveId: widget!.synthwaveId!,
+            borderGradientColors: gradientColors,
+            borderColor: const Color(0xFF647C83),
+            borderWidth: gradientColors == null ? 1.2 : 2,
+            borderRadius: 20,
+          );
+        }
+
+        if (widget != null &&
+            (widget!.type == WidgetType.image ||
+                widget!.type == WidgetType.video ||
+                widget!.type == WidgetType.affirmation)) {
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: SavedWidgetArtwork(widget: widget!),
+          );
+        }
 
         return Container(
-          padding: EdgeInsets.all(gradientColors == null ? 10 : 2),
+          padding: EdgeInsets.all(
+            isCountryFlag
+                ? (gradientColors == null ? 0 : 2)
+                : gradientColors == null
+                ? 10
+                : 2,
+          ),
           decoration: BoxDecoration(
             color: gradientColors != null
                 ? null
@@ -290,7 +342,13 @@ class _CarPlayWidgetCard extends StatelessWidget {
                 : null,
           ),
           child: Container(
-            padding: EdgeInsets.all(gradientColors == null ? 0 : 8),
+            padding: EdgeInsets.all(
+              isCountryFlag
+                  ? 0
+                  : gradientColors == null
+                  ? 0
+                  : 8,
+            ),
             decoration: gradientColors == null
                 ? null
                 : BoxDecoration(

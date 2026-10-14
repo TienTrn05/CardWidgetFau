@@ -1,10 +1,14 @@
 import 'package:carwidget/app/theme/app_theme.dart';
 import 'package:carwidget/features/catalog/data/models/saved_widget_model.dart';
-import 'package:carwidget/features/catalog/data/models/widget_type.dart';
 import 'package:carwidget/features/catalog/presentation/pages/video_widget_editor_page.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
 import 'package:carwidget/features/my_widgets/presentation/widgets/my_widgets_section.dart'
-    show savedWidgetsListenable, showSavedWidgetPreview;
+    show
+        SavedWidgetArtwork,
+        addVideoWidgetToLibrary,
+        removeVideoWidgetFromLibrary,
+        showVideoWidgetPreview,
+        videoWidgetsListenable;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -14,11 +18,9 @@ class VideoWidgetsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       ValueListenableBuilder<List<SavedWidgetModel>>(
-        valueListenable: savedWidgetsListenable,
+        valueListenable: videoWidgetsListenable,
         builder: (context, widgets, _) {
-          final videoWidgets = widgets
-              .where((widget) => widget.type == WidgetType.video)
-              .toList();
+          final videoWidgets = widgets;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -96,11 +98,9 @@ class VideoWidgetsPage extends StatelessWidget {
     body: SafeArea(
       top: false,
       child: ValueListenableBuilder<List<SavedWidgetModel>>(
-        valueListenable: savedWidgetsListenable,
+        valueListenable: videoWidgetsListenable,
         builder: (context, widgets, _) {
-          final videoWidgets = widgets
-              .where((widget) => widget.type == WidgetType.video)
-              .toList();
+          final videoWidgets = widgets;
           return LayoutBuilder(
             builder: (context, constraints) {
               final cardSize = carPlayWidgetPreviewSize(
@@ -116,14 +116,48 @@ class VideoWidgetsPage extends StatelessWidget {
                   mainAxisExtent: cardSize,
                 ),
                 itemCount: videoWidgets.length + 1,
-                itemBuilder: (context, index) => Center(
-                  child: SizedBox.square(
-                    dimension: cardSize,
-                    child: index == 0
-                        ? const _AddVideoWidgetTile()
-                        : _VideoWidgetTile(widget: videoWidgets[index - 1]),
-                  ),
-                ),
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return Center(
+                      child: SizedBox.square(
+                        dimension: cardSize,
+                        child: const _AddVideoWidgetTile(),
+                      ),
+                    );
+                  }
+
+                  final videoWidget = videoWidgets[index - 1];
+                  return Center(
+                    child: SizedBox.square(
+                      dimension: cardSize,
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: _VideoWidgetTile(widget: videoWidget),
+                          ),
+                          Positioned(
+                            top: 7,
+                            right: 7,
+                            child: Material(
+                              color: const Color(0xCC080D12),
+                              shape: const CircleBorder(),
+                              child: InkWell(
+                                customBorder: const CircleBorder(),
+                                onTap: () => removeVideoWidgetFromLibrary(
+                                  videoWidget.id,
+                                ),
+                                child: const SizedBox.square(
+                                  dimension: 25,
+                                  child: Icon(Icons.close_rounded, size: 17),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               );
             },
           );
@@ -170,55 +204,34 @@ class _VideoWidgetTile extends StatelessWidget {
     color: const Color(0xFF252D33),
     borderRadius: BorderRadius.circular(24),
     child: InkWell(
-      onTap: () => showSavedWidgetPreview(context, widget),
+      onTap: () => showVideoWidgetPreview(context, widget),
       borderRadius: BorderRadius.circular(24),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
-        child: _VideoThumbnail(widget: widget),
-      ),
-    ),
-  );
-}
-
-class _VideoThumbnail extends StatelessWidget {
-  const _VideoThumbnail({required this.widget});
-
-  final SavedWidgetModel widget;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    color: const Color(0xFF252D33),
-    child: Stack(
-      fit: StackFit.expand,
-      children: [
-        if (widget.videoThumbnail != null)
-          Image.memory(widget.videoThumbnail!, fit: BoxFit.cover)
-        else
-          const Center(
-            child: Icon(
-              Icons.play_circle_fill_rounded,
-              color: AppColors.green,
-              size: 48,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            SavedWidgetArtwork(widget: widget),
+            Positioned(
+              left: 10,
+              right: 10,
+              bottom: 8,
+              child: Text(
+                widget.videoName ?? widget.label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  shadows: [Shadow(color: Colors.black, blurRadius: 5)],
+                ),
+              ),
             ),
-          ),
-        Positioned(
-          left: 10,
-          right: 10,
-          bottom: 8,
-          child: Text(
-            widget.videoName ?? widget.label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              shadows: [Shadow(color: Colors.black, blurRadius: 5)],
-            ),
-          ),
+          ],
         ),
-      ],
+      ),
     ),
   );
 }
@@ -298,21 +311,23 @@ class _AddVideoWidgetTile extends StatelessWidget {
       );
       if (selectedVideo == null || !context.mounted) return;
 
-      final wasAdded = await Navigator.of(context).push<bool>(
+      await Navigator.of(context).push<bool>(
         MaterialPageRoute<bool>(
           builder: (_) => VideoWidgetEditorPage(
             videoPath: selectedVideo.path,
             videoName: selectedVideo.name,
+            onAddVideoWidget: (startMs, durationMs, thumbnail) {
+              addVideoWidgetToLibrary(
+                videoPath: selectedVideo.path,
+                videoName: selectedVideo.name,
+                videoStartMs: startMs,
+                videoDurationMs: durationMs,
+                videoThumbnail: thumbnail,
+              );
+            },
           ),
         ),
       );
-      if (!context.mounted || wasAdded != true) return;
-
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(content: Text('Video added to My Widgets.')),
-        );
     } catch (_) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context)
