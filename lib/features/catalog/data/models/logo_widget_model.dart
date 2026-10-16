@@ -1,3 +1,4 @@
+import 'package:carwidget/features/cards/data/car_catalog.dart';
 import 'package:carwidget/features/catalog/data/models/widget_type.dart';
 import 'package:flutter/material.dart';
 
@@ -28,41 +29,40 @@ class LogoWidgetModel {
   final WidgetType type;
 }
 
-const logoWidgetModels = <LogoWidgetModel>[
-  LogoWidgetModel(
-    id: 'logo_abarth',
-    nameLogo: 'Abarth',
-    symbol: 'A',
-    type: WidgetType.logoAndName,
+const _logoSymbols = <String, String>{
+  'Abarth': 'A',
+  'Acura': 'A',
+  'Aiways': 'AIWAYS',
+  'Alfa Romeo': 'AR',
+  'Audi': 'A',
+  'BMW': 'BMW',
+  'BAIC': 'BAIC',
+  'BYD': 'BYD',
+  'Citroën': 'C',
+  'MINI': 'MINI',
+  'Mercedes-Benz': 'MB',
+};
+
+final logoWidgetModels = List<LogoWidgetModel>.unmodifiable(
+  carBrandNames.map(
+    (name) => LogoWidgetModel(
+      id: 'logo_${_logoSlug(name)}',
+      nameLogo: name,
+      symbol: _logoSymbols[name] ?? _logoInitials(name),
+      type: WidgetType.logoAndName,
+    ),
   ),
-  LogoWidgetModel(
-    id: 'logo_acura',
-    nameLogo: 'Acura',
-    symbol: 'A',
-    type: WidgetType.logoAndName,
-  ),
-  LogoWidgetModel(
-    id: 'logo_aiways',
-    nameLogo: 'Aiways',
-    symbol: 'AIWAYS',
-    type: WidgetType.logoAndName,
-  ),
-  LogoWidgetModel(
-    id: 'logo_alfa_romeo',
-    nameLogo: 'Alfa Romeo',
-    symbol: 'AR',
-    type: WidgetType.logoAndName,
-  ),
-  LogoWidgetModel(
-    id: 'logo_audi',
-    nameLogo: 'Audi',
-    symbol: 'A',
-    type: WidgetType.logoAndName,
-  ),
-  LogoWidgetModel(
-    id: 'logo_bmw',
-    nameLogo: 'BMW',
-    symbol: 'BMW',
-    type: WidgetType.logoAndName,
-  ),
-];
+);
+
+String _logoSlug(String name) => name
+    .toLowerCase()
+    .replaceAll('ë', 'e')
+    .replaceAll(RegExp(r'[^a-z0-9]+'), '_')
+    .replaceAll(RegExp(r'^_|_$'), '');
+
+String _logoInitials(String name) => name
+    .split(RegExp(r'[\s-]+'))
+    .where((word) => word.isNotEmpty)
+    .take(2)
+    .map((word) => word[0].toUpperCase())
+    .join();

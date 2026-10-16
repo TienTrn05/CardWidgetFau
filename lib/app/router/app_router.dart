@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:carwidget/core/network/connection_notice.dart';
 import 'package:carwidget/features/onboarding/presentation/pages/loading_screen.dart';
 import 'package:carwidget/features/Prenium/presentation/pages/buy_screen.dart';
 import 'home_shell.dart';
@@ -37,6 +38,6 @@ class _AppRouterState extends State<AppRouter> {
     AppRoute.buy => BuyScreen(
       onContinue: () => setState(() => route = AppRoute.home),
     ),
-    AppRoute.home => const HomeShell(),
+    AppRoute.home => const ConnectionNotice(child: HomeShell()),
   };
 }

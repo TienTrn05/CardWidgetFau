@@ -6,7 +6,14 @@ import 'package:carwidget/features/catalog/data/models/saved_widget_model.dart';
 import 'package:carwidget/features/catalog/data/models/logo_widget_model.dart';
 import 'package:carwidget/features/catalog/data/models/widget_type.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/brand_car_section.dart';
+import 'package:carwidget/features/cards/presentation/widgets/affirmations_section.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_mockup.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/country_flag_artwork.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/country_flags_section.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/football_teams_section.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/synthwave_artwork.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/synthwave_section.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/logos_section.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/video_widgets_section.dart';
 import 'package:carwidget/features/editor/data/services/brand_car_layout_store.dart';
@@ -36,6 +43,14 @@ class WidgetsPage extends StatelessWidget {
       const LogosSection(),
       const SizedBox(height: 30),
       const VideoWidgetsSection(),
+      const SizedBox(height: 30),
+      const CountryFlagsSection(),
+      const SizedBox(height: 30),
+      const FootballTeamsSection(),
+      const SizedBox(height: 30),
+      const SynthwaveSection(),
+      const SizedBox(height: 30),
+      const AffirmationsSection(),
     ],
   );
 }
@@ -54,8 +69,8 @@ class _CarPlayPreview extends StatelessWidget {
       );
       final cardSize = widgetSize;
       final dockIconSize = math.min(
-        38.0,
-        math.min(railWidth - 10, (widgetSize - 15) / 3),
+        34.0,
+        math.min(railWidth - 10, (widgetSize - 27) / 3),
       );
 
       return SizedBox(
@@ -71,7 +86,6 @@ class _CarPlayPreview extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(27),
-                  border: Border.all(color: const Color(0xFF647C83), width: 2),
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -93,10 +107,10 @@ class _CarPlayPreview extends StatelessWidget {
             ),
             Positioned(
               left: -13,
-              top: 0,
-              bottom: 0,
+              top: -5,
+              bottom: -5,
               width: railWidth,
-              child: _CarPlayDock(iconSize: dockIconSize),
+              child: CarPlayPreviewDock(iconSize: dockIconSize),
             ),
             Positioned(
               left: railWidth - 6,
@@ -148,97 +162,6 @@ class _CarPlayPreview extends StatelessWidget {
   );
 }
 
-class _CarPlayDock extends StatelessWidget {
-  const _CarPlayDock({required this.iconSize});
-
-  final double iconSize;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    decoration: BoxDecoration(
-      gradient: const LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [Color(0xC910416D), Color(0x99506F7B), Color(0xA8758380)],
-      ),
-      borderRadius: BorderRadius.circular(20),
-    ),
-    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 5),
-    child: Column(
-      children: [
-        const Text(
-          '9:41',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-            height: 1.1,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: 3),
-        const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.signal_cellular_alt, color: Colors.white, size: 13),
-            SizedBox(width: 2),
-            Text(
-              '5G',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 9,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-        const Spacer(),
-        _DockIcon(asset: 'assets/images/map.png', size: iconSize),
-        const SizedBox(height: 4),
-        _DockIcon(asset: 'assets/images/music.png', size: iconSize),
-        const SizedBox(height: 4),
-        _DockIcon(asset: 'assets/images/phone.png', size: iconSize),
-        const Spacer(),
-        Container(
-          width: 18,
-          height: 18,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.white, width: 1.5),
-            borderRadius: BorderRadius.circular(5),
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-class _DockIcon extends StatelessWidget {
-  const _DockIcon({required this.asset, required this.size});
-
-  final String asset;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) => SizedBox.square(
-    dimension: size,
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(9),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(9),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x55000000),
-              blurRadius: 5,
-              offset: Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Image.asset(asset, fit: BoxFit.cover),
-      ),
-    ),
-  );
-}
-
 class _CarPlayWidgetCard extends StatelessWidget {
   const _CarPlayWidgetCard({this.widget, this.onTap});
 
@@ -272,9 +195,47 @@ class _CarPlayWidgetCard extends StatelessWidget {
                       logoBorderGradients.length]
                   .map((color) => color.withValues(alpha: borderOpacity))
                   .toList();
+        final isCountryFlag = widget?.type == WidgetType.countryFlag;
+
+        if (isCountryFlag && widget?.countryFlagCode != null) {
+          return CountryFlagArtworkFrame(
+            countryCode: widget!.countryFlagCode!,
+            borderGradientColors: gradientColors,
+            borderColor: const Color(0xFF647C83),
+            borderWidth: gradientColors == null ? 1.2 : 2,
+            borderRadius: 20,
+          );
+        }
+
+        if (widget?.type == WidgetType.synthwave &&
+            widget?.synthwaveId != null) {
+          return SynthwaveArtworkFrame(
+            synthwaveId: widget!.synthwaveId!,
+            borderGradientColors: gradientColors,
+            borderColor: const Color(0xFF647C83),
+            borderWidth: gradientColors == null ? 1.2 : 2,
+            borderRadius: 20,
+          );
+        }
+
+        if (widget != null &&
+            (widget!.type == WidgetType.image ||
+                widget!.type == WidgetType.video ||
+                widget!.type == WidgetType.affirmation)) {
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: SavedWidgetArtwork(widget: widget!),
+          );
+        }
 
         return Container(
-          padding: EdgeInsets.all(gradientColors == null ? 10 : 2),
+          padding: EdgeInsets.all(
+            isCountryFlag
+                ? (gradientColors == null ? 0 : 2)
+                : gradientColors == null
+                ? 10
+                : 2,
+          ),
           decoration: BoxDecoration(
             color: gradientColors != null
                 ? null
@@ -290,7 +251,13 @@ class _CarPlayWidgetCard extends StatelessWidget {
                 : null,
           ),
           child: Container(
-            padding: EdgeInsets.all(gradientColors == null ? 0 : 8),
+            padding: EdgeInsets.all(
+              isCountryFlag
+                  ? 0
+                  : gradientColors == null
+                  ? 0
+                  : 8,
+            ),
             decoration: gradientColors == null
                 ? null
                 : BoxDecoration(

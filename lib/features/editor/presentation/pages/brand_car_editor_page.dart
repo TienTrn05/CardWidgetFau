@@ -10,15 +10,17 @@ import 'package:carwidget/features/catalog/presentation/widgets/brand_car_image_
 import 'package:carwidget/features/catalog/presentation/widgets/brand_car_font_options.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/image_crop_dialog.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/widget_preview_button.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/slide_right_transition.dart';
+import 'package:carwidget/features/settings/presentation/widgets/tutorial_sheet.dart';
 import 'package:carwidget/features/my_widgets/presentation/widgets/my_widgets_section.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 void showBrandCarWidgetEditor(BuildContext context, SavedWidgetModel widget) {
-  showDialog<void>(
+  showSlideRightDialog<void>(
     context: context,
-    barrierDismissible: false,
-    builder: (_) => Dialog.fullscreen(
+    builder: (context) => Dialog.fullscreen(
       backgroundColor: AppColors.background,
       child: BrandCarEditorPage(
         model: widget,
@@ -95,24 +97,7 @@ class _BrandCarEditorPageState extends State<BrandCarEditorPage> {
                     ),
                     IconButton(
                       tooltip: 'About this widget',
-                      onPressed: () => showDialog<void>(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          backgroundColor: AppColors.surface,
-                          content: Text(
-                            widget.isSavedWidget
-                                ? 'Changes update this widget in My Widgets and your CarPlay preview.'
-                                : 'Add this car design to My Widgets to use it in your CarPlay preview.',
-                            textAlign: TextAlign.center,
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: const Text('Got it'),
-                            ),
-                          ],
-                        ),
-                      ),
+                      onPressed: () => showTutorialSheet(context),
                       icon: const Icon(
                         Icons.info_rounded,
                         color: AppColors.green,
@@ -126,13 +111,13 @@ class _BrandCarEditorPageState extends State<BrandCarEditorPage> {
           ),
           Expanded(
             flex: 2,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final previewSize = editorWidgetPreviewSize(constraints);
-                return Column(
-                  children: [
-                    Expanded(
-                      child: Center(
+            child: Column(
+              children: [
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final previewSize = editorWidgetPreviewSize(constraints);
+                      return Center(
                         child: SizedBox.square(
                           dimension: previewSize,
                           child: BrandCarPreviewFrame(
@@ -145,11 +130,23 @@ class _BrandCarEditorPageState extends State<BrandCarEditorPage> {
                             ),
                           ),
                         ),
-                      ),
+                      );
+                    },
+                  ),
+                ),
+                WidgetPreviewButton(
+                  previewBuilder: (_) => BrandCarPreviewFrame(
+                    layoutId: widget.layoutId,
+                    contentPadding: EdgeInsets.zero,
+                    child: SavedWidgetArtwork(
+                      widget: widget.model,
+                      isEditable: false,
+                      layoutId: widget.layoutId,
                     ),
-                  ],
-                );
-              },
+                  ),
+                ),
+                const SizedBox(height: 8),
+              ],
             ),
           ),
           Expanded(

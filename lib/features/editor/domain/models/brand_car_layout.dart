@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 enum BrandCarElement { greeting, brand, car, location }
@@ -7,6 +8,14 @@ class WidgetElementPosition {
 
   final double x;
   final double y;
+
+  Map<String, dynamic> toJson() => {'x': x, 'y': y};
+
+  factory WidgetElementPosition.fromJson(Map<String, dynamic> json) =>
+      WidgetElementPosition(
+        (json['x'] as num).toDouble(),
+        (json['y'] as num).toDouble(),
+      );
 
   WidgetElementPosition movedBy(
     double dx,
@@ -51,6 +60,57 @@ class BrandCarLayout {
   final int? borderGradientIndex;
   final double borderOpacity;
   final double borderWidth;
+
+  Map<String, dynamic> toJson() => {
+    'greeting': greeting.toJson(),
+    'brand': brand.toJson(),
+    'car': car.toJson(),
+    'location': location.toJson(),
+    'brandScale': brandScale,
+    'carScale': carScale,
+    'carImageIndex': carImageIndex,
+    'carImageBytes': carImageBytes == null
+        ? null
+        : base64Encode(carImageBytes!),
+    'greetingNickname': greetingNickname,
+    'greetingFontIndex': greetingFontIndex,
+    'greetingColorValue': greetingColorValue,
+    'borderGradientIndex': borderGradientIndex,
+    'borderOpacity': borderOpacity,
+    'borderWidth': borderWidth,
+  };
+
+  factory BrandCarLayout.fromJson(Map<String, dynamic> json) {
+    const defaults = BrandCarLayout();
+    WidgetElementPosition position(
+      String key,
+      WidgetElementPosition fallback,
+    ) => json[key] == null
+        ? fallback
+        : WidgetElementPosition.fromJson(
+            Map<String, dynamic>.from(json[key] as Map),
+          );
+    return BrandCarLayout(
+      greeting: position('greeting', defaults.greeting),
+      brand: position('brand', defaults.brand),
+      car: position('car', defaults.car),
+      location: position('location', defaults.location),
+      brandScale: (json['brandScale'] as num?)?.toDouble() ?? 1,
+      carScale: (json['carScale'] as num?)?.toDouble() ?? 1,
+      carImageIndex: json['carImageIndex'] as int? ?? 0,
+      carImageBytes: json['carImageBytes'] == null
+          ? null
+          : base64Decode(json['carImageBytes'] as String),
+      greetingNickname:
+          json['greetingNickname'] as String? ?? defaults.greetingNickname,
+      greetingFontIndex: json['greetingFontIndex'] as int? ?? 0,
+      greetingColorValue:
+          json['greetingColorValue'] as int? ?? defaults.greetingColorValue,
+      borderGradientIndex: json['borderGradientIndex'] as int?,
+      borderOpacity: (json['borderOpacity'] as num?)?.toDouble() ?? 1,
+      borderWidth: (json['borderWidth'] as num?)?.toDouble() ?? 3,
+    );
+  }
 
   WidgetElementPosition positionFor(BrandCarElement element) =>
       switch (element) {

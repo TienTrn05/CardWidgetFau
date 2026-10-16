@@ -56,7 +56,7 @@ ios/
   Shared/
     Models/                  # Codable DTO/schema dùng chung app + extension
     Storage/                 # App Group container và version dữ liệu
-  CarWidgetExtension/        # Nguồn dự kiến; CHƯA là Xcode target
+  CarWidgetExtension/        # WidgetKit extension target (iOS 17+)
     Widgets/                 # WidgetBundle + Widget definitions
     Providers/               # TimelineProvider/AppIntentTimelineProvider
     Views/                   # SwiftUI widget views
@@ -84,7 +84,7 @@ Flutter lưu bản thiết kế có version (`schemaVersion`, `id`, `templateId`
 1. Đối chiếu Figma để chốt màn hình, navigation và phạm vi bản đầu.
 2. Thêm `flutter_bloc` (và thư viện cần thiết) bằng `flutter pub add`; tạo `app/` bootstrap, router và một feature đầu tiên.
 3. Chốt model widget và schema lưu trữ trước khi viết MethodChannel. Dùng tên channel/command có version, ví dụ `carwidget/widget_v1` với `saveSnapshot`, `deleteSnapshot`, `reloadWidgets`.
-4. Trên macOS/Xcode, thêm **Widget Extension target** vào `Runner.xcodeproj`; bật cùng App Group cho Runner và extension; đặt source ở `ios/CarWidgetExtension` và khai báo Target Membership. Đừng chỉ tạo file Swift trong thư mục rồi xem như target đã hoạt động.
+4. **Temporarily disabled:** WidgetKit source and the `CarWidgetExtension` target remain in the Xcode project for later study, but Runner does not embed the extension while App Group signing is unavailable. The Flutter export control and native bridge are disabled; CarPlay preview selection remains active.
 5. Tạo widget `systemSmall`, kiểm tra StandBy và CarPlay Simulator; xử lý background có thể tháo, chữ đủ lớn và thông tin đọc nhanh. Chỉ thêm App Intents/tương tác phù hợp sau khi kiểm tra trên xe/mô phỏng.
 6. Kiểm thử lưu/sửa/xoá, ảnh trong App Group, reload và dữ liệu cũ. Kiểm tra mua hàng, quyền ảnh và âm thanh riêng theo hành vi thực tế được chốt.
 
@@ -93,4 +93,4 @@ Flutter lưu bản thiết kế có version (`schemaVersion`, `id`, `templateId`
 - WidgetKit render bằng SwiftUI và có vòng đời riêng; BLoC chỉ chạy trong app Flutter.
 - CarPlay widget không cấp quyền thay thế màn hình chính hoặc dashboard của CarPlay. Một số thao tác widget phụ thuộc xe có màn hình cảm ứng và khả năng tích hợp CarPlay của app. [Apple: Adding StandBy and CarPlay support](https://developer.apple.com/documentation/widgetkit/adding-standby-and-carplay-support-to-your-widget).
 - Phát âm thanh khi kết nối CarPlay không nên được coi là chức năng mặc định của WidgetKit; cần xác minh API, quyền và chính sách Apple trước khi cam kết.
-- Repo hiện chưa có dependency BLoC, target WidgetKit, App Group entitlement hoặc native channel. Các folder này là khung triển khai, không phải chức năng đã chạy.
+- The WidgetKit source and versioned Flutter channel are retained but disabled pending App Group provisioning for both iOS targets. Flutter widget collections, saved layouts, CarPlay preview selections, sound choices, and the garage are stored in a versioned JSON file in the app's private support directory. Writes replace the file atomically and retain a backup; selected videos are copied into a persistent media directory and referenced by relative paths. This local storage is independent of WidgetKit and does not require an App Group. The extension requires iOS 17 or later.

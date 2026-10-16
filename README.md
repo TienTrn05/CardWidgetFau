@@ -1,11 +1,11 @@
 # CarWidget
 
-Dự án Flutter cho màn hình thiết kế widget, kết hợp Swift và WidgetKit để hiển thị widget trên iOS/CarPlay.
+A Flutter app for designing widgets, with Swift and WidgetKit support for the iPhone Home Screen.
 
 - [Cấu trúc thư mục, danh sách chức năng và ranh giới Flutter/Swift](docs/architecture.md)
 - Luồng UI hiện tại: **Loading → Buy → Widget / Sound / Card**, mở Settings từ nút bánh răng. Có thể bỏ qua Buy để khám phá giao diện.
 - Giao diện là bản tạm theo phạm vi yêu cầu; chưa đối chiếu được frame Figma vì link không truy cập được trong môi trường triển khai. Mẫu widget/card và dữ liệu hiển thị là dữ liệu minh họa.
-- Các lựa chọn được giữ trong phiên sử dụng; chưa có lưu trữ, thanh toán, phát âm thanh, BLoC, native bridge hay WidgetKit target hoạt động.
+- My Widgets stays in memory in the Flutter app. iPhone Widget export is temporarily disabled while App Group signing is unavailable; the WidgetKit source remains in the project for later reactivation. Payments and BLoC are not implemented.
 
 ## Bắt đầu
 
@@ -14,4 +14,6 @@ flutter pub get
 flutter run
 ```
 
-WidgetKit extension cần được thêm vào `ios/Runner.xcodeproj` bằng Xcode trên macOS. Xem các bước trong tài liệu kiến trúc.
+## Add an iPhone widget
+
+iPhone Widget export is temporarily disabled until the Apple Developer team can provision the App Group for Runner and the WidgetKit extension. The extension source and Flutter export code remain in the project for later reactivation. CarPlay preview selection remains available.

@@ -2,10 +2,13 @@ import 'package:carwidget/app/theme/app_theme.dart';
 import 'package:carwidget/features/catalog/data/models/logo_widget_model.dart';
 import 'package:carwidget/features/catalog/presentation/pages/logo_widget_editor_page.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/slide_right_transition.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/logo_widget_content.dart';
 import 'package:carwidget/features/my_widgets/presentation/widgets/my_widgets_section.dart'
     show addLogoWidgetToMyWidgets;
 import 'package:flutter/material.dart';
+
+const _previewItemCount = 6;
 
 class LogosSection extends StatelessWidget {
   const LogosSection({super.key});
@@ -45,7 +48,9 @@ class LogosSection extends StatelessWidget {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               clipBehavior: Clip.none,
-              itemCount: logoWidgetModels.length,
+              itemCount: logoWidgetModels.length < _previewItemCount
+                  ? logoWidgetModels.length
+                  : _previewItemCount,
               separatorBuilder: (_, _) => const SizedBox(width: 12),
               itemBuilder: (context, index) => SizedBox.square(
                 dimension: cardSize,
@@ -137,10 +142,8 @@ class _LogosPageState extends State<LogosPage> {
             Expanded(
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  final cardSize = carPlayWidgetPreviewSize(
-                    context,
-                    constraints.maxWidth - 48,
-                  );
+                  final cardWidth = (constraints.maxWidth - 48 - 24) / 3;
+                  final itemHeight = cardWidth + 24;
                   if (filteredLogos.isEmpty) {
                     return const Center(
                       child: Text(
@@ -152,17 +155,15 @@ class _LogosPageState extends State<LogosPage> {
                   return GridView.builder(
                     padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
+                      crossAxisCount: 3,
                       crossAxisSpacing: 12,
-                      mainAxisSpacing: 18,
-                      mainAxisExtent: cardSize,
+                      mainAxisSpacing: 14,
+                      mainAxisExtent: itemHeight,
                     ),
                     itemCount: filteredLogos.length,
-                    itemBuilder: (context, index) => Center(
-                      child: SizedBox.square(
-                        dimension: cardSize,
-                        child: _LogoTile(model: filteredLogos[index]),
-                      ),
+                    itemBuilder: (context, index) => _LogoGridTile(
+                      model: filteredLogos[index],
+                      cardWidth: cardWidth,
                     ),
                   );
                 },
@@ -185,20 +186,7 @@ class _LogoTile extends StatelessWidget {
     color: const Color(0xFF252D33),
     borderRadius: BorderRadius.circular(24),
     child: InkWell(
-      onTap: () => showDialog<void>(
-        context: context,
-        builder: (_) => Dialog.fullscreen(
-          backgroundColor: AppColors.background,
-          child: LogoWidgetEditorPage(
-            model: model,
-            onAdd: (result) => addLogoWidgetToMyWidgets(
-              model,
-              borderGradientIndex: result.borderGradientIndex,
-              borderOpacity: result.borderOpacity,
-            ),
-          ),
-        ),
-      ),
+      onTap: () => _openLogoEditor(context, model),
       borderRadius: BorderRadius.circular(24),
       child: Ink(
         decoration: BoxDecoration(
@@ -211,26 +199,101 @@ class _LogoTile extends StatelessWidget {
   );
 }
 
+class _LogoGridTile extends StatelessWidget {
+  const _LogoGridTile({required this.model, required this.cardWidth});
+
+  final LogoWidgetModel model;
+  final double cardWidth;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    width: cardWidth,
+    child: Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _openLogoEditor(context, model),
+        borderRadius: BorderRadius.circular(16),
+        child: Column(
+          children: [
+            SizedBox.square(
+              dimension: cardWidth,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: const Color(0xFF252D33),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: const Color(0xFF303940)),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: LogoArtwork(model: model),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 4),
+            SizedBox(
+              height: 18,
+              child: Text(
+                model.nameLogo,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+void _openLogoEditor(BuildContext context, LogoWidgetModel model) {
+  showSlideRightDialog<void>(
+    context: context,
+    builder: (_) => Dialog.fullscreen(
+      backgroundColor: AppColors.background,
+      child: LogoWidgetEditorPage(
+        model: model,
+        onAdd: (result) => addLogoWidgetToMyWidgets(
+          model,
+          borderGradientIndex: result.borderGradientIndex,
+          borderOpacity: result.borderOpacity,
+        ),
+      ),
+    ),
+  );
+}
+
 class _SeeAllButton extends StatelessWidget {
   const _SeeAllButton({required this.onTap});
 
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => Material(
-    color: AppColors.surface,
-    borderRadius: BorderRadius.circular(22),
-    child: InkWell(
-      onTap: onTap,
+  Widget build(BuildContext context) => Transform.translate(
+    offset: const Offset(6, 0),
+    child: Material(
+      color: AppColors.surface,
       borderRadius: BorderRadius.circular(22),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 8),
-        child: Text(
-          'See All',
-          style: const TextStyle(
-            color: AppColors.green,
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(22),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 9.5, vertical: 4.5),
+          child: Text(
+            'See All',
+            style: const TextStyle(
+              color: AppColors.green,
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),

@@ -1,7 +1,9 @@
 import 'package:carwidget/app/theme/app_theme.dart';
 import 'package:carwidget/features/catalog/data/models/logo_widget_model.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/widget_preview_button.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/logo_widget_content.dart';
+import 'package:carwidget/features/settings/presentation/widgets/tutorial_sheet.dart';
 import 'package:flutter/material.dart';
 
 class LogoWidgetEditResult {
@@ -69,7 +71,7 @@ class _LogoWidgetEditorPageState extends State<LogoWidgetEditorPage> {
                     ),
                     IconButton(
                       tooltip: 'Widget information',
-                      onPressed: () => _showInfo(context),
+                      onPressed: () => showTutorialSheet(context),
                       icon: const Icon(
                         Icons.info_rounded,
                         color: AppColors.green,
@@ -82,20 +84,34 @@ class _LogoWidgetEditorPageState extends State<LogoWidgetEditorPage> {
             ),
             Expanded(
               flex: 2,
-              child: LayoutBuilder(
-                builder: (context, box) {
-                  final size = editorWidgetPreviewSize(box);
-                  return Center(
-                    child: SizedBox.square(
-                      dimension: size,
-                      child: _LogoPreviewCard(
-                        model: widget.model,
-                        gradientIndex: _gradientIndex,
-                        opacity: _borderOpacity,
-                      ),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: LayoutBuilder(
+                      builder: (context, box) {
+                        final size = editorWidgetPreviewSize(box);
+                        return Center(
+                          child: SizedBox.square(
+                            dimension: size,
+                            child: _LogoPreviewCard(
+                              model: widget.model,
+                              gradientIndex: _gradientIndex,
+                              opacity: _borderOpacity,
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
+                  ),
+                  WidgetPreviewButton(
+                    previewBuilder: (_) => _LogoPreviewCard(
+                      model: widget.model,
+                      gradientIndex: _gradientIndex,
+                      opacity: _borderOpacity,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
               ),
             ),
             Expanded(
@@ -140,7 +156,6 @@ class _LogoWidgetEditorPageState extends State<LogoWidgetEditorPage> {
                                   _GradientSwatch(
                                     colors: logoBorderGradients[index],
                                     selected: _gradientIndex == index,
-                                    opacity: _borderOpacity,
                                     onTap: () =>
                                         setState(() => _gradientIndex = index),
                                   ),
@@ -225,25 +240,6 @@ class _LogoWidgetEditorPageState extends State<LogoWidgetEditorPage> {
       Navigator.of(context).pop();
     }
   }
-
-  void _showInfo(BuildContext context) => showDialog<void>(
-    context: context,
-    builder: (context) => AlertDialog(
-      backgroundColor: AppColors.surface,
-      title: const Text('Widget Preview'),
-      content: Text(
-        widget.isEditingSavedWidget
-            ? 'Changes to this logo are saved to My Widgets.'
-            : 'This preview shows how your logo widget will look. Add it to My Widget to save it.',
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Got it'),
-        ),
-      ],
-    ),
-  );
 }
 
 class _LogoPreviewCard extends StatelessWidget {
@@ -293,12 +289,10 @@ class _GradientSwatch extends StatelessWidget {
     required this.selected,
     required this.onTap,
     this.colors,
-    this.opacity = 1,
   });
 
   final List<Color>? colors;
   final bool selected;
-  final double opacity;
   final VoidCallback onTap;
 
   @override
@@ -320,13 +314,7 @@ class _GradientSwatch extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: colors == null ? AppColors.surface : null,
-          gradient: colors == null
-              ? null
-              : LinearGradient(
-                  colors: colors!
-                      .map((color) => color.withValues(alpha: opacity))
-                      .toList(),
-                ),
+          gradient: colors == null ? null : LinearGradient(colors: colors!),
         ),
         child: colors == null
             ? const Icon(Icons.remove_rounded, color: Colors.white70)

@@ -1,10 +1,15 @@
 import 'package:carwidget/app/theme/app_theme.dart';
+import 'package:carwidget/core/storage/local_state_store.dart';
 import 'package:carwidget/features/catalog/data/models/saved_widget_model.dart';
-import 'package:carwidget/features/catalog/data/models/widget_type.dart';
 import 'package:carwidget/features/catalog/presentation/pages/video_widget_editor_page.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
 import 'package:carwidget/features/my_widgets/presentation/widgets/my_widgets_section.dart'
-    show savedWidgetsListenable, showSavedWidgetPreview;
+    show
+        SavedWidgetArtwork,
+        addVideoWidgetToLibrary,
+        removeVideoWidgetFromLibrary,
+        showVideoWidgetPreview,
+        videoWidgetsListenable;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -14,11 +19,9 @@ class VideoWidgetsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       ValueListenableBuilder<List<SavedWidgetModel>>(
-        valueListenable: savedWidgetsListenable,
+        valueListenable: videoWidgetsListenable,
         builder: (context, widgets, _) {
-          final videoWidgets = widgets
-              .where((widget) => widget.type == WidgetType.video)
-              .toList();
+          final videoWidgets = widgets;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -96,11 +99,9 @@ class VideoWidgetsPage extends StatelessWidget {
     body: SafeArea(
       top: false,
       child: ValueListenableBuilder<List<SavedWidgetModel>>(
-        valueListenable: savedWidgetsListenable,
+        valueListenable: videoWidgetsListenable,
         builder: (context, widgets, _) {
-          final videoWidgets = widgets
-              .where((widget) => widget.type == WidgetType.video)
-              .toList();
+          final videoWidgets = widgets;
           return LayoutBuilder(
             builder: (context, constraints) {
               final cardSize = carPlayWidgetPreviewSize(
@@ -116,14 +117,48 @@ class VideoWidgetsPage extends StatelessWidget {
                   mainAxisExtent: cardSize,
                 ),
                 itemCount: videoWidgets.length + 1,
-                itemBuilder: (context, index) => Center(
-                  child: SizedBox.square(
-                    dimension: cardSize,
-                    child: index == 0
-                        ? const _AddVideoWidgetTile()
-                        : _VideoWidgetTile(widget: videoWidgets[index - 1]),
-                  ),
-                ),
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return Center(
+                      child: SizedBox.square(
+                        dimension: cardSize,
+                        child: const _AddVideoWidgetTile(),
+                      ),
+                    );
+                  }
+
+                  final videoWidget = videoWidgets[index - 1];
+                  return Center(
+                    child: SizedBox.square(
+                      dimension: cardSize,
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: _VideoWidgetTile(widget: videoWidget),
+                          ),
+                          Positioned(
+                            top: 7,
+                            right: 7,
+                            child: Material(
+                              color: const Color(0xCC080D12),
+                              shape: const CircleBorder(),
+                              child: InkWell(
+                                customBorder: const CircleBorder(),
+                                onTap: () => removeVideoWidgetFromLibrary(
+                                  videoWidget.id,
+                                ),
+                                child: const SizedBox.square(
+                                  dimension: 25,
+                                  child: Icon(Icons.close_rounded, size: 17),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               );
             },
           );
@@ -139,20 +174,23 @@ class _SeeAllButton extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => Material(
-    color: AppColors.surface,
-    borderRadius: BorderRadius.circular(22),
-    child: InkWell(
-      onTap: onTap,
+  Widget build(BuildContext context) => Transform.translate(
+    offset: const Offset(6, 0),
+    child: Material(
+      color: AppColors.surface,
       borderRadius: BorderRadius.circular(22),
-      child: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 17, vertical: 8),
-        child: Text(
-          'See All',
-          style: TextStyle(
-            color: AppColors.green,
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(22),
+        child: const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 9.5, vertical: 4.5),
+          child: Text(
+            'See All',
+            style: TextStyle(
+              color: AppColors.green,
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),
@@ -170,55 +208,34 @@ class _VideoWidgetTile extends StatelessWidget {
     color: const Color(0xFF252D33),
     borderRadius: BorderRadius.circular(24),
     child: InkWell(
-      onTap: () => showSavedWidgetPreview(context, widget),
+      onTap: () => showVideoWidgetPreview(context, widget),
       borderRadius: BorderRadius.circular(24),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
-        child: _VideoThumbnail(widget: widget),
-      ),
-    ),
-  );
-}
-
-class _VideoThumbnail extends StatelessWidget {
-  const _VideoThumbnail({required this.widget});
-
-  final SavedWidgetModel widget;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    color: const Color(0xFF252D33),
-    child: Stack(
-      fit: StackFit.expand,
-      children: [
-        if (widget.videoThumbnail != null)
-          Image.memory(widget.videoThumbnail!, fit: BoxFit.cover)
-        else
-          const Center(
-            child: Icon(
-              Icons.play_circle_fill_rounded,
-              color: AppColors.green,
-              size: 48,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            SavedWidgetArtwork(widget: widget),
+            Positioned(
+              left: 10,
+              right: 10,
+              bottom: 8,
+              child: Text(
+                widget.videoName ?? widget.label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  shadows: [Shadow(color: Colors.black, blurRadius: 5)],
+                ),
+              ),
             ),
-          ),
-        Positioned(
-          left: 10,
-          right: 10,
-          bottom: 8,
-          child: Text(
-            widget.videoName ?? widget.label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              shadows: [Shadow(color: Colors.black, blurRadius: 5)],
-            ),
-          ),
+          ],
         ),
-      ],
+      ),
     ),
   );
 }
@@ -244,35 +261,35 @@ class _AddVideoWidgetTile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                width: 84,
-                height: 68,
+                width: 56,
+                height: 48,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
                     Transform.rotate(
                       angle: .12,
                       child: Container(
-                        width: 76,
-                        height: 56,
+                        width: 50,
+                        height: 38,
                         decoration: BoxDecoration(
                           color: const Color(0xFF087453),
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                     ),
                     Transform.rotate(
                       angle: -.12,
                       child: Container(
-                        width: 76,
-                        height: 56,
+                        width: 50,
+                        height: 38,
                         decoration: BoxDecoration(
                           color: AppColors.green,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Icon(
                           Icons.play_arrow_rounded,
                           color: AppColors.background,
-                          size: 38,
+                          size: 24,
                         ),
                       ),
                     ),
@@ -282,7 +299,7 @@ class _AddVideoWidgetTile extends StatelessWidget {
               const SizedBox(height: 16),
               const Text(
                 'Add Widget',
-                style: TextStyle(color: AppColors.muted, fontSize: 18),
+                style: TextStyle(color: Colors.white, fontSize: 18),
               ),
             ],
           ),
@@ -298,21 +315,28 @@ class _AddVideoWidgetTile extends StatelessWidget {
       );
       if (selectedVideo == null || !context.mounted) return;
 
-      final wasAdded = await Navigator.of(context).push<bool>(
+      final localVideoPath = await LocalStateStore.instance.importVideo(
+        selectedVideo.path,
+      );
+      if (!context.mounted) return;
+
+      await Navigator.of(context).push<bool>(
         MaterialPageRoute<bool>(
           builder: (_) => VideoWidgetEditorPage(
-            videoPath: selectedVideo.path,
+            videoPath: localVideoPath,
             videoName: selectedVideo.name,
+            onAddVideoWidget: (startMs, durationMs, thumbnail) {
+              addVideoWidgetToLibrary(
+                videoPath: localVideoPath,
+                videoName: selectedVideo.name,
+                videoStartMs: startMs,
+                videoDurationMs: durationMs,
+                videoThumbnail: thumbnail,
+              );
+            },
           ),
         ),
       );
-      if (!context.mounted || wasAdded != true) return;
-
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(content: Text('Video added to My Widgets.')),
-        );
     } catch (_) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context)
@@ -339,7 +363,7 @@ class _VideoWidgetDashedBorderPainter extends CustomPainter {
     final paint = Paint()
       ..color = AppColors.green
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.5;
+      ..strokeWidth = 1.2;
 
     for (final metric in path.computeMetrics()) {
       var distance = 0.0;

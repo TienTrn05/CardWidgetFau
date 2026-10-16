@@ -65,6 +65,7 @@ flutter:
     - assets/data/settings.json
     - assets/data/widget_tutorial.json
     - assets/images/
+    - assets/sounds/
     - ios/Runner/Assets.xcassets/CarIcon.appiconset/Icon-App-60x60@3x.png
     - ios/Runner/Assets.xcassets/AppIcon1.appiconset/Icon-App-60x60@3x.png
     - ios/Runner/Assets.xcassets/AppIcon2.appiconset/Icon-App-60x60@3x.png

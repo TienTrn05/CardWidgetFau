@@ -1,0 +1,3000 @@
+{
+  "description": "Bundled offline image snapshot. Country flags include all FlagCDN countries and territories, excluding US states, EU, and UN. The selectable football catalog contains only 2026/27 UEFA Champions League and Europa League league-phase clubs. Retired entries are retained only for saved widget compatibility.",
+  "season": "2026-27",
+  "competitionSources": [
+    "https://www.uefa.com/uefachampionsleague/news/02a8-216cd740d41f-fd3b45ac4a0f-1000--champions-league-league-phase-draw-all-36-teams-learn-their/",
+    "https://www.uefa.com/uefaeuropaleague/news/02a8-216e9cafba52-f039617d7982-1000--2026-27-europa-league-league-phase-draw-contenders-learn/"
+  ],
+  "sources": [
+    {
+      "asset": "assets/images/flag_af.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Afghanistan",
+      "countryCode": "af",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/af.png"
+    },
+    {
+      "asset": "assets/images/flag_al.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Albania",
+      "countryCode": "al",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/al.png"
+    },
+    {
+      "asset": "assets/images/flag_dz.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Algeria",
+      "countryCode": "dz",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/dz.png"
+    },
+    {
+      "asset": "assets/images/flag_as.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "American Samoa",
+      "countryCode": "as",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/as.png"
+    },
+    {
+      "asset": "assets/images/flag_ad.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Andorra",
+      "countryCode": "ad",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ad.png"
+    },
+    {
+      "asset": "assets/images/flag_ao.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Angola",
+      "countryCode": "ao",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ao.png"
+    },
+    {
+      "asset": "assets/images/flag_ai.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Anguilla",
+      "countryCode": "ai",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ai.png"
+    },
+    {
+      "asset": "assets/images/flag_aq.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Antarctica",
+      "countryCode": "aq",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/aq.png"
+    },
+    {
+      "asset": "assets/images/flag_ag.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Antigua and Barbuda",
+      "countryCode": "ag",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ag.png"
+    },
+    {
+      "asset": "assets/images/flag_ar.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Argentina",
+      "countryCode": "ar",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ar.png"
+    },
+    {
+      "asset": "assets/images/flag_am.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Armenia",
+      "countryCode": "am",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/am.png"
+    },
+    {
+      "asset": "assets/images/flag_aw.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Aruba",
+      "countryCode": "aw",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/aw.png"
+    },
+    {
+      "asset": "assets/images/flag_au.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Australia",
+      "countryCode": "au",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/au.png"
+    },
+    {
+      "asset": "assets/images/flag_at.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Austria",
+      "countryCode": "at",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/at.png"
+    },
+    {
+      "asset": "assets/images/flag_az.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Azerbaijan",
+      "countryCode": "az",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/az.png"
+    },
+    {
+      "asset": "assets/images/flag_bs.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Bahamas",
+      "countryCode": "bs",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/bs.png"
+    },
+    {
+      "asset": "assets/images/flag_bh.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Bahrain",
+      "countryCode": "bh",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/bh.png"
+    },
+    {
+      "asset": "assets/images/flag_bd.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Bangladesh",
+      "countryCode": "bd",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/bd.png"
+    },
+    {
+      "asset": "assets/images/flag_bb.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Barbados",
+      "countryCode": "bb",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/bb.png"
+    },
+    {
+      "asset": "assets/images/flag_by.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Belarus",
+      "countryCode": "by",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/by.png"
+    },
+    {
+      "asset": "assets/images/flag_be.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Belgium",
+      "countryCode": "be",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/be.png"
+    },
+    {
+      "asset": "assets/images/flag_bz.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Belize",
+      "countryCode": "bz",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/bz.png"
+    },
+    {
+      "asset": "assets/images/flag_bj.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Benin",
+      "countryCode": "bj",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/bj.png"
+    },
+    {
+      "asset": "assets/images/flag_bm.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Bermuda",
+      "countryCode": "bm",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/bm.png"
+    },
+    {
+      "asset": "assets/images/flag_bt.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Bhutan",
+      "countryCode": "bt",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/bt.png"
+    },
+    {
+      "asset": "assets/images/flag_bo.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Bolivia",
+      "countryCode": "bo",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/bo.png"
+    },
+    {
+      "asset": "assets/images/flag_ba.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Bosnia and Herzegovina",
+      "countryCode": "ba",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ba.png"
+    },
+    {
+      "asset": "assets/images/flag_bw.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Botswana",
+      "countryCode": "bw",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/bw.png"
+    },
+    {
+      "asset": "assets/images/flag_bv.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Bouvet Island",
+      "countryCode": "bv",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/bv.png"
+    },
+    {
+      "asset": "assets/images/flag_br.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Brazil",
+      "countryCode": "br",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/br.png"
+    },
+    {
+      "asset": "assets/images/flag_io.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "British Indian Ocean Territory",
+      "countryCode": "io",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/io.png"
+    },
+    {
+      "asset": "assets/images/flag_vg.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "British Virgin Islands",
+      "countryCode": "vg",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/vg.png"
+    },
+    {
+      "asset": "assets/images/flag_bn.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Brunei",
+      "countryCode": "bn",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/bn.png"
+    },
+    {
+      "asset": "assets/images/flag_bg.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Bulgaria",
+      "countryCode": "bg",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/bg.png"
+    },
+    {
+      "asset": "assets/images/flag_bf.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Burkina Faso",
+      "countryCode": "bf",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/bf.png"
+    },
+    {
+      "asset": "assets/images/flag_bi.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Burundi",
+      "countryCode": "bi",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/bi.png"
+    },
+    {
+      "asset": "assets/images/flag_kh.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Cambodia",
+      "countryCode": "kh",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/kh.png"
+    },
+    {
+      "asset": "assets/images/flag_cm.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Cameroon",
+      "countryCode": "cm",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/cm.png"
+    },
+    {
+      "asset": "assets/images/flag_ca.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Canada",
+      "countryCode": "ca",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ca.png"
+    },
+    {
+      "asset": "assets/images/flag_cv.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Cape Verde",
+      "countryCode": "cv",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/cv.png"
+    },
+    {
+      "asset": "assets/images/flag_bq.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Caribbean Netherlands",
+      "countryCode": "bq",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/bq.png"
+    },
+    {
+      "asset": "assets/images/flag_ky.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Cayman Islands",
+      "countryCode": "ky",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ky.png"
+    },
+    {
+      "asset": "assets/images/flag_cf.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Central African Republic",
+      "countryCode": "cf",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/cf.png"
+    },
+    {
+      "asset": "assets/images/flag_td.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Chad",
+      "countryCode": "td",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/td.png"
+    },
+    {
+      "asset": "assets/images/flag_cl.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Chile",
+      "countryCode": "cl",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/cl.png"
+    },
+    {
+      "asset": "assets/images/flag_cn.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "China",
+      "countryCode": "cn",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/cn.png"
+    },
+    {
+      "asset": "assets/images/flag_cx.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Christmas Island",
+      "countryCode": "cx",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/cx.png"
+    },
+    {
+      "asset": "assets/images/flag_cc.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Cocos (Keeling) Islands",
+      "countryCode": "cc",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/cc.png"
+    },
+    {
+      "asset": "assets/images/flag_co.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Colombia",
+      "countryCode": "co",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/co.png"
+    },
+    {
+      "asset": "assets/images/flag_km.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Comoros",
+      "countryCode": "km",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/km.png"
+    },
+    {
+      "asset": "assets/images/flag_ck.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Cook Islands",
+      "countryCode": "ck",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ck.png"
+    },
+    {
+      "asset": "assets/images/flag_cr.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Costa Rica",
+      "countryCode": "cr",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/cr.png"
+    },
+    {
+      "asset": "assets/images/flag_hr.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Croatia",
+      "countryCode": "hr",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/hr.png"
+    },
+    {
+      "asset": "assets/images/flag_cu.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Cuba",
+      "countryCode": "cu",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/cu.png"
+    },
+    {
+      "asset": "assets/images/flag_cw.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Curaçao",
+      "countryCode": "cw",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/cw.png"
+    },
+    {
+      "asset": "assets/images/flag_cy.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Cyprus",
+      "countryCode": "cy",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/cy.png"
+    },
+    {
+      "asset": "assets/images/flag_cz.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Czechia",
+      "countryCode": "cz",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/cz.png"
+    },
+    {
+      "asset": "assets/images/flag_ci.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Côte d'Ivoire (Ivory Coast)",
+      "countryCode": "ci",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ci.png"
+    },
+    {
+      "asset": "assets/images/flag_dk.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Denmark",
+      "countryCode": "dk",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/dk.png"
+    },
+    {
+      "asset": "assets/images/flag_dj.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Djibouti",
+      "countryCode": "dj",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/dj.png"
+    },
+    {
+      "asset": "assets/images/flag_dm.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Dominica",
+      "countryCode": "dm",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/dm.png"
+    },
+    {
+      "asset": "assets/images/flag_do.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Dominican Republic",
+      "countryCode": "do",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/do.png"
+    },
+    {
+      "asset": "assets/images/flag_cd.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "DR Congo",
+      "countryCode": "cd",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/cd.png"
+    },
+    {
+      "asset": "assets/images/flag_ec.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Ecuador",
+      "countryCode": "ec",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ec.png"
+    },
+    {
+      "asset": "assets/images/flag_eg.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Egypt",
+      "countryCode": "eg",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/eg.png"
+    },
+    {
+      "asset": "assets/images/flag_sv.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "El Salvador",
+      "countryCode": "sv",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/sv.png"
+    },
+    {
+      "asset": "assets/images/flag_gb-eng.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "England",
+      "countryCode": "gb-eng",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/gb-eng.png"
+    },
+    {
+      "asset": "assets/images/flag_gq.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Equatorial Guinea",
+      "countryCode": "gq",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/gq.png"
+    },
+    {
+      "asset": "assets/images/flag_er.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Eritrea",
+      "countryCode": "er",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/er.png"
+    },
+    {
+      "asset": "assets/images/flag_ee.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Estonia",
+      "countryCode": "ee",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ee.png"
+    },
+    {
+      "asset": "assets/images/flag_sz.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Eswatini (Swaziland)",
+      "countryCode": "sz",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/sz.png"
+    },
+    {
+      "asset": "assets/images/flag_et.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Ethiopia",
+      "countryCode": "et",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/et.png"
+    },
+    {
+      "asset": "assets/images/flag_fk.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Falkland Islands",
+      "countryCode": "fk",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/fk.png"
+    },
+    {
+      "asset": "assets/images/flag_fo.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Faroe Islands",
+      "countryCode": "fo",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/fo.png"
+    },
+    {
+      "asset": "assets/images/flag_fj.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Fiji",
+      "countryCode": "fj",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/fj.png"
+    },
+    {
+      "asset": "assets/images/flag_fi.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Finland",
+      "countryCode": "fi",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/fi.png"
+    },
+    {
+      "asset": "assets/images/flag_fr.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "France",
+      "countryCode": "fr",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/fr.png"
+    },
+    {
+      "asset": "assets/images/flag_gf.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "French Guiana",
+      "countryCode": "gf",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/gf.png"
+    },
+    {
+      "asset": "assets/images/flag_pf.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "French Polynesia",
+      "countryCode": "pf",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/pf.png"
+    },
+    {
+      "asset": "assets/images/flag_tf.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "French Southern and Antarctic Lands",
+      "countryCode": "tf",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/tf.png"
+    },
+    {
+      "asset": "assets/images/flag_ga.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Gabon",
+      "countryCode": "ga",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ga.png"
+    },
+    {
+      "asset": "assets/images/flag_gm.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Gambia",
+      "countryCode": "gm",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/gm.png"
+    },
+    {
+      "asset": "assets/images/flag_ge.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Georgia",
+      "countryCode": "ge",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ge.png"
+    },
+    {
+      "asset": "assets/images/flag_de.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Germany",
+      "countryCode": "de",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/de.png"
+    },
+    {
+      "asset": "assets/images/flag_gh.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Ghana",
+      "countryCode": "gh",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/gh.png"
+    },
+    {
+      "asset": "assets/images/flag_gi.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Gibraltar",
+      "countryCode": "gi",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/gi.png"
+    },
+    {
+      "asset": "assets/images/flag_gr.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Greece",
+      "countryCode": "gr",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/gr.png"
+    },
+    {
+      "asset": "assets/images/flag_gl.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Greenland",
+      "countryCode": "gl",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/gl.png"
+    },
+    {
+      "asset": "assets/images/flag_gd.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Grenada",
+      "countryCode": "gd",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/gd.png"
+    },
+    {
+      "asset": "assets/images/flag_gp.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Guadeloupe",
+      "countryCode": "gp",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/gp.png"
+    },
+    {
+      "asset": "assets/images/flag_gu.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Guam",
+      "countryCode": "gu",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/gu.png"
+    },
+    {
+      "asset": "assets/images/flag_gt.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Guatemala",
+      "countryCode": "gt",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/gt.png"
+    },
+    {
+      "asset": "assets/images/flag_gg.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Guernsey",
+      "countryCode": "gg",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/gg.png"
+    },
+    {
+      "asset": "assets/images/flag_gn.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Guinea",
+      "countryCode": "gn",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/gn.png"
+    },
+    {
+      "asset": "assets/images/flag_gw.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Guinea-Bissau",
+      "countryCode": "gw",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/gw.png"
+    },
+    {
+      "asset": "assets/images/flag_gy.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Guyana",
+      "countryCode": "gy",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/gy.png"
+    },
+    {
+      "asset": "assets/images/flag_ht.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Haiti",
+      "countryCode": "ht",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ht.png"
+    },
+    {
+      "asset": "assets/images/flag_hm.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Heard Island and McDonald Islands",
+      "countryCode": "hm",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/hm.png"
+    },
+    {
+      "asset": "assets/images/flag_hn.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Honduras",
+      "countryCode": "hn",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/hn.png"
+    },
+    {
+      "asset": "assets/images/flag_hk.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Hong Kong",
+      "countryCode": "hk",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/hk.png"
+    },
+    {
+      "asset": "assets/images/flag_hu.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Hungary",
+      "countryCode": "hu",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/hu.png"
+    },
+    {
+      "asset": "assets/images/flag_is.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Iceland",
+      "countryCode": "is",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/is.png"
+    },
+    {
+      "asset": "assets/images/flag_in.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "India",
+      "countryCode": "in",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/in.png"
+    },
+    {
+      "asset": "assets/images/flag_id.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Indonesia",
+      "countryCode": "id",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/id.png"
+    },
+    {
+      "asset": "assets/images/flag_ir.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Iran",
+      "countryCode": "ir",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ir.png"
+    },
+    {
+      "asset": "assets/images/flag_iq.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Iraq",
+      "countryCode": "iq",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/iq.png"
+    },
+    {
+      "asset": "assets/images/flag_ie.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Ireland",
+      "countryCode": "ie",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ie.png"
+    },
+    {
+      "asset": "assets/images/flag_im.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Isle of Man",
+      "countryCode": "im",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/im.png"
+    },
+    {
+      "asset": "assets/images/flag_il.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Israel",
+      "countryCode": "il",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/il.png"
+    },
+    {
+      "asset": "assets/images/flag_it.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Italy",
+      "countryCode": "it",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/it.png"
+    },
+    {
+      "asset": "assets/images/flag_jm.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Jamaica",
+      "countryCode": "jm",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/jm.png"
+    },
+    {
+      "asset": "assets/images/flag_jp.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Japan",
+      "countryCode": "jp",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/jp.png"
+    },
+    {
+      "asset": "assets/images/flag_je.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Jersey",
+      "countryCode": "je",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/je.png"
+    },
+    {
+      "asset": "assets/images/flag_jo.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Jordan",
+      "countryCode": "jo",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/jo.png"
+    },
+    {
+      "asset": "assets/images/flag_kz.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Kazakhstan",
+      "countryCode": "kz",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/kz.png"
+    },
+    {
+      "asset": "assets/images/flag_ke.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Kenya",
+      "countryCode": "ke",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ke.png"
+    },
+    {
+      "asset": "assets/images/flag_ki.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Kiribati",
+      "countryCode": "ki",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ki.png"
+    },
+    {
+      "asset": "assets/images/flag_xk.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Kosovo",
+      "countryCode": "xk",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/xk.png"
+    },
+    {
+      "asset": "assets/images/flag_kw.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Kuwait",
+      "countryCode": "kw",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/kw.png"
+    },
+    {
+      "asset": "assets/images/flag_kg.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Kyrgyzstan",
+      "countryCode": "kg",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/kg.png"
+    },
+    {
+      "asset": "assets/images/flag_la.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Laos",
+      "countryCode": "la",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/la.png"
+    },
+    {
+      "asset": "assets/images/flag_lv.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Latvia",
+      "countryCode": "lv",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/lv.png"
+    },
+    {
+      "asset": "assets/images/flag_lb.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Lebanon",
+      "countryCode": "lb",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/lb.png"
+    },
+    {
+      "asset": "assets/images/flag_ls.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Lesotho",
+      "countryCode": "ls",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ls.png"
+    },
+    {
+      "asset": "assets/images/flag_lr.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Liberia",
+      "countryCode": "lr",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/lr.png"
+    },
+    {
+      "asset": "assets/images/flag_ly.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Libya",
+      "countryCode": "ly",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ly.png"
+    },
+    {
+      "asset": "assets/images/flag_li.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Liechtenstein",
+      "countryCode": "li",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/li.png"
+    },
+    {
+      "asset": "assets/images/flag_lt.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Lithuania",
+      "countryCode": "lt",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/lt.png"
+    },
+    {
+      "asset": "assets/images/flag_lu.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Luxembourg",
+      "countryCode": "lu",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/lu.png"
+    },
+    {
+      "asset": "assets/images/flag_mo.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Macau",
+      "countryCode": "mo",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/mo.png"
+    },
+    {
+      "asset": "assets/images/flag_mg.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Madagascar",
+      "countryCode": "mg",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/mg.png"
+    },
+    {
+      "asset": "assets/images/flag_mw.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Malawi",
+      "countryCode": "mw",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/mw.png"
+    },
+    {
+      "asset": "assets/images/flag_my.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Malaysia",
+      "countryCode": "my",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/my.png"
+    },
+    {
+      "asset": "assets/images/flag_mv.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Maldives",
+      "countryCode": "mv",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/mv.png"
+    },
+    {
+      "asset": "assets/images/flag_ml.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Mali",
+      "countryCode": "ml",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ml.png"
+    },
+    {
+      "asset": "assets/images/flag_mt.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Malta",
+      "countryCode": "mt",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/mt.png"
+    },
+    {
+      "asset": "assets/images/flag_mh.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Marshall Islands",
+      "countryCode": "mh",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/mh.png"
+    },
+    {
+      "asset": "assets/images/flag_mq.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Martinique",
+      "countryCode": "mq",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/mq.png"
+    },
+    {
+      "asset": "assets/images/flag_mr.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Mauritania",
+      "countryCode": "mr",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/mr.png"
+    },
+    {
+      "asset": "assets/images/flag_mu.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Mauritius",
+      "countryCode": "mu",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/mu.png"
+    },
+    {
+      "asset": "assets/images/flag_yt.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Mayotte",
+      "countryCode": "yt",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/yt.png"
+    },
+    {
+      "asset": "assets/images/flag_mx.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Mexico",
+      "countryCode": "mx",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/mx.png"
+    },
+    {
+      "asset": "assets/images/flag_fm.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Micronesia",
+      "countryCode": "fm",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/fm.png"
+    },
+    {
+      "asset": "assets/images/flag_md.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Moldova",
+      "countryCode": "md",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/md.png"
+    },
+    {
+      "asset": "assets/images/flag_mc.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Monaco",
+      "countryCode": "mc",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/mc.png"
+    },
+    {
+      "asset": "assets/images/flag_mn.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Mongolia",
+      "countryCode": "mn",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/mn.png"
+    },
+    {
+      "asset": "assets/images/flag_me.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Montenegro",
+      "countryCode": "me",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/me.png"
+    },
+    {
+      "asset": "assets/images/flag_ms.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Montserrat",
+      "countryCode": "ms",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ms.png"
+    },
+    {
+      "asset": "assets/images/flag_ma.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Morocco",
+      "countryCode": "ma",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ma.png"
+    },
+    {
+      "asset": "assets/images/flag_mz.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Mozambique",
+      "countryCode": "mz",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/mz.png"
+    },
+    {
+      "asset": "assets/images/flag_mm.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Myanmar",
+      "countryCode": "mm",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/mm.png"
+    },
+    {
+      "asset": "assets/images/flag_na.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Namibia",
+      "countryCode": "na",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/na.png"
+    },
+    {
+      "asset": "assets/images/flag_nr.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Nauru",
+      "countryCode": "nr",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/nr.png"
+    },
+    {
+      "asset": "assets/images/flag_np.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Nepal",
+      "countryCode": "np",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/np.png"
+    },
+    {
+      "asset": "assets/images/flag_nl.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Netherlands",
+      "countryCode": "nl",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/nl.png"
+    },
+    {
+      "asset": "assets/images/flag_nc.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "New Caledonia",
+      "countryCode": "nc",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/nc.png"
+    },
+    {
+      "asset": "assets/images/flag_nz.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "New Zealand",
+      "countryCode": "nz",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/nz.png"
+    },
+    {
+      "asset": "assets/images/flag_ni.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Nicaragua",
+      "countryCode": "ni",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ni.png"
+    },
+    {
+      "asset": "assets/images/flag_ne.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Niger",
+      "countryCode": "ne",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ne.png"
+    },
+    {
+      "asset": "assets/images/flag_ng.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Nigeria",
+      "countryCode": "ng",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ng.png"
+    },
+    {
+      "asset": "assets/images/flag_nu.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Niue",
+      "countryCode": "nu",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/nu.png"
+    },
+    {
+      "asset": "assets/images/flag_nf.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Norfolk Island",
+      "countryCode": "nf",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/nf.png"
+    },
+    {
+      "asset": "assets/images/flag_kp.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "North Korea",
+      "countryCode": "kp",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/kp.png"
+    },
+    {
+      "asset": "assets/images/flag_mk.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "North Macedonia",
+      "countryCode": "mk",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/mk.png"
+    },
+    {
+      "asset": "assets/images/flag_gb-nir.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Northern Ireland",
+      "countryCode": "gb-nir",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/gb-nir.png"
+    },
+    {
+      "asset": "assets/images/flag_mp.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Northern Mariana Islands",
+      "countryCode": "mp",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/mp.png"
+    },
+    {
+      "asset": "assets/images/flag_no.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Norway",
+      "countryCode": "no",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/no.png"
+    },
+    {
+      "asset": "assets/images/flag_om.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Oman",
+      "countryCode": "om",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/om.png"
+    },
+    {
+      "asset": "assets/images/flag_pk.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Pakistan",
+      "countryCode": "pk",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/pk.png"
+    },
+    {
+      "asset": "assets/images/flag_pw.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Palau",
+      "countryCode": "pw",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/pw.png"
+    },
+    {
+      "asset": "assets/images/flag_ps.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Palestine",
+      "countryCode": "ps",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ps.png"
+    },
+    {
+      "asset": "assets/images/flag_pa.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Panama",
+      "countryCode": "pa",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/pa.png"
+    },
+    {
+      "asset": "assets/images/flag_pg.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Papua New Guinea",
+      "countryCode": "pg",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/pg.png"
+    },
+    {
+      "asset": "assets/images/flag_py.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Paraguay",
+      "countryCode": "py",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/py.png"
+    },
+    {
+      "asset": "assets/images/flag_pe.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Peru",
+      "countryCode": "pe",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/pe.png"
+    },
+    {
+      "asset": "assets/images/flag_ph.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Philippines",
+      "countryCode": "ph",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ph.png"
+    },
+    {
+      "asset": "assets/images/flag_pn.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Pitcairn Islands",
+      "countryCode": "pn",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/pn.png"
+    },
+    {
+      "asset": "assets/images/flag_pl.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Poland",
+      "countryCode": "pl",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/pl.png"
+    },
+    {
+      "asset": "assets/images/flag_pt.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Portugal",
+      "countryCode": "pt",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/pt.png"
+    },
+    {
+      "asset": "assets/images/flag_pr.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Puerto Rico",
+      "countryCode": "pr",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/pr.png"
+    },
+    {
+      "asset": "assets/images/flag_qa.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Qatar",
+      "countryCode": "qa",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/qa.png"
+    },
+    {
+      "asset": "assets/images/flag_cg.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Republic of the Congo",
+      "countryCode": "cg",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/cg.png"
+    },
+    {
+      "asset": "assets/images/flag_ro.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Romania",
+      "countryCode": "ro",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ro.png"
+    },
+    {
+      "asset": "assets/images/flag_ru.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Russia",
+      "countryCode": "ru",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ru.png"
+    },
+    {
+      "asset": "assets/images/flag_rw.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Rwanda",
+      "countryCode": "rw",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/rw.png"
+    },
+    {
+      "asset": "assets/images/flag_re.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Réunion",
+      "countryCode": "re",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/re.png"
+    },
+    {
+      "asset": "assets/images/flag_bl.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Saint Barthélemy",
+      "countryCode": "bl",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/bl.png"
+    },
+    {
+      "asset": "assets/images/flag_sh.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Saint Helena, Ascension and Tristan da Cunha",
+      "countryCode": "sh",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/sh.png"
+    },
+    {
+      "asset": "assets/images/flag_kn.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Saint Kitts and Nevis",
+      "countryCode": "kn",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/kn.png"
+    },
+    {
+      "asset": "assets/images/flag_lc.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Saint Lucia",
+      "countryCode": "lc",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/lc.png"
+    },
+    {
+      "asset": "assets/images/flag_mf.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Saint Martin",
+      "countryCode": "mf",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/mf.png"
+    },
+    {
+      "asset": "assets/images/flag_pm.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Saint Pierre and Miquelon",
+      "countryCode": "pm",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/pm.png"
+    },
+    {
+      "asset": "assets/images/flag_vc.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Saint Vincent and the Grenadines",
+      "countryCode": "vc",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/vc.png"
+    },
+    {
+      "asset": "assets/images/flag_ws.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Samoa",
+      "countryCode": "ws",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ws.png"
+    },
+    {
+      "asset": "assets/images/flag_sm.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "San Marino",
+      "countryCode": "sm",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/sm.png"
+    },
+    {
+      "asset": "assets/images/flag_sa.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Saudi Arabia",
+      "countryCode": "sa",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/sa.png"
+    },
+    {
+      "asset": "assets/images/flag_gb-sct.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Scotland",
+      "countryCode": "gb-sct",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/gb-sct.png"
+    },
+    {
+      "asset": "assets/images/flag_sn.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Senegal",
+      "countryCode": "sn",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/sn.png"
+    },
+    {
+      "asset": "assets/images/flag_rs.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Serbia",
+      "countryCode": "rs",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/rs.png"
+    },
+    {
+      "asset": "assets/images/flag_sc.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Seychelles",
+      "countryCode": "sc",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/sc.png"
+    },
+    {
+      "asset": "assets/images/flag_sl.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Sierra Leone",
+      "countryCode": "sl",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/sl.png"
+    },
+    {
+      "asset": "assets/images/flag_sg.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Singapore",
+      "countryCode": "sg",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/sg.png"
+    },
+    {
+      "asset": "assets/images/flag_sx.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Sint Maarten",
+      "countryCode": "sx",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/sx.png"
+    },
+    {
+      "asset": "assets/images/flag_sk.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Slovakia",
+      "countryCode": "sk",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/sk.png"
+    },
+    {
+      "asset": "assets/images/flag_si.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Slovenia",
+      "countryCode": "si",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/si.png"
+    },
+    {
+      "asset": "assets/images/flag_sb.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Solomon Islands",
+      "countryCode": "sb",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/sb.png"
+    },
+    {
+      "asset": "assets/images/flag_so.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Somalia",
+      "countryCode": "so",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/so.png"
+    },
+    {
+      "asset": "assets/images/flag_za.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "South Africa",
+      "countryCode": "za",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/za.png"
+    },
+    {
+      "asset": "assets/images/flag_gs.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "South Georgia",
+      "countryCode": "gs",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/gs.png"
+    },
+    {
+      "asset": "assets/images/flag_kr.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "South Korea",
+      "countryCode": "kr",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/kr.png"
+    },
+    {
+      "asset": "assets/images/flag_ss.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "South Sudan",
+      "countryCode": "ss",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ss.png"
+    },
+    {
+      "asset": "assets/images/flag_es.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Spain",
+      "countryCode": "es",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/es.png"
+    },
+    {
+      "asset": "assets/images/flag_lk.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Sri Lanka",
+      "countryCode": "lk",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/lk.png"
+    },
+    {
+      "asset": "assets/images/flag_sd.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Sudan",
+      "countryCode": "sd",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/sd.png"
+    },
+    {
+      "asset": "assets/images/flag_sr.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Suriname",
+      "countryCode": "sr",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/sr.png"
+    },
+    {
+      "asset": "assets/images/flag_sj.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Svalbard and Jan Mayen",
+      "countryCode": "sj",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/sj.png"
+    },
+    {
+      "asset": "assets/images/flag_se.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Sweden",
+      "countryCode": "se",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/se.png"
+    },
+    {
+      "asset": "assets/images/flag_ch.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Switzerland",
+      "countryCode": "ch",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ch.png"
+    },
+    {
+      "asset": "assets/images/flag_sy.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Syria",
+      "countryCode": "sy",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/sy.png"
+    },
+    {
+      "asset": "assets/images/flag_st.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "São Tomé and Príncipe",
+      "countryCode": "st",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/st.png"
+    },
+    {
+      "asset": "assets/images/flag_tw.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Taiwan",
+      "countryCode": "tw",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/tw.png"
+    },
+    {
+      "asset": "assets/images/flag_tj.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Tajikistan",
+      "countryCode": "tj",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/tj.png"
+    },
+    {
+      "asset": "assets/images/flag_tz.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Tanzania",
+      "countryCode": "tz",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/tz.png"
+    },
+    {
+      "asset": "assets/images/flag_th.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Thailand",
+      "countryCode": "th",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/th.png"
+    },
+    {
+      "asset": "assets/images/flag_tl.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Timor-Leste",
+      "countryCode": "tl",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/tl.png"
+    },
+    {
+      "asset": "assets/images/flag_tg.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Togo",
+      "countryCode": "tg",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/tg.png"
+    },
+    {
+      "asset": "assets/images/flag_tk.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Tokelau",
+      "countryCode": "tk",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/tk.png"
+    },
+    {
+      "asset": "assets/images/flag_to.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Tonga",
+      "countryCode": "to",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/to.png"
+    },
+    {
+      "asset": "assets/images/flag_tt.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Trinidad and Tobago",
+      "countryCode": "tt",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/tt.png"
+    },
+    {
+      "asset": "assets/images/flag_tn.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Tunisia",
+      "countryCode": "tn",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/tn.png"
+    },
+    {
+      "asset": "assets/images/flag_tr.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Turkey",
+      "countryCode": "tr",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/tr.png"
+    },
+    {
+      "asset": "assets/images/flag_tm.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Turkmenistan",
+      "countryCode": "tm",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/tm.png"
+    },
+    {
+      "asset": "assets/images/flag_tc.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Turks and Caicos Islands",
+      "countryCode": "tc",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/tc.png"
+    },
+    {
+      "asset": "assets/images/flag_tv.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Tuvalu",
+      "countryCode": "tv",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/tv.png"
+    },
+    {
+      "asset": "assets/images/flag_ug.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Uganda",
+      "countryCode": "ug",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ug.png"
+    },
+    {
+      "asset": "assets/images/flag_ua.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Ukraine",
+      "countryCode": "ua",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ua.png"
+    },
+    {
+      "asset": "assets/images/flag_ae.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "United Arab Emirates",
+      "countryCode": "ae",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ae.png"
+    },
+    {
+      "asset": "assets/images/flag_gb.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "United Kingdom",
+      "countryCode": "gb",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/gb.png"
+    },
+    {
+      "asset": "assets/images/flag_us.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "United States",
+      "countryCode": "us",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/us.png"
+    },
+    {
+      "asset": "assets/images/flag_um.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "United States Minor Outlying Islands",
+      "countryCode": "um",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/um.png"
+    },
+    {
+      "asset": "assets/images/flag_vi.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "United States Virgin Islands",
+      "countryCode": "vi",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/vi.png"
+    },
+    {
+      "asset": "assets/images/flag_uy.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Uruguay",
+      "countryCode": "uy",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/uy.png"
+    },
+    {
+      "asset": "assets/images/flag_uz.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Uzbekistan",
+      "countryCode": "uz",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/uz.png"
+    },
+    {
+      "asset": "assets/images/flag_vu.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Vanuatu",
+      "countryCode": "vu",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/vu.png"
+    },
+    {
+      "asset": "assets/images/flag_va.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Vatican City (Holy See)",
+      "countryCode": "va",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/va.png"
+    },
+    {
+      "asset": "assets/images/flag_ve.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Venezuela",
+      "countryCode": "ve",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ve.png"
+    },
+    {
+      "asset": "assets/images/flag_vn.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Vietnam",
+      "countryCode": "vn",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/vn.png"
+    },
+    {
+      "asset": "assets/images/flag_gb-wls.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Wales",
+      "countryCode": "gb-wls",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/gb-wls.png"
+    },
+    {
+      "asset": "assets/images/flag_wf.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Wallis and Futuna",
+      "countryCode": "wf",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/wf.png"
+    },
+    {
+      "asset": "assets/images/flag_eh.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Western Sahara",
+      "countryCode": "eh",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/eh.png"
+    },
+    {
+      "asset": "assets/images/flag_ye.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Yemen",
+      "countryCode": "ye",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ye.png"
+    },
+    {
+      "asset": "assets/images/flag_zm.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Zambia",
+      "countryCode": "zm",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/zm.png"
+    },
+    {
+      "asset": "assets/images/flag_zw.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Zimbabwe",
+      "countryCode": "zw",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/zw.png"
+    },
+    {
+      "asset": "assets/images/flag_ax.png",
+      "provider": "FlagCDN / Flagpedia",
+      "name": "Åland Islands",
+      "countryCode": "ax",
+      "metadataUrl": "https://flagcdn.com/en/codes.json",
+      "imageUrl": "https://flagcdn.com/w640/ax.png"
+    },
+    {
+      "asset": "assets/images/team_133753.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133753",
+      "idTeam": "133753",
+      "strTeam": "AEK Athens",
+      "strCountry": "Greece",
+      "strLeague": "Greek Super League 1",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=AEK+Athens",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/4nogst1602773624.png"
+    },
+    {
+      "asset": "assets/images/team_arsenal.png",
+      "provider": "TheSportsDB",
+      "catalogId": "arsenal",
+      "idTeam": "133604",
+      "strTeam": "Arsenal",
+      "strCountry": "England",
+      "strLeague": "English Premier League",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Arsenal",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/uyhbfe1612467038.png"
+    },
+    {
+      "asset": "assets/images/team_133601.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133601",
+      "idTeam": "133601",
+      "strTeam": "Aston Villa",
+      "strCountry": "England",
+      "strLeague": "English Premier League",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Aston+Villa",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/uwzw561787679026.png"
+    },
+    {
+      "asset": "assets/images/team_133729.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133729",
+      "idTeam": "133729",
+      "strTeam": "Atlético Madrid",
+      "strCountry": "Spain",
+      "strLeague": "Spanish La Liga",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Atletico+Madrid",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/0ulh3q1719984315.png"
+    },
+    {
+      "asset": "assets/images/team_133739.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133739",
+      "idTeam": "133739",
+      "strTeam": "Barcelona",
+      "strCountry": "Spain",
+      "strLeague": "Spanish La Liga",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Barcelona",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/wq9sir1639406443.png"
+    },
+    {
+      "asset": "assets/images/team_133664.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133664",
+      "idTeam": "133664",
+      "strTeam": "Bayern Munich",
+      "strCountry": "Germany",
+      "strLeague": "German Bundesliga",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Bayern+Munich",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/01ogkh1716960412.png"
+    },
+    {
+      "asset": "assets/images/team_135497.png",
+      "provider": "TheSportsDB",
+      "catalogId": "135497",
+      "idTeam": "135497",
+      "strTeam": "Bodø/Glimt",
+      "strCountry": "Norway",
+      "strLeague": "Norwegian Eliteserien",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Bodo+Glimt",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/uqpwwx1449165943.png"
+    },
+    {
+      "asset": "assets/images/team_133650.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133650",
+      "idTeam": "133650",
+      "strTeam": "Borussia Dortmund",
+      "strCountry": "Germany",
+      "strLeague": "German Bundesliga",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Borussia+Dortmund",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/tqo8ge1716960353.png"
+    },
+    {
+      "asset": "assets/images/team_133789.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133789",
+      "idTeam": "133789",
+      "strTeam": "Club Brugge",
+      "strCountry": "Belgium",
+      "strLeague": "Belgian Pro League",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Club+Brugge",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/mz8y0q1771129880.png"
+    },
+    {
+      "asset": "assets/images/team_134243.png",
+      "provider": "TheSportsDB",
+      "catalogId": "134243",
+      "idTeam": "134243",
+      "strTeam": "Como",
+      "strCountry": "Italy",
+      "strLeague": "Italian Serie A",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Como",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/02x81t1627405841.png"
+    },
+    {
+      "asset": "assets/images/team_133807.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133807",
+      "idTeam": "133807",
+      "strTeam": "Fenerbahçe",
+      "strCountry": "Turkey",
+      "strLeague": "Turkish Super Lig",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Fenerbahce",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/twxxvs1448199691.png"
+    },
+    {
+      "asset": "assets/images/team_133758.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133758",
+      "idTeam": "133758",
+      "strTeam": "Feyenoord",
+      "strCountry": "The Netherlands",
+      "strLeague": "Dutch Eredivisie",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Feyenoord",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/uturtx1473534803.png"
+    },
+    {
+      "asset": "assets/images/team_133804.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133804",
+      "idTeam": "133804",
+      "strTeam": "Galatasaray",
+      "strCountry": "Turkey",
+      "strLeague": "Turkish Super Lig",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Galatasaray",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/io7jk21767941298.png"
+    },
+    {
+      "asset": "assets/images/team_133681.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133681",
+      "idTeam": "133681",
+      "strTeam": "Inter Milan",
+      "strCountry": "Italy",
+      "strLeague": "Italian Serie A",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Inter+Milan",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/ryhu6d1617113103.png"
+    },
+    {
+      "asset": "assets/images/team_137261.png",
+      "provider": "TheSportsDB",
+      "catalogId": "137261",
+      "idTeam": "137261",
+      "strTeam": "LASK",
+      "strCountry": "Austria",
+      "strLeague": "Austrian Bundesliga",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=LASK+Linz",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/oox26l1683556395.png"
+    },
+    {
+      "asset": "assets/images/team_133822.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133822",
+      "idTeam": "133822",
+      "strTeam": "Lens",
+      "strCountry": "France",
+      "strLeague": "French Ligue 1",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Lens",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/3pxoum1598797195.png"
+    },
+    {
+      "asset": "assets/images/team_133711.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133711",
+      "idTeam": "133711",
+      "strTeam": "Lille",
+      "strCountry": "France",
+      "strLeague": "French Ligue 1",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/lookupteam.php?id=133711",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/2giize1534005340.png"
+    },
+    {
+      "asset": "assets/images/team_133602.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133602",
+      "idTeam": "133602",
+      "strTeam": "Liverpool",
+      "strCountry": "England",
+      "strLeague": "English Premier League",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Liverpool",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/kfaher1737969724.png"
+    },
+    {
+      "asset": "assets/images/team_133613.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133613",
+      "idTeam": "133613",
+      "strTeam": "Manchester City",
+      "strCountry": "England",
+      "strLeague": "English Premier League",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Manchester+City",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/vwpvry1467462651.png"
+    },
+    {
+      "asset": "assets/images/team_133612.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133612",
+      "idTeam": "133612",
+      "strTeam": "Manchester United",
+      "strCountry": "England",
+      "strLeague": "English Premier League",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Manchester+United",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/xzqdr11517660252.png"
+    },
+    {
+      "asset": "assets/images/team_133670.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133670",
+      "idTeam": "133670",
+      "strTeam": "Napoli",
+      "strCountry": "Italy",
+      "strLeague": "Italian Serie A",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Napoli",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/l8qyxv1742982541.png"
+    },
+    {
+      "asset": "assets/images/team_133714.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133714",
+      "idTeam": "133714",
+      "strTeam": "Paris Saint-Germain",
+      "strCountry": "France",
+      "strLeague": "French Ligue 1",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/lookupteam.php?id=133714",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/rwqrrq1473504808.png"
+    },
+    {
+      "asset": "assets/images/team_134114.png",
+      "provider": "TheSportsDB",
+      "catalogId": "134114",
+      "idTeam": "134114",
+      "strTeam": "Porto",
+      "strCountry": "Portugal",
+      "strLeague": "Portuguese Primeira Liga",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/lookupteam.php?id=134114",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/xu47rb1628855600.png"
+    },
+    {
+      "asset": "assets/images/team_133768.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133768",
+      "idTeam": "133768",
+      "strTeam": "PSV Eindhoven",
+      "strCountry": "The Netherlands",
+      "strLeague": "Dutch Eredivisie",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=PSV+Eindhoven",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/xfsz6i1721297428.png"
+    },
+    {
+      "asset": "assets/images/team_134695.png",
+      "provider": "TheSportsDB",
+      "catalogId": "134695",
+      "idTeam": "134695",
+      "strTeam": "RB Leipzig",
+      "strCountry": "Germany",
+      "strLeague": "German Bundesliga",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=RB+Leipzig",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/zjgapo1594244951.png"
+    },
+    {
+      "asset": "assets/images/team_133722.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133722",
+      "idTeam": "133722",
+      "strTeam": "Real Betis",
+      "strCountry": "Spain",
+      "strLeague": "Spanish La Liga",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Real+Betis",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/2oqulv1663245386.png"
+    },
+    {
+      "asset": "assets/images/team_133738.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133738",
+      "idTeam": "133738",
+      "strTeam": "Real Madrid",
+      "strCountry": "Spain",
+      "strLeague": "Spanish La Liga",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Real+Madrid",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/vwvwrw1473502969.png"
+    },
+    {
+      "asset": "assets/images/team_133682.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133682",
+      "idTeam": "133682",
+      "strTeam": "Roma",
+      "strCountry": "Italy",
+      "strLeague": "Italian Serie A",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=AS+Roma",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/jwro2s1760820674.png"
+    },
+    {
+      "asset": "assets/images/team_138341.png",
+      "provider": "TheSportsDB",
+      "catalogId": "138341",
+      "idTeam": "138341",
+      "strTeam": "Sabah Baku",
+      "strCountry": "Azerbaijan",
+      "strLeague": "Azerbaijani Premier League",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/lookupteam.php?id=138341",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/5cw7q91723051971.png"
+    },
+    {
+      "asset": "assets/images/team_134126.png",
+      "provider": "TheSportsDB",
+      "catalogId": "134126",
+      "idTeam": "134126",
+      "strTeam": "Shakhtar Donetsk",
+      "strCountry": "Ukraine",
+      "strLeague": "Ukrainian Premier League",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Shakhtar+Donetsk",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/sqrxsr1421791799.png"
+    },
+    {
+      "asset": "assets/images/team_136036.png",
+      "provider": "TheSportsDB",
+      "catalogId": "136036",
+      "idTeam": "136036",
+      "strTeam": "Slavia Prague",
+      "strCountry": "Czechia",
+      "strLeague": "Czech First League",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Slavia+Prague",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/l7kl4n1759252139.png"
+    },
+    {
+      "asset": "assets/images/team_134090.png",
+      "provider": "TheSportsDB",
+      "catalogId": "134090",
+      "idTeam": "134090",
+      "strTeam": "Slovan Bratislava",
+      "strCountry": "Slovakia",
+      "strLeague": "Slovak First Football League",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Slovan+Bratislava",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/uzkg701781199823.png"
+    },
+    {
+      "asset": "assets/images/team_135708.png",
+      "provider": "TheSportsDB",
+      "catalogId": "135708",
+      "idTeam": "135708",
+      "strTeam": "Sporting CP",
+      "strCountry": "Portugal",
+      "strLeague": "Portuguese Primeira Liga",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Sporting+CP",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/5hiuk71783137875.png"
+    },
+    {
+      "asset": "assets/images/team_133660.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133660",
+      "idTeam": "133660",
+      "strTeam": "Stuttgart",
+      "strCountry": "Germany",
+      "strLeague": "German Bundesliga",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=VfB+Stuttgart",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/yppyux1473454085.png"
+    },
+    {
+      "asset": "assets/images/team_134570.png",
+      "provider": "TheSportsDB",
+      "catalogId": "134570",
+      "idTeam": "134570",
+      "strTeam": "Viking",
+      "strCountry": "Norway",
+      "strLeague": "Norwegian Eliteserien",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Viking",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/9mzq961590148192.png"
+    },
+    {
+      "asset": "assets/images/team_133740.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133740",
+      "idTeam": "133740",
+      "strTeam": "Villarreal",
+      "strCountry": "Spain",
+      "strLeague": "Spanish La Liga",
+      "competition": "UEFA Champions League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Villarreal",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/vrypqy1473503073.png"
+    },
+    {
+      "asset": "assets/images/team_133667.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133667",
+      "idTeam": "133667",
+      "strTeam": "AC Milan",
+      "strCountry": "Italy",
+      "strLeague": "Italian Serie A",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=AC+Milan",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/wvspur1448806617.png"
+    },
+    {
+      "asset": "assets/images/team_133776.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133776",
+      "idTeam": "133776",
+      "strTeam": "Anderlecht",
+      "strCountry": "Belgium",
+      "strLeague": "Belgian Pro League",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Anderlecht",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/auindn1771129464.png"
+    },
+    {
+      "asset": "assets/images/team_137892.png",
+      "provider": "TheSportsDB",
+      "catalogId": "137892",
+      "idTeam": "137892",
+      "strTeam": "Ararat-Armenia",
+      "strCountry": "Armenia",
+      "strLeague": "Armenian Premier League",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/lookupteam.php?id=137892",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/g396se1596470244.png"
+    },
+    {
+      "asset": "assets/images/team_133767.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133767",
+      "idTeam": "133767",
+      "strTeam": "AZ Alkmaar",
+      "strCountry": "The Netherlands",
+      "strLeague": "Dutch Eredivisie",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=AZ+Alkmaar",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/wtqwvv1473534757.png"
+    },
+    {
+      "asset": "assets/images/team_133666.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133666",
+      "idTeam": "133666",
+      "strTeam": "Bayer Leverkusen",
+      "strCountry": "Germany",
+      "strLeague": "German Bundesliga",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Bayer+Leverkusen",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/3x9k851726760113.png"
+    },
+    {
+      "asset": "assets/images/team_134108.png",
+      "provider": "TheSportsDB",
+      "catalogId": "134108",
+      "idTeam": "134108",
+      "strTeam": "Benfica",
+      "strCountry": "Portugal",
+      "strLeague": "Portuguese Primeira Liga",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Benfica",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/hj4kyc1781152436.png"
+    },
+    {
+      "asset": "assets/images/team_133794.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133794",
+      "idTeam": "133794",
+      "strTeam": "Beşiktaş",
+      "strCountry": "Turkey",
+      "strLeague": "Turkish Super Lig",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Besiktas",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/svo05k1776827439.png"
+    },
+    {
+      "asset": "assets/images/team_134301.png",
+      "provider": "TheSportsDB",
+      "catalogId": "134301",
+      "idTeam": "134301",
+      "strTeam": "Bournemouth",
+      "strCountry": "England",
+      "strLeague": "English Premier League",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Bournemouth",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/y08nak1534071116.png"
+    },
+    {
+      "asset": "assets/images/team_134318.png",
+      "provider": "TheSportsDB",
+      "catalogId": "134318",
+      "idTeam": "134318",
+      "strTeam": "Celje",
+      "strCountry": "Slovenia",
+      "strLeague": "Slovenian 1. SNL",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Celje",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/amvs371681106952.png"
+    },
+    {
+      "asset": "assets/images/team_133937.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133937",
+      "idTeam": "133937",
+      "strTeam": "Celta Vigo",
+      "strCountry": "Spain",
+      "strLeague": "Spanish La Liga",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Celta+Vigo",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/xfjtku1690436219.png"
+    },
+    {
+      "asset": "assets/images/team_133647.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133647",
+      "idTeam": "133647",
+      "strTeam": "Celtic",
+      "strCountry": "Scotland",
+      "strLeague": "Scottish Premier League",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Celtic",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/3uv1641758780002.png"
+    },
+    {
+      "asset": "assets/images/team_133632.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133632",
+      "idTeam": "133632",
+      "strTeam": "Crystal Palace",
+      "strCountry": "England",
+      "strLeague": "English Premier League",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Crystal+Palace",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/ia6i3m1656014992.png"
+    },
+    {
+      "asset": "assets/images/team_133961.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133961",
+      "idTeam": "133961",
+      "strTeam": "Dinamo Zagreb",
+      "strCountry": "Croatia",
+      "strLeague": "Croatian First Football League",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Dinamo+Zagreb",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/zcb6f61784988620.png"
+    },
+    {
+      "asset": "assets/images/team_134620.png",
+      "provider": "TheSportsDB",
+      "catalogId": "134620",
+      "idTeam": "134620",
+      "strTeam": "Ferencváros",
+      "strCountry": "Hungary",
+      "strLeague": "Hungarian NB I",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Ferencvaros",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/wk17od1688115265.png"
+    },
+    {
+      "asset": "assets/images/team_134799.png",
+      "provider": "TheSportsDB",
+      "catalogId": "134799",
+      "idTeam": "134799",
+      "strTeam": "Hapoel Be'er Sheva",
+      "strCountry": "Israel",
+      "strLeague": "Israeli Premier League",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/lookupteam.php?id=134799",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/ar5zft1781239007.png"
+    },
+    {
+      "asset": "assets/images/team_133657.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133657",
+      "idTeam": "133657",
+      "strTeam": "Hoffenheim",
+      "strCountry": "Germany",
+      "strLeague": "German Bundesliga",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Hoffenheim",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/9hwvb21621593919.png"
+    },
+    {
+      "asset": "assets/images/team_135297.png",
+      "provider": "TheSportsDB",
+      "catalogId": "135297",
+      "idTeam": "135297",
+      "strTeam": "Jagiellonia Białystok",
+      "strCountry": "Poland",
+      "strLeague": "Polish Ekstraklasa",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Jagiellonia+Bialystok",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/ucze1y1601404699.png"
+    },
+    {
+      "asset": "assets/images/team_133676.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133676",
+      "idTeam": "133676",
+      "strTeam": "Juventus",
+      "strCountry": "Italy",
+      "strLeague": "Italian Serie A",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Juventus",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/uxf0gr1742983727.png"
+    },
+    {
+      "asset": "assets/images/team_134010.png",
+      "provider": "TheSportsDB",
+      "catalogId": "134010",
+      "idTeam": "134010",
+      "strTeam": "Lech Poznań",
+      "strCountry": "Poland",
+      "strLeague": "Polish Ekstraklasa",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Lech+Poznan",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/8zfxyx1685597440.png"
+    },
+    {
+      "asset": "assets/images/team_134085.png",
+      "provider": "TheSportsDB",
+      "catalogId": "134085",
+      "idTeam": "134085",
+      "strTeam": "Levski Sofia",
+      "strCountry": "Bulgaria",
+      "strLeague": "Bulgarian First League",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Levski+Sofia",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/9krgx71781149189.png"
+    },
+    {
+      "asset": "assets/images/team_134569.png",
+      "provider": "TheSportsDB",
+      "catalogId": "134569",
+      "idTeam": "134569",
+      "strTeam": "Lillestrøm",
+      "strCountry": "Norway",
+      "strLeague": "Norwegian Eliteserien",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Lillestrom",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/txpuvv1448823342.png"
+    },
+    {
+      "asset": "assets/images/team_133713.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133713",
+      "idTeam": "133713",
+      "strTeam": "Lyon",
+      "strCountry": "France",
+      "strLeague": "French Ligue 1",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Lyon",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/blk9771656932845.png"
+    },
+    {
+      "asset": "assets/images/team_133707.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133707",
+      "idTeam": "133707",
+      "strTeam": "Marseille",
+      "strCountry": "France",
+      "strLeague": "French Ligue 1",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Marseille",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/c6bazh1779212287.png"
+    },
+    {
+      "asset": "assets/images/team_133760.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133760",
+      "idTeam": "133760",
+      "strTeam": "NEC Nijmegen",
+      "strCountry": "The Netherlands",
+      "strLeague": "Dutch Eredivisie",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=NEC+Nijmegen",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/t5qjle1701019868.png"
+    },
+    {
+      "asset": "assets/images/team_133743.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133743",
+      "idTeam": "133743",
+      "strTeam": "OFI",
+      "strCountry": "Greece",
+      "strLeague": "Greek Super League 1",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=OFI+Crete",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/02xrl91602773672.png"
+    },
+    {
+      "asset": "assets/images/team_133754.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133754",
+      "idTeam": "133754",
+      "strTeam": "Olympiacos",
+      "strCountry": "Greece",
+      "strLeague": "Greek Super League 1",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Olympiacos",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/xckasq1721291508.png"
+    },
+    {
+      "asset": "assets/images/team_133986.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133986",
+      "idTeam": "133986",
+      "strTeam": "Omonia Nicosia",
+      "strCountry": "Cyprus",
+      "strLeague": "Cypriot First Division",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Omonia+Nicosia",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/nmd7vt1779579017.png"
+    },
+    {
+      "asset": "assets/images/team_133724.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133724",
+      "idTeam": "133724",
+      "strTeam": "Real Sociedad",
+      "strCountry": "Spain",
+      "strLeague": "Spanish La Liga",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Real+Sociedad",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/vptvpr1473502986.png"
+    },
+    {
+      "asset": "assets/images/team_133970.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133970",
+      "idTeam": "133970",
+      "strTeam": "Red Bull Salzburg",
+      "strCountry": "Austria",
+      "strLeague": "Austrian Bundesliga",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Red+Bull+Salzburg",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/nc2cua1781541639.png"
+    },
+    {
+      "asset": "assets/images/team_133719.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133719",
+      "idTeam": "133719",
+      "strTeam": "Rennes",
+      "strCountry": "France",
+      "strLeague": "French Ligue 1",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Rennes",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/ypturx1473504818.png"
+    },
+    {
+      "asset": "assets/images/team_134007.png",
+      "provider": "TheSportsDB",
+      "catalogId": "134007",
+      "idTeam": "134007",
+      "strTeam": "Sparta Prague",
+      "strCountry": "Czechia",
+      "strLeague": "Czech First League",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Sparta+Prague",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/j00qct1718287150.png"
+    },
+    {
+      "asset": "assets/images/team_137743.png",
+      "provider": "TheSportsDB",
+      "catalogId": "137743",
+      "idTeam": "137743",
+      "strTeam": "Sturm Graz",
+      "strCountry": "Austria",
+      "strLeague": "Austrian Bundesliga",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Sturm+Graz",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/ppg0j71578585847.png"
+    },
+    {
+      "asset": "assets/images/team_133603.png",
+      "provider": "TheSportsDB",
+      "catalogId": "133603",
+      "idTeam": "133603",
+      "strTeam": "Sunderland",
+      "strCountry": "England",
+      "strLeague": "English Premier League",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Sunderland",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/tprtus1448813498.png"
+    },
+    {
+      "asset": "assets/images/team_143720.png",
+      "provider": "TheSportsDB",
+      "catalogId": "143720",
+      "idTeam": "143720",
+      "strTeam": "Torreense",
+      "strCountry": "Portugal",
+      "strLeague": "Portuguese LigaPro",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Torreense",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/byn6c21659694982.png"
+    },
+    {
+      "asset": "assets/images/team_138141.png",
+      "provider": "TheSportsDB",
+      "catalogId": "138141",
+      "idTeam": "138141",
+      "strTeam": "Union Saint-Gilloise",
+      "strCountry": "Belgium",
+      "strLeague": "Belgian Pro League",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/lookupteam.php?id=138141",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/ljszp41654601742.png"
+    },
+    {
+      "asset": "assets/images/team_134015.png",
+      "provider": "TheSportsDB",
+      "catalogId": "134015",
+      "idTeam": "134015",
+      "strTeam": "Viktoria Plzeň",
+      "strCountry": "Czechia",
+      "strLeague": "Czech First League",
+      "competition": "UEFA Europa League",
+      "season": "2026-27",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Viktoria+Plzen",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/at8i2h1679265942.png"
+    },
+    {
+      "asset": "assets/images/team_algeria.png",
+      "provider": "TheSportsDB",
+      "catalogId": "algeria",
+      "idTeam": "134516",
+      "strTeam": "Algeria",
+      "strLeague": "FIFA World Cup",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Algeria",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/rrwpry1455460218.png",
+      "legacyOnly": true
+    },
+    {
+      "asset": "assets/images/team_lafc.png",
+      "provider": "TheSportsDB",
+      "catalogId": "lafc",
+      "idTeam": "136050",
+      "strTeam": "Los Angeles FC",
+      "strLeague": "American Major League Soccer",
+      "metadataUrl": "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=Los_Angeles_FC",
+      "imageUrl": "https://r2.thesportsdb.com/images/media/team/badge/7nbj2a1602103638.png",
+      "legacyOnly": true
+    }
+  ]
+}
