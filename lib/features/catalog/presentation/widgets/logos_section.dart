@@ -2,10 +2,13 @@ import 'package:carwidget/app/theme/app_theme.dart';
 import 'package:carwidget/features/catalog/data/models/logo_widget_model.dart';
 import 'package:carwidget/features/catalog/presentation/pages/logo_widget_editor_page.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/slide_right_transition.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/logo_widget_content.dart';
 import 'package:carwidget/features/my_widgets/presentation/widgets/my_widgets_section.dart'
     show addLogoWidgetToMyWidgets;
 import 'package:flutter/material.dart';
+
+const _previewItemCount = 6;
 
 class LogosSection extends StatelessWidget {
   const LogosSection({super.key});
@@ -45,7 +48,9 @@ class LogosSection extends StatelessWidget {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               clipBehavior: Clip.none,
-              itemCount: logoWidgetModels.length,
+              itemCount: logoWidgetModels.length < _previewItemCount
+                  ? logoWidgetModels.length
+                  : _previewItemCount,
               separatorBuilder: (_, _) => const SizedBox(width: 12),
               itemBuilder: (context, index) => SizedBox.square(
                 dimension: cardSize,
@@ -250,7 +255,7 @@ class _LogoGridTile extends StatelessWidget {
 }
 
 void _openLogoEditor(BuildContext context, LogoWidgetModel model) {
-  showDialog<void>(
+  showSlideRightDialog<void>(
     context: context,
     builder: (_) => Dialog.fullscreen(
       backgroundColor: AppColors.background,
@@ -272,20 +277,23 @@ class _SeeAllButton extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => Material(
-    color: AppColors.surface,
-    borderRadius: BorderRadius.circular(22),
-    child: InkWell(
-      onTap: onTap,
+  Widget build(BuildContext context) => Transform.translate(
+    offset: const Offset(6, 0),
+    child: Material(
+      color: AppColors.surface,
       borderRadius: BorderRadius.circular(22),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 8),
-        child: Text(
-          'See All',
-          style: const TextStyle(
-            color: AppColors.green,
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(22),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 9.5, vertical: 4.5),
+          child: Text(
+            'See All',
+            style: const TextStyle(
+              color: AppColors.green,
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),

@@ -52,16 +52,51 @@ class _SynthwavePainter extends CustomPainter {
 
   final String synthwaveId;
 
-  int get _variant => int.tryParse(synthwaveId.split('_').last) ?? 1;
+  static const _cityVariants = {2, 3, 5, 7, 9, 10};
+  static const _mountainVariants = {1, 4, 6, 8, 10};
+  static const _palmVariants = {3, 4, 7, 8};
+  static const _wheelVariants = {1, 5, 10};
+  static const _carPositions = <int, (double, double)>{
+    1: (.5, .83),
+    2: (.5, .79),
+    3: (.59, .83),
+    4: (.5, .83),
+    5: (.38, .84),
+    6: (.64, .82),
+    7: (.42, .82),
+    8: (.5, .85),
+    9: (.61, .8),
+    10: (.5, .84),
+  };
+
+  int get _variant {
+    final parsed = int.tryParse(synthwaveId.split('_').last) ?? 1;
+    return ((parsed - 1) % 10) + 1;
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
     if (size.isEmpty) return;
     final rect = Offset.zero & size;
-    final horizon = size.height * (_variant == 2 ? .52 : .56);
-    final accent = _variant.isEven
-        ? const Color(0xFF35E3F7)
-        : const Color(0xFFFF2E91);
+    final horizon =
+        size.height *
+        switch (_variant) {
+          2 => .52,
+          5 => .49,
+          6 => .61,
+          7 => .53,
+          8 => .47,
+          9 => .55,
+          10 => .58,
+          _ => .56,
+        };
+    final accent = switch (_variant) {
+      2 || 4 || 6 || 7 || 9 => const Color(0xFF35E3F7),
+      5 => const Color(0xFFFFA14A),
+      8 => const Color(0xFFFF4FB8),
+      10 => const Color(0xFFFFD166),
+      _ => const Color(0xFFFF2E91),
+    };
     canvas.drawRect(
       rect,
       Paint()
@@ -75,15 +110,19 @@ class _SynthwavePainter extends CustomPainter {
 
     _drawStars(canvas, size);
     _drawSun(canvas, size, horizon, accent);
-    if (_variant == 2 || _variant == 3) {
+    if (_cityVariants.contains(_variant)) {
       _drawCity(canvas, size, horizon, accent);
-    } else {
+    }
+    if (_mountainVariants.contains(_variant)) {
       _drawMountains(canvas, size, horizon, accent);
     }
-    if (_variant == 3 || _variant == 4) _drawPalmTrees(canvas, size, horizon);
+    if (_palmVariants.contains(_variant)) {
+      _drawPalmTrees(canvas, size, horizon);
+    }
     _drawPerspectiveGrid(canvas, size, horizon, accent);
-    if (_variant == 1) _drawDashboardWheel(canvas, size);
-    _drawCar(canvas, size, accent, _variant == 2 ? .79 : .83);
+    if (_wheelVariants.contains(_variant)) _drawDashboardWheel(canvas, size);
+    final (carX, carY) = _carPositions[_variant]!;
+    _drawCar(canvas, size, accent, carY, centerXFactor: carX);
   }
 
   void _drawStars(Canvas canvas, Size size) {
@@ -97,11 +136,18 @@ class _SynthwavePainter extends CustomPainter {
   }
 
   void _drawSun(Canvas canvas, Size size, double horizon, Color accent) {
+    final sunX = switch (_variant) {
+      3 || 7 => .62,
+      5 || 8 => .38,
+      9 => .46,
+      10 => .57,
+      _ => .5,
+    };
     final center = Offset(
-      size.width * (_variant == 3 ? .62 : .5),
-      horizon - size.height * .1,
+      size.width * sunX,
+      horizon - size.height * (_variant == 6 ? .06 : .1),
     );
-    final radius = size.shortestSide * .28;
+    final radius = size.shortestSide * (_variant == 8 ? .25 : .28);
     final circle = Path()
       ..addOval(Rect.fromCircle(center: center, radius: radius));
     canvas.save();
@@ -136,12 +182,24 @@ class _SynthwavePainter extends CustomPainter {
   }
 
   void _drawMountains(Canvas canvas, Size size, double horizon, Color accent) {
+    final firstPeakX = switch (_variant) {
+      6 => .34,
+      8 => .62,
+      10 => .25,
+      _ => .22,
+    };
+    final secondPeakX = switch (_variant) {
+      6 => .72,
+      8 => .38,
+      10 => .69,
+      _ => .54,
+    };
     final left = Path()
       ..moveTo(0, horizon + size.height * .07)
-      ..lineTo(size.width * .22, horizon - size.height * .13)
-      ..lineTo(size.width * .39, horizon + size.height * .08)
-      ..lineTo(size.width * .54, horizon - size.height * .03)
-      ..lineTo(size.width * .7, horizon + size.height * .09)
+      ..lineTo(size.width * firstPeakX, horizon - size.height * .13)
+      ..lineTo(size.width * (firstPeakX + .17), horizon + size.height * .08)
+      ..lineTo(size.width * secondPeakX, horizon - size.height * .03)
+      ..lineTo(size.width * (secondPeakX + .16), horizon + size.height * .09)
       ..lineTo(0, horizon + size.height * .12)
       ..close();
     canvas.drawPath(left, Paint()..color = const Color(0xFF21153F));
@@ -150,19 +208,19 @@ class _SynthwavePainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = size.shortestSide * .012;
     canvas.drawLine(
-      Offset(size.width * .22, horizon - size.height * .13),
-      Offset(size.width * .39, horizon + size.height * .08),
+      Offset(size.width * firstPeakX, horizon - size.height * .13),
+      Offset(size.width * (firstPeakX + .17), horizon + size.height * .08),
       ridgePaint,
     );
     canvas.drawLine(
-      Offset(size.width * .54, horizon - size.height * .03),
-      Offset(size.width * .7, horizon + size.height * .09),
+      Offset(size.width * secondPeakX, horizon - size.height * .03),
+      Offset(size.width * (secondPeakX + .16), horizon + size.height * .09),
       ridgePaint,
     );
   }
 
   void _drawCity(Canvas canvas, Size size, double horizon, Color accent) {
-    final baseY = horizon + size.height * .07;
+    final baseY = horizon + size.height * (_variant == 5 ? .11 : .07);
     final colors = [
       const Color(0xFF21183E),
       const Color(0xFF30204B),
@@ -170,7 +228,8 @@ class _SynthwavePainter extends CustomPainter {
     ];
     for (var index = 0; index < 13; index++) {
       final width = size.width * (.045 + (index % 3) * .012);
-      final height = size.height * (.12 + ((index * 7) % 9) * .018);
+      final height =
+          size.height * (.1 + ((index * 7 + _variant * 3) % 9) * .019);
       final x = index * size.width / 12 - width / 2;
       final building = Rect.fromLTWH(x, baseY - height, width, height);
       canvas.drawRect(building, Paint()..color = colors[index % colors.length]);
@@ -229,7 +288,14 @@ class _SynthwavePainter extends CustomPainter {
     final paint = Paint()
       ..color = accent.withValues(alpha: .78)
       ..strokeWidth = size.shortestSide * .008;
-    final vanish = Offset(size.width * .5, horizon);
+    final vanishX = switch (_variant) {
+      3 || 7 => .58,
+      5 || 8 => .4,
+      6 => .62,
+      9 => .46,
+      _ => .5,
+    };
+    final vanish = Offset(size.width * vanishX, horizon);
     for (var index = -6; index <= 6; index++) {
       canvas.drawLine(
         vanish,
@@ -245,8 +311,11 @@ class _SynthwavePainter extends CustomPainter {
   }
 
   void _drawDashboardWheel(Canvas canvas, Size size) {
-    final center = Offset(size.width * .16, size.height * .91);
-    final radius = size.shortestSide * .27;
+    final center = Offset(
+      size.width * (_variant == 5 ? .84 : .16),
+      size.height * (_variant == 10 ? .88 : .91),
+    );
+    final radius = size.shortestSide * (_variant == 10 ? .22 : .27);
     canvas.drawCircle(
       center,
       radius,
@@ -269,9 +338,10 @@ class _SynthwavePainter extends CustomPainter {
     Canvas canvas,
     Size size,
     Color accent,
-    double verticalPosition,
-  ) {
-    final centerX = size.width * (_variant == 3 ? .59 : .5);
+    double verticalPosition, {
+    required double centerXFactor,
+  }) {
+    final centerX = size.width * centerXFactor;
     final y = size.height * verticalPosition;
     final carWidth = size.width * .55;
     final carHeight = size.height * .22;

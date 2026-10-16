@@ -49,8 +49,14 @@ void main() {
         final close = find.byTooltip('Close Driving Mode');
         final dock = find.byKey(const ValueKey('driving-dock'));
         final map = find.byKey(const ValueKey('driving-map'));
-        final music = find.byKey(const ValueKey('driving-music'));
-        final info = find.byKey(const ValueKey('driving-info'));
+        final music = find.byKey(
+          const ValueKey('driving-music'),
+          skipOffstage: false,
+        );
+        final info = find.byKey(
+          const ValueKey('driving-info'),
+          skipOffstage: false,
+        );
 
         expect(find.byType(DrivingMapView), findsOneWidget);
         expect(tester.getTopLeft(close).dy, greaterThanOrEqualTo(_topInset));
@@ -69,11 +75,15 @@ void main() {
         );
         expect(tester.takeException(), isNull);
 
+        final initialInfoTop = tester.getTopLeft(info).dy;
+        final initialDockTop = tester.getTopLeft(dock).dy;
         await tester.drag(
-          find.byType(SingleChildScrollView),
+          find.byKey(const ValueKey('driving-dashboard-list')),
           const Offset(0, -1600),
         );
         await tester.pumpAndSettle();
+        expect(tester.getTopLeft(info).dy, lessThan(initialInfoTop));
+        expect(tester.getTopLeft(dock).dy, initialDockTop);
         expect(
           tester.getBottomRight(info).dy,
           lessThan(tester.getTopLeft(dock).dy),

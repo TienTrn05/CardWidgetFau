@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:carwidget/app/theme/app_theme.dart';
+import 'package:carwidget/core/storage/local_state_store.dart';
+import 'package:carwidget/features/my_widgets/data/widget_collection_snapshot.dart';
 import 'package:carwidget/features/cards/data/models/affirmation_model.dart';
 import 'package:carwidget/features/cards/presentation/pages/affirmation_settings_page.dart';
 import 'package:carwidget/features/cards/presentation/widgets/affirmation_card_artwork.dart';
@@ -14,6 +17,7 @@ import 'package:carwidget/features/catalog/data/models/widget_type.dart';
 import 'package:carwidget/features/catalog/data/models/logo_widget_model.dart';
 import 'package:carwidget/features/catalog/data/services/device_location_service.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/slide_right_transition.dart';
 import 'package:carwidget/features/catalog/presentation/pages/logo_widget_editor_page.dart';
 import 'package:carwidget/features/catalog/presentation/pages/country_flag_editor_page.dart';
 import 'package:carwidget/features/catalog/presentation/pages/photo_widget_editor_page.dart';
@@ -51,6 +55,61 @@ const _isIPhoneWidgetExportEnabled = false;
 final carPlayPreviewQueue = _createCarPlayPreviewQueue();
 final _previewSelectionOrder = <String>[];
 var _brandCarCopySequence = 0;
+
+VoidCallback? _detachWidgetStorage;
+
+void initializeMyWidgetsStorage({LocalStateStore? storage}) {
+  _detachWidgetStorage?.call();
+  final store = storage ?? LocalStateStore.instance;
+  final snapshot = WidgetCollectionSnapshot.fromJson(
+    store.readMap('widgetCollection') ?? {},
+    store,
+  );
+  brandCarLayouts.value = snapshot.layouts;
+  _savedWidgets.value = snapshot.widgets;
+  _videoWidgets.value = snapshot.videos;
+  carPlayPreviewQueue.value = snapshot.previewSlots;
+  _previewSelectionOrder
+    ..clear()
+    ..addAll(snapshot.selectionOrder);
+
+  var active = true;
+  var pending = false;
+  void save() {
+    if (pending) return;
+    pending = true;
+    scheduleMicrotask(() {
+      pending = false;
+      if (!active) return;
+      store.setValue(
+        'widgetCollection',
+        WidgetCollectionSnapshot(
+          widgets: _savedWidgets.value,
+          videos: _videoWidgets.value,
+          layouts: brandCarLayouts.value,
+          previewSlots: carPlayPreviewQueue.value,
+          selectionOrder: List.of(_previewSelectionOrder),
+        ).toJson(store),
+      );
+    });
+  }
+
+  final sources = [
+    _savedWidgets,
+    _videoWidgets,
+    carPlayPreviewQueue,
+    brandCarLayouts,
+  ];
+  for (final source in sources) {
+    source.addListener(save);
+  }
+  _detachWidgetStorage = () {
+    active = false;
+    for (final source in sources) {
+      source.removeListener(save);
+    }
+  };
+}
 
 ValueNotifier<List<SavedWidgetModel?>> _createCarPlayPreviewQueue() {
   final queue = ValueNotifier<List<SavedWidgetModel?>>([null, null]);
@@ -501,15 +560,40 @@ Future<void> _showWidgetPreview(
   required int initialIndex,
   required ValueListenable<List<SavedWidgetModel>> widgetsListenable,
   bool isVideoLibrary = false,
-}) => showDialog<void>(
-  context: context,
-  barrierColor: Colors.black.withValues(alpha: .86),
-  builder: (_) => _WidgetPreviewDialog(
-    initialIndex: initialIndex,
-    widgetsListenable: widgetsListenable,
-    isVideoLibrary: isVideoLibrary,
-  ),
-);
+}) {
+  if (widgetsListenable.value.isEmpty) {
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      enableDrag: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: .86),
+      builder: (sheetContext) => DraggableScrollableSheet(
+        initialChildSize: .92,
+        minChildSize: .56,
+        maxChildSize: .98,
+        expand: false,
+        builder: (context, scrollController) => _EmptyWidgetPreviewSheet(
+          scrollController: scrollController,
+          onClose: () => Navigator.of(sheetContext).pop(),
+          onInfo: () => _showPreviewInfoDialog(context),
+        ),
+      ),
+    );
+  }
+
+  return showSlideRightDialog<void>(
+    context: context,
+    barrierColor: Colors.black.withValues(alpha: .86),
+    builder: (_) => _WidgetPreviewDialog(
+      initialIndex: initialIndex,
+      widgetsListenable: widgetsListenable,
+      isVideoLibrary: isVideoLibrary,
+    ),
+  );
+}
 
 Future<void> showSavedWidgetPreview(
   BuildContext context,
@@ -538,6 +622,8 @@ Future<void> showSavedWidgetPreview(
   );
 }
 
+void _showPreviewInfoDialog(BuildContext context) => showTutorialSheet(context);
+
 Future<void> showVideoWidgetPreview(
   BuildContext context,
   SavedWidgetModel widget,
@@ -555,7 +641,6 @@ Future<void> showVideoWidgetPreview(
 }
 
 Future<void> showFirstSavedWidgetPreview(BuildContext context) {
-  if (_savedWidgets.value.isEmpty) return Future<void>.value();
   return _showWidgetPreview(
     context,
     initialIndex: 0,
@@ -629,25 +714,30 @@ class MyWidgetsSection extends StatelessWidget {
               ),
             ),
           ),
-          Material(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(22),
-            child: InkWell(
+          Transform.translate(
+            offset: const Offset(6, 0),
+            child: Material(
+              color: AppColors.surface,
               borderRadius: BorderRadius.circular(22),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(builder: (_) => const MyWidgetsPage()),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 17,
-                  vertical: 8,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(22),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const MyWidgetsPage(),
+                  ),
                 ),
-                child: Text(
-                  'See All',
-                  style: const TextStyle(
-                    color: AppColors.green,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 9.5,
+                    vertical: 4.5,
+                  ),
+                  child: Text(
+                    'See All',
+                    style: const TextStyle(
+                      color: AppColors.green,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
@@ -760,7 +850,7 @@ class _TutorialBanner extends StatelessWidget {
       onTap: onTap,
       child: Container(
         constraints: const BoxConstraints(minHeight: 45),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 9),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(23),
           border: Border.all(color: const Color(0xFF46525A), width: 1.2),
@@ -787,9 +877,9 @@ class _TutorialBanner extends StatelessWidget {
                 maxLines: 2,
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 18,
-                  height: 1.15,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  height: 1.25,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ),
@@ -865,41 +955,41 @@ class _AddWidgetTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              width: 66,
-              height: 66,
+              width: 52,
+              height: 52,
               child: Stack(
                 children: [
                   Positioned(
-                    left: 18,
-                    top: 7,
+                    left: 14,
+                    top: 6,
                     child: Transform.rotate(
                       angle: .12,
                       child: Container(
-                        width: 47,
-                        height: 54,
+                        width: 37,
+                        height: 43,
                         decoration: BoxDecoration(
                           color: const Color(0xFF008C61),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                       ),
                     ),
                   ),
                   Positioned(
-                    left: 8,
-                    top: 3,
+                    left: 6,
+                    top: 2,
                     child: Transform.rotate(
                       angle: -.12,
                       child: Container(
-                        width: 47,
-                        height: 54,
+                        width: 37,
+                        height: 43,
                         decoration: BoxDecoration(
                           color: AppColors.green,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(
                           Icons.add_rounded,
                           color: AppColors.background,
-                          size: 38,
+                          size: 30,
                         ),
                       ),
                     ),
@@ -932,7 +1022,7 @@ class _DashedBorderPainter extends CustomPainter {
     final paint = Paint()
       ..color = AppColors.green
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.5;
+      ..strokeWidth = 1.2;
 
     for (final metric in path.computeMetrics()) {
       var distance = 0.0;
@@ -1397,7 +1487,7 @@ class _BrandCarArtwork extends StatelessWidget {
                     style: TextStyle(
                       color: Color(layout.greetingColorValue),
                       fontFamily: greetingFontFamily,
-                      fontSize: 16,
+                      fontSize: isEditable ? 16 : 14,
                       height: 1.1,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1415,7 +1505,7 @@ class _BrandCarArtwork extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: Colors.white.withValues(alpha: .58),
-                      fontSize: 15 * layout.brandScale,
+                      fontSize: (isEditable ? 15 : 12) * layout.brandScale,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 1.2,
                     ),
@@ -1471,7 +1561,7 @@ class _BrandCarArtwork extends StatelessWidget {
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                       color: Colors.white.withValues(alpha: .8),
-                                      fontSize: 9,
+                                      fontSize: isEditable ? 9 : 8,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -1824,6 +1914,159 @@ class _LoopingVideoArtworkState extends State<_LoopingVideoArtwork> {
   );
 }
 
+class _EmptyWidgetPreviewSheet extends StatelessWidget {
+  const _EmptyWidgetPreviewSheet({
+    required this.scrollController,
+    required this.onClose,
+    required this.onInfo,
+  });
+
+  final ScrollController scrollController;
+  final VoidCallback onClose;
+  final VoidCallback onInfo;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) => SingleChildScrollView(
+      controller: scrollController,
+      child: SizedBox(
+        height: constraints.maxHeight,
+        child: DecoratedBox(
+          decoration: const BoxDecoration(
+            color: Color(0xFF0B0E17),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 48,
+                    child: Row(
+                      children: [
+                        IconButton(
+                          tooltip: 'Close preview',
+                          onPressed: onClose,
+                          icon: const Icon(Icons.close_rounded, size: 25),
+                        ),
+                        const Expanded(
+                          child: Text(
+                            'Preview Widget',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 19,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          tooltip: 'About the preview',
+                          onPressed: onInfo,
+                          icon: const Icon(
+                            Icons.info_rounded,
+                            color: AppColors.green,
+                            size: 25,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 22),
+                    child: Text(
+                      'This only updates the preview. CarPlay setup is done separately.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 15, height: 1.4),
+                    ),
+                  ),
+                  Expanded(
+                    child: Center(
+                      child: TweenAnimationBuilder<double>(
+                        tween: Tween(begin: 0, end: 1),
+                        duration: const Duration(milliseconds: 650),
+                        curve: Curves.easeOutCubic,
+                        builder: (context, progress, child) => Opacity(
+                          opacity: progress,
+                          child: Transform.translate(
+                            offset: Offset(0, 20 * (1 - progress)),
+                            child: Transform.scale(
+                              scale: .94 + .06 * progress,
+                              child: child,
+                            ),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 112,
+                                height: 112,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF003B2B),
+                                  borderRadius: BorderRadius.circular(24),
+                                ),
+                                child: const Icon(
+                                  Icons.widgets_rounded,
+                                  color: AppColors.green,
+                                  size: 58,
+                                ),
+                              ),
+                              const SizedBox(height: 34),
+                              const Text(
+                                'No Widget Added',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Text.rich(
+                                TextSpan(
+                                  style: const TextStyle(
+                                    color: AppColors.muted,
+                                    fontSize: 17,
+                                    height: 1.35,
+                                  ),
+                                  children: [
+                                    const TextSpan(
+                                      text: 'Browse widgets below and tap ',
+                                    ),
+                                    TextSpan(
+                                      text: '“Add Widget”',
+                                      style: const TextStyle(
+                                        color: AppColors.green,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    const TextSpan(
+                                      text: ' to build your collection.',
+                                    ),
+                                  ],
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
 class _WidgetPreviewDialog extends StatefulWidget {
   const _WidgetPreviewDialog({
     required this.initialIndex,
@@ -1860,7 +2103,9 @@ class _WidgetPreviewDialogState extends State<_WidgetPreviewDialog> {
   ) => ValueListenableBuilder<List<SavedWidgetModel>>(
     valueListenable: widget.widgetsListenable,
     builder: (context, widgets, _) {
-      if (widgets.isEmpty) return const SizedBox.shrink();
+      if (widgets.isEmpty) {
+        return const SizedBox.shrink();
+      }
 
       final currentIndex = _currentIndex.clamp(0, widgets.length - 1);
       final currentWidget = widgets[currentIndex];
@@ -1904,7 +2149,7 @@ class _WidgetPreviewDialogState extends State<_WidgetPreviewDialog> {
                       ),
                       IconButton(
                         tooltip: 'About the preview',
-                        onPressed: () => _showPreviewInfo(context),
+                        onPressed: () => _showPreviewInfoDialog(context),
                         icon: const Icon(
                           Icons.info_rounded,
                           color: AppColors.green,
@@ -2114,56 +2359,55 @@ class _WidgetPreviewDialogState extends State<_WidgetPreviewDialog> {
                 SizedBox(
                   width: double.infinity,
                   height: 56,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: FilledButton.icon(
-                          onPressed: () {
-                            _enqueueWidgetForCarPlayPreview(currentWidget);
-                            Navigator.of(context).pop();
-                          },
-                          style: FilledButton.styleFrom(
-                            backgroundColor: AppColors.green,
-                            foregroundColor: AppColors.background,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          icon: const Icon(Icons.directions_car_filled_rounded),
-                          label: const Text('CarPlay'),
-                        ),
+                  child: FilledButton(
+                    onPressed: () {
+                      _enqueueWidgetForCarPlayPreview(currentWidget);
+                      Navigator.of(context).pop();
+                    },
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.green,
+                      foregroundColor: AppColors.background,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                      if (Platform.isIOS && _isIPhoneWidgetExportEnabled) ...[
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: _isExportingToIPhone || selectedSlot < 0
-                                ? null
-                                : () => _exportCurrentWidget(currentWidget),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              side: const BorderSide(color: AppColors.green),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                            ),
-                            icon: const Icon(Icons.add_to_home_screen_rounded),
-                            label: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                selectedSlot == 0
-                                    ? 'Car Widget'
-                                    : selectedSlot == 1
-                                    ? 'Car Widget 2'
-                                    : 'Select for CarPlay first',
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
+                      textStyle: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    child: const Text('Select Widget'),
                   ),
                 ),
+                if (Platform.isIOS && _isIPhoneWidgetExportEnabled) ...[
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: OutlinedButton.icon(
+                      onPressed: _isExportingToIPhone || selectedSlot < 0
+                          ? null
+                          : () => _exportCurrentWidget(currentWidget),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        side: const BorderSide(color: AppColors.green),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      icon: const Icon(Icons.add_to_home_screen_rounded),
+                      label: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          selectedSlot == 0
+                              ? 'Car Widget'
+                              : selectedSlot == 1
+                              ? 'Car Widget 2'
+                              : 'Select for CarPlay first',
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 12),
                 SizedBox(
                   width: double.infinity,
@@ -2205,14 +2449,12 @@ class _WidgetPreviewDialogState extends State<_WidgetPreviewDialog> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
-                    ),
-                    child: const Text(
-                      'Edit Widget',
-                      style: TextStyle(
+                      textStyle: const TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
+                    child: const Text('Edit Widget'),
                   ),
                 ),
                 TextButton(
@@ -2480,25 +2722,6 @@ class _WidgetPreviewDialogState extends State<_WidgetPreviewDialog> {
       widgetId: savedWidget.id,
       borderGradientIndex: result.borderGradientIndex,
       borderOpacity: result.borderOpacity,
-    );
-  }
-
-  void _showPreviewInfo(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        content: const Text(
-          'This only updates the preview. CarPlay setup is done separately.',
-          textAlign: TextAlign.center,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Got it'),
-          ),
-        ],
-      ),
     );
   }
 

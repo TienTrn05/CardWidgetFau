@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:carwidget/features/catalog/data/models/widget_type.dart';
@@ -54,12 +55,75 @@ class SavedWidgetModel {
   final Uint8List? videoThumbnail;
 
   String get nameLogo => label;
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'label': label,
+    'type': type.name,
+    'imageBytes': imageBytes == null ? null : base64Encode(imageBytes!),
+    'imageAsset': imageAsset,
+    'layoutId': layoutId,
+    'borderGradientIndex': borderGradientIndex,
+    'borderOpacity': borderOpacity,
+    'symbol': symbol,
+    'countryFlagCode': countryFlagCode,
+    'footballTeamId': footballTeamId,
+    'synthwaveId': synthwaveId,
+    'affirmationText': affirmationText,
+    'affirmationDate': affirmationDate?.toIso8601String(),
+    'affirmationTextColorValue': affirmationTextColorValue,
+    'affirmationBackgroundColorValue': affirmationBackgroundColorValue,
+    'affirmationEyebrow': affirmationEyebrow,
+    'affirmationStyleIndex': affirmationStyleIndex,
+    'videoPath': videoPath,
+    'videoName': videoName,
+    'videoStartMs': videoStartMs,
+    'videoDurationMs': videoDurationMs,
+    'videoThumbnail': videoThumbnail == null
+        ? null
+        : base64Encode(videoThumbnail!),
+  };
+
+  factory SavedWidgetModel.fromJson(Map<String, dynamic> json) =>
+      SavedWidgetModel(
+        id: json['id'] as String,
+        label: json['label'] as String,
+        type: WidgetType.values.byName(json['type'] as String),
+        imageBytes: json['imageBytes'] == null
+            ? null
+            : base64Decode(json['imageBytes'] as String),
+        imageAsset: json['imageAsset'] as String?,
+        layoutId: json['layoutId'] as String?,
+        borderGradientIndex: json['borderGradientIndex'] as int?,
+        borderOpacity: (json['borderOpacity'] as num?)?.toDouble() ?? 1,
+        symbol: json['symbol'] as String?,
+        countryFlagCode: json['countryFlagCode'] as String?,
+        footballTeamId: json['footballTeamId'] as String?,
+        synthwaveId: json['synthwaveId'] as String?,
+        affirmationText: json['affirmationText'] as String?,
+        affirmationDate: json['affirmationDate'] == null
+            ? null
+            : DateTime.parse(json['affirmationDate'] as String),
+        affirmationTextColorValue:
+            json['affirmationTextColorValue'] as int? ?? 0xFF211917,
+        affirmationBackgroundColorValue:
+            json['affirmationBackgroundColorValue'] as int? ?? 0xFFF5D9CF,
+        affirmationEyebrow: json['affirmationEyebrow'] as String?,
+        affirmationStyleIndex: json['affirmationStyleIndex'] as int? ?? 0,
+        videoPath: json['videoPath'] as String?,
+        videoName: json['videoName'] as String?,
+        videoStartMs: json['videoStartMs'] as int? ?? 0,
+        videoDurationMs: json['videoDurationMs'] as int?,
+        videoThumbnail: json['videoThumbnail'] == null
+            ? null
+            : base64Decode(json['videoThumbnail'] as String),
+      );
 }
 
 const brandCarWidgetModels = <SavedWidgetModel>[
   SavedWidgetModel(
-    id: 'brand_car_fiat',
-    label: 'FIAT',
+    id: 'brand_car_abarth',
+    label: 'ABARTH',
     type: WidgetType.carLogoAndName,
   ),
   SavedWidgetModel(
@@ -68,18 +132,23 @@ const brandCarWidgetModels = <SavedWidgetModel>[
     type: WidgetType.carLogoAndName,
   ),
   SavedWidgetModel(
-    id: 'brand_car_porsche',
-    label: 'PORSCHE',
+    id: 'brand_car_aiways',
+    label: 'AIWAYS',
     type: WidgetType.carLogoAndName,
   ),
   SavedWidgetModel(
-    id: 'brand_car_bmw',
-    label: 'BMW',
+    id: 'brand_car_alfa_romeo',
+    label: 'ALFA ROMEO',
     type: WidgetType.carLogoAndName,
   ),
   SavedWidgetModel(
-    id: 'brand_car_mercedes',
-    label: 'MERCEDES',
+    id: 'brand_car_alpine',
+    label: 'ALPINE',
+    type: WidgetType.carLogoAndName,
+  ),
+  SavedWidgetModel(
+    id: 'brand_car_aston_martin',
+    label: 'ASTON MARTIN',
     type: WidgetType.carLogoAndName,
   ),
 ];

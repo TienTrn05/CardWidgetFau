@@ -15,7 +15,7 @@ class AffirmationCardArtwork extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     width: double.infinity,
     height: double.infinity,
-    padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
+    padding: const EdgeInsets.fromLTRB(12, 14, 12, 12),
     decoration: BoxDecoration(
       color: Color(affirmation.backgroundColorValue),
       borderRadius: BorderRadius.circular(25),
@@ -56,6 +56,70 @@ class AffirmationCardArtwork extends StatelessWidget {
               ),
             ),
           ),
+        if (affirmation.styleIndex == 3)
+          Positioned(
+            top: 8,
+            right: 4,
+            child: Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Color(
+                    affirmation.textColorValue,
+                  ).withValues(alpha: .18),
+                  width: 5,
+                ),
+              ),
+            ),
+          ),
+        if (affirmation.styleIndex == 4)
+          Positioned(
+            top: 0,
+            bottom: 0,
+            left: 0,
+            child: Container(
+              width: 4,
+              decoration: BoxDecoration(
+                color: Color(affirmation.textColorValue).withValues(alpha: .32),
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          ),
+        if (affirmation.styleIndex == 5)
+          Positioned(
+            bottom: 34,
+            left: 12,
+            right: 12,
+            child: Container(
+              height: 3,
+              decoration: BoxDecoration(
+                color: Color(affirmation.textColorValue).withValues(alpha: .22),
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
+          ),
+        if (affirmation.styleIndex == 6)
+          Positioned(
+            top: 5,
+            right: 2,
+            child: Icon(
+              Icons.auto_awesome_rounded,
+              size: 28,
+              color: Color(affirmation.textColorValue).withValues(alpha: .2),
+            ),
+          ),
+        if (affirmation.styleIndex == 7)
+          Positioned(
+            bottom: 30,
+            left: 2,
+            child: Icon(
+              Icons.wb_sunny_outlined,
+              size: 32,
+              color: Color(affirmation.textColorValue).withValues(alpha: .18),
+            ),
+          ),
         Padding(
           padding: EdgeInsets.fromLTRB(
             0,
@@ -79,20 +143,36 @@ class AffirmationCardArtwork extends StatelessWidget {
                 const SizedBox(height: 8),
               ],
               Expanded(
-                child: Center(
-                  child: Text(
-                    affirmation.text,
-                    textAlign: TextAlign.center,
-                    maxLines: 6,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final textStyle = TextStyle(
                       color: Color(affirmation.textColorValue),
                       fontFamily: 'Georgia',
-                      fontSize: textSize,
                       height: 1.25,
+                      fontStyle: affirmation.styleIndex == 6
+                          ? FontStyle.italic
+                          : FontStyle.normal,
                       fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                    );
+                    final fittedTextSize = _fitAffirmationTextSize(
+                      text: affirmation.text,
+                      style: textStyle,
+                      preferredSize: textSize,
+                      maxWidth: constraints.maxWidth,
+                      maxHeight: constraints.maxHeight,
+                      textScaler: MediaQuery.textScalerOf(context),
+                      textDirection: Directionality.of(context),
+                    );
+                    return Center(
+                      child: Text(
+                        affirmation.text,
+                        textAlign: affirmation.styleIndex == 4
+                            ? TextAlign.left
+                            : TextAlign.center,
+                        style: textStyle.copyWith(fontSize: fittedTextSize),
+                      ),
+                    );
+                  },
                 ),
               ),
               const SizedBox(height: 10),
@@ -111,4 +191,29 @@ class AffirmationCardArtwork extends StatelessWidget {
       ],
     ),
   );
+}
+
+double _fitAffirmationTextSize({
+  required String text,
+  required TextStyle style,
+  required double preferredSize,
+  required double maxWidth,
+  required double maxHeight,
+  required TextScaler textScaler,
+  required TextDirection textDirection,
+}) {
+  var candidateSize = preferredSize;
+  while (candidateSize > 7) {
+    final painter = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: style.copyWith(fontSize: candidateSize),
+      ),
+      textDirection: textDirection,
+      textScaler: textScaler,
+    )..layout(maxWidth: maxWidth);
+    if (painter.height <= maxHeight) return candidateSize;
+    candidateSize -= .5;
+  }
+  return 7;
 }

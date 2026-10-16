@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:carwidget/app/theme/app_theme.dart';
 import 'package:carwidget/features/cards/data/models/affirmation_model.dart';
 import 'package:carwidget/features/cards/presentation/widgets/affirmation_card_artwork.dart';
+import 'package:carwidget/features/settings/presentation/widgets/tutorial_sheet.dart';
 import 'package:flutter/material.dart';
 
 class AffirmationSettingsPage extends StatefulWidget {
@@ -280,22 +281,7 @@ class _AffirmationSettingsPageState extends State<AffirmationSettingsPage> {
     ),
   );
 
-  void _showInfo() => showDialog<void>(
-    context: context,
-    builder: (context) => AlertDialog(
-      backgroundColor: AppColors.surface,
-      title: const Text('Affirmation Widget'),
-      content: const Text(
-        'Edit the affirmation and choose its text and background colors. The date is set to today when you add it to My Widgets.',
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Got it'),
-        ),
-      ],
-    ),
-  );
+  void _showInfo() => showTutorialSheet(context);
 }
 
 class _SettingsLabel extends StatelessWidget {

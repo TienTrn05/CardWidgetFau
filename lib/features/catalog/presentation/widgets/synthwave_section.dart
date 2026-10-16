@@ -2,6 +2,7 @@ import 'package:carwidget/app/theme/app_theme.dart';
 import 'package:carwidget/features/catalog/data/models/synthwave_model.dart';
 import 'package:carwidget/features/catalog/presentation/pages/synthwave_editor_page.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/slide_right_transition.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/synthwave_artwork.dart';
 import 'package:carwidget/features/my_widgets/presentation/widgets/my_widgets_section.dart'
     show addSynthwaveToMyWidgets;
@@ -26,13 +27,30 @@ class SynthwaveSection extends StatelessWidget {
               ),
             ),
           ),
-          TextButton(
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => const SynthwavePage()),
-            ),
-            child: const Text(
-              'See All',
-              style: TextStyle(color: AppColors.green),
+          Transform.translate(
+            offset: const Offset(6, 0),
+            child: Material(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(22),
+              child: InkWell(
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const SynthwavePage(),
+                  ),
+                ),
+                borderRadius: BorderRadius.circular(22),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 9.5, vertical: 4.5),
+                  child: Text(
+                    'See All',
+                    style: TextStyle(
+                      color: AppColors.green,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ],
@@ -179,9 +197,9 @@ class _SynthwaveTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Material(
     color: const Color(0xFF252D33),
-    borderRadius: BorderRadius.circular(16),
+    borderRadius: BorderRadius.circular(24),
     child: InkWell(
-      onTap: () => showDialog<void>(
+      onTap: () => showSlideRightDialog<void>(
         context: context,
         builder: (_) => Dialog.fullscreen(
           backgroundColor: AppColors.background,
@@ -195,14 +213,14 @@ class _SynthwaveTile extends StatelessWidget {
           ),
         ),
       ),
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(24),
       child: Ink(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(24),
           border: Border.all(color: const Color(0xFF303940)),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(22),
           child: SynthwaveArtwork(synthwaveId: model.id),
         ),
       ),

@@ -2,6 +2,8 @@ import 'package:carwidget/app/theme/app_theme.dart';
 import 'package:carwidget/features/cards/data/models/affirmation_model.dart';
 import 'package:carwidget/features/cards/presentation/pages/affirmation_settings_page.dart';
 import 'package:carwidget/features/cards/presentation/widgets/affirmation_card_artwork.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/slide_right_transition.dart';
 import 'package:carwidget/features/my_widgets/presentation/widgets/my_widgets_section.dart';
 import 'package:flutter/material.dart';
 
@@ -27,25 +29,31 @@ class AffirmationsSection extends StatelessWidget {
                 ),
               ),
             ),
-            Material(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(22),
-              child: InkWell(
+            Transform.translate(
+              offset: const Offset(6, 0),
+              child: Material(
+                color: AppColors.surface,
                 borderRadius: BorderRadius.circular(22),
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) =>
-                        AffirmationsPage(affirmations: affirmations),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(22),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) =>
+                          AffirmationsPage(affirmations: affirmations),
+                    ),
                   ),
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 17, vertical: 8),
-                  child: Text(
-                    'See All',
-                    style: TextStyle(
-                      color: AppColors.green,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 9.5,
+                      vertical: 4.5,
+                    ),
+                    child: Text(
+                      'See All',
+                      style: TextStyle(
+                        color: AppColors.green,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
@@ -54,18 +62,26 @@ class AffirmationsSection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 14),
-        SizedBox(
-          height: 150,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            clipBehavior: Clip.none,
-            itemCount: affirmations.length,
-            separatorBuilder: (_, _) => const SizedBox(width: 10),
-            itemBuilder: (context, index) => SizedBox(
-              width: 150,
-              child: _AffirmationTile(affirmation: affirmations[index]),
-            ),
-          ),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final cardSize = carPlayWidgetPreviewSize(
+              context,
+              constraints.maxWidth,
+            );
+            return SizedBox(
+              height: cardSize,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                clipBehavior: Clip.none,
+                itemCount: affirmations.length,
+                separatorBuilder: (_, _) => const SizedBox(width: 12),
+                itemBuilder: (context, index) => SizedBox.square(
+                  dimension: cardSize,
+                  child: _AffirmationTile(affirmation: affirmations[index]),
+                ),
+              ),
+            );
+          },
         ),
       ],
     );
@@ -131,7 +147,7 @@ Future<void> _openSettings(
   AffirmationModel affirmation,
 ) async {
   final result = await Navigator.of(context).push<AffirmationModel>(
-    MaterialPageRoute<AffirmationModel>(
+    slideRightPageRoute<AffirmationModel>(
       builder: (_) => AffirmationSettingsPage(affirmation: affirmation),
     ),
   );

@@ -1,11 +1,14 @@
 import 'package:carwidget/app/theme/app_theme.dart';
 import 'package:carwidget/features/catalog/data/models/country_flag_model.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/slide_right_transition.dart';
 import 'package:carwidget/features/catalog/presentation/pages/country_flag_editor_page.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/country_flag_artwork.dart';
 import 'package:carwidget/features/my_widgets/presentation/widgets/my_widgets_section.dart'
     show addCountryFlagToMyWidgets;
 import 'package:flutter/material.dart';
+
+const _previewItemCount = 6;
 
 class CountryFlagsSection extends StatelessWidget {
   const CountryFlagsSection({super.key});
@@ -26,9 +29,14 @@ class CountryFlagsSection extends StatelessWidget {
               ),
             ),
           ),
-          _SeeAllButton(
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => const CountryFlagsPage()),
+          Transform.translate(
+            offset: const Offset(6, 0),
+            child: _SeeAllButton(
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const CountryFlagsPage(),
+                ),
+              ),
             ),
           ),
         ],
@@ -45,7 +53,9 @@ class CountryFlagsSection extends StatelessWidget {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               clipBehavior: Clip.none,
-              itemCount: countryFlagModels.length,
+              itemCount: countryFlagModels.length < _previewItemCount
+                  ? countryFlagModels.length
+                  : _previewItemCount,
               separatorBuilder: (_, _) => const SizedBox(width: 12),
               itemBuilder: (context, index) => SizedBox.square(
                 dimension: cardSize,
@@ -179,12 +189,12 @@ class _CountryFlagTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Material(
     color: const Color(0xFF252D33),
-    borderRadius: BorderRadius.circular(16),
+    borderRadius: BorderRadius.circular(24),
     child: InkWell(
       onTap: () => _openCountryFlagEditor(context, flag),
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(24),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
         child: Semantics(
           label: '${flag.name} flag',
           child: CountryFlagArtwork(countryCode: flag.code),
@@ -230,7 +240,7 @@ class _CountryFlagGridTile extends StatelessWidget {
 }
 
 void _openCountryFlagEditor(BuildContext context, CountryFlagModel flag) {
-  showDialog<void>(
+  showSlideRightDialog<void>(
     context: context,
     builder: (_) => Dialog.fullscreen(
       backgroundColor: AppColors.background,
@@ -259,12 +269,12 @@ class _SeeAllButton extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(22),
       child: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        padding: EdgeInsets.symmetric(horizontal: 9.5, vertical: 4.5),
         child: Text(
           'See All',
           style: TextStyle(
             color: AppColors.green,
-            fontSize: 12,
+            fontSize: 17,
             fontWeight: FontWeight.w600,
           ),
         ),

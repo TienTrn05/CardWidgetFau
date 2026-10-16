@@ -8,6 +8,7 @@ import 'package:carwidget/features/catalog/data/models/widget_type.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/brand_car_section.dart';
 import 'package:carwidget/features/cards/presentation/widgets/affirmations_section.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_mockup.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/country_flag_artwork.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/country_flags_section.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/football_teams_section.dart';
@@ -68,8 +69,8 @@ class _CarPlayPreview extends StatelessWidget {
       );
       final cardSize = widgetSize;
       final dockIconSize = math.min(
-        38.0,
-        math.min(railWidth - 10, (widgetSize - 15) / 3),
+        34.0,
+        math.min(railWidth - 10, (widgetSize - 27) / 3),
       );
 
       return SizedBox(
@@ -85,7 +86,6 @@ class _CarPlayPreview extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(27),
-                  border: Border.all(color: const Color(0xFF647C83), width: 2),
                   gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -107,10 +107,10 @@ class _CarPlayPreview extends StatelessWidget {
             ),
             Positioned(
               left: -13,
-              top: 0,
-              bottom: 0,
+              top: -5,
+              bottom: -5,
               width: railWidth,
-              child: _CarPlayDock(iconSize: dockIconSize),
+              child: CarPlayPreviewDock(iconSize: dockIconSize),
             ),
             Positioned(
               left: railWidth - 6,
@@ -159,97 +159,6 @@ class _CarPlayPreview extends StatelessWidget {
         ),
       );
     },
-  );
-}
-
-class _CarPlayDock extends StatelessWidget {
-  const _CarPlayDock({required this.iconSize});
-
-  final double iconSize;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    decoration: BoxDecoration(
-      gradient: const LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [Color(0xC910416D), Color(0x99506F7B), Color(0xA8758380)],
-      ),
-      borderRadius: BorderRadius.circular(20),
-    ),
-    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 5),
-    child: Column(
-      children: [
-        const Text(
-          '9:41',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-            height: 1.1,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: 3),
-        const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.signal_cellular_alt, color: Colors.white, size: 13),
-            SizedBox(width: 2),
-            Text(
-              '5G',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 9,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-        const Spacer(),
-        _DockIcon(asset: 'assets/images/map.png', size: iconSize),
-        const SizedBox(height: 4),
-        _DockIcon(asset: 'assets/images/music.png', size: iconSize),
-        const SizedBox(height: 4),
-        _DockIcon(asset: 'assets/images/phone.png', size: iconSize),
-        const Spacer(),
-        Container(
-          width: 18,
-          height: 18,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.white, width: 1.5),
-            borderRadius: BorderRadius.circular(5),
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
-class _DockIcon extends StatelessWidget {
-  const _DockIcon({required this.asset, required this.size});
-
-  final String asset;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) => SizedBox.square(
-    dimension: size,
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(9),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(9),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x55000000),
-              blurRadius: 5,
-              offset: Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Image.asset(asset, fit: BoxFit.cover),
-      ),
-    ),
   );
 }
 

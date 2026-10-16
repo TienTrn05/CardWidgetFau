@@ -1,4 +1,5 @@
 import 'package:carwidget/app/theme/app_theme.dart';
+import 'package:carwidget/core/storage/local_state_store.dart';
 import 'package:carwidget/features/catalog/data/models/saved_widget_model.dart';
 import 'package:carwidget/features/catalog/presentation/pages/video_widget_editor_page.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
@@ -173,20 +174,23 @@ class _SeeAllButton extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => Material(
-    color: AppColors.surface,
-    borderRadius: BorderRadius.circular(22),
-    child: InkWell(
-      onTap: onTap,
+  Widget build(BuildContext context) => Transform.translate(
+    offset: const Offset(6, 0),
+    child: Material(
+      color: AppColors.surface,
       borderRadius: BorderRadius.circular(22),
-      child: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 17, vertical: 8),
-        child: Text(
-          'See All',
-          style: TextStyle(
-            color: AppColors.green,
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(22),
+        child: const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 9.5, vertical: 4.5),
+          child: Text(
+            'See All',
+            style: TextStyle(
+              color: AppColors.green,
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),
@@ -257,35 +261,35 @@ class _AddVideoWidgetTile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                width: 84,
-                height: 68,
+                width: 56,
+                height: 48,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
                     Transform.rotate(
                       angle: .12,
                       child: Container(
-                        width: 76,
-                        height: 56,
+                        width: 50,
+                        height: 38,
                         decoration: BoxDecoration(
                           color: const Color(0xFF087453),
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                     ),
                     Transform.rotate(
                       angle: -.12,
                       child: Container(
-                        width: 76,
-                        height: 56,
+                        width: 50,
+                        height: 38,
                         decoration: BoxDecoration(
                           color: AppColors.green,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Icon(
                           Icons.play_arrow_rounded,
                           color: AppColors.background,
-                          size: 38,
+                          size: 24,
                         ),
                       ),
                     ),
@@ -295,7 +299,7 @@ class _AddVideoWidgetTile extends StatelessWidget {
               const SizedBox(height: 16),
               const Text(
                 'Add Widget',
-                style: TextStyle(color: AppColors.muted, fontSize: 18),
+                style: TextStyle(color: Colors.white, fontSize: 18),
               ),
             ],
           ),
@@ -311,14 +315,19 @@ class _AddVideoWidgetTile extends StatelessWidget {
       );
       if (selectedVideo == null || !context.mounted) return;
 
+      final localVideoPath = await LocalStateStore.instance.importVideo(
+        selectedVideo.path,
+      );
+      if (!context.mounted) return;
+
       await Navigator.of(context).push<bool>(
         MaterialPageRoute<bool>(
           builder: (_) => VideoWidgetEditorPage(
-            videoPath: selectedVideo.path,
+            videoPath: localVideoPath,
             videoName: selectedVideo.name,
             onAddVideoWidget: (startMs, durationMs, thumbnail) {
               addVideoWidgetToLibrary(
-                videoPath: selectedVideo.path,
+                videoPath: localVideoPath,
                 videoName: selectedVideo.name,
                 videoStartMs: startMs,
                 videoDurationMs: durationMs,
@@ -354,7 +363,7 @@ class _VideoWidgetDashedBorderPainter extends CustomPainter {
     final paint = Paint()
       ..color = AppColors.green
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.5;
+      ..strokeWidth = 1.2;
 
     for (final metric in path.computeMetrics()) {
       var distance = 0.0;

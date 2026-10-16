@@ -239,12 +239,14 @@ class _DrivingMapViewState extends State<DrivingMapView> {
                 viewType: 'carwidget/driving_map_v1',
                 layoutDirection: TextDirection.ltr,
                 onPlatformViewCreated: _onMapCreated,
-                // Map gestures belong to MapKit; the rest of the dashboard scrolls.
-                gestureRecognizers: {
-                  Factory<EagerGestureRecognizer>(
-                    () => EagerGestureRecognizer(),
-                  ),
-                },
+                // Vertical drags scroll the dashboard; expanded maps own all gestures.
+                gestureRecognizers: widget.expanded
+                    ? {
+                        Factory<EagerGestureRecognizer>(
+                          () => EagerGestureRecognizer(),
+                        ),
+                      }
+                    : const <Factory<OneSequenceGestureRecognizer>>{},
               )
             else
               const ColoredBox(

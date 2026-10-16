@@ -1,6 +1,12 @@
+import 'dart:async';
+import 'dart:math' as math;
+
 import 'package:carwidget/app/theme/app_theme.dart';
+import 'package:carwidget/core/storage/local_state_store.dart';
 import 'package:carwidget/features/settings/presentation/pages/widget_tutorial_page.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 
 class SoundsPage extends StatefulWidget {
   const SoundsPage({super.key});
@@ -10,11 +16,20 @@ class SoundsPage extends StatefulWidget {
 }
 
 class _SoundsPageState extends State<SoundsPage> {
-  final Map<_SoundEvent, String> _selections = {
-    _SoundEvent.connect: 'Car Horn',
-    _SoundEvent.disconnect: 'I Got This',
-    _SoundEvent.home: 'Car Horn',
+  final Map<_SoundEvent, String?> _selections = {
+    for (final event in _SoundEvent.values) event: null,
   };
+
+  @override
+  void initState() {
+    super.initState();
+    final saved = LocalStateStore.instance.readMap('sounds');
+    if (saved != null) {
+      for (final event in _SoundEvent.values) {
+        _selections[event] = saved[event.name] as String?;
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) => ListView(
@@ -40,35 +55,38 @@ class _SoundsPageState extends State<SoundsPage> {
       const SizedBox(height: 16),
       _SoundEventCard(
         event: _SoundEvent.connect,
-        selectedSound: _selections[_SoundEvent.connect]!,
+        selectedSound: _selections[_SoundEvent.connect],
         onTap: () => _chooseSound(_SoundEvent.connect),
       ),
       const SizedBox(height: 16),
       _SoundEventCard(
         event: _SoundEvent.disconnect,
-        selectedSound: _selections[_SoundEvent.disconnect]!,
+        selectedSound: _selections[_SoundEvent.disconnect],
         onTap: () => _chooseSound(_SoundEvent.disconnect),
       ),
       const SizedBox(height: 16),
       _SoundEventCard(
         event: _SoundEvent.home,
-        selectedSound: _selections[_SoundEvent.home]!,
+        selectedSound: _selections[_SoundEvent.home],
         onTap: () => _chooseSound(_SoundEvent.home),
       ),
     ],
   );
 
   Future<void> _chooseSound(_SoundEvent event) async {
-    final selected = await Navigator.of(context).push<String>(
-      MaterialPageRoute<String>(
+    final result = await Navigator.of(context).push<_SoundSelectionResult>(
+      MaterialPageRoute<_SoundSelectionResult>(
         builder: (_) => _SoundSelectionPage(
           title: event.title,
-          initialSelection: _selections[event]!,
+          initialSelection: _selections[event],
         ),
       ),
     );
-    if (selected != null && mounted) {
-      setState(() => _selections[event] = selected);
+    if (result != null && mounted) {
+      setState(() => _selections[event] = result.sound);
+      LocalStateStore.instance.setValue('sounds', {
+        for (final entry in _selections.entries) entry.key.name: entry.value,
+      });
     }
   }
 }
@@ -89,8 +107,8 @@ extension on _SoundEvent {
   };
 
   IconData get icon => switch (this) {
-    _SoundEvent.connect => Icons.play_circle_outline_rounded,
-    _SoundEvent.disconnect => Icons.play_circle_outline_rounded,
+    _SoundEvent.connect => Icons.play_arrow_rounded,
+    _SoundEvent.disconnect => Icons.play_arrow_rounded,
     _SoundEvent.home => Icons.home_rounded,
   };
 
@@ -149,7 +167,7 @@ class _SoundEventCard extends StatelessWidget {
   });
 
   final _SoundEvent event;
-  final String selectedSound;
+  final String? selectedSound;
   final VoidCallback onTap;
 
   @override
@@ -171,7 +189,17 @@ class _SoundEventCard extends StatelessWidget {
                 color: event.iconBackground,
                 borderRadius: BorderRadius.circular(11),
               ),
-              child: Icon(event.icon, color: event.color, size: 23),
+              child: Center(
+                child: event == _SoundEvent.home
+                    ? Icon(event.icon, color: event.color, size: 25)
+                    : CustomPaint(
+                        painter: _SoundPlaybackRingPainter(color: event.color),
+                        child: SizedBox.square(
+                          dimension: 26,
+                          child: Icon(event.icon, color: event.color, size: 18),
+                        ),
+                      ),
+              ),
             ),
             const SizedBox(width: 11),
             Expanded(
@@ -182,16 +210,21 @@ class _SoundEventCard extends StatelessWidget {
                     event.title,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      height: 1.3,
+                      letterSpacing: .2,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     event.subtitle,
                     style: const TextStyle(
-                      color: AppColors.muted,
-                      fontSize: 11,
+                      color: Color(0xFFAAB6BF),
+                      fontSize: 12,
+                      height: 1.35,
+                      letterSpacing: .1,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ],
@@ -202,37 +235,63 @@ class _SoundEventCard extends StatelessWidget {
         const SizedBox(height: 12),
         Material(
           color: AppColors.background,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(18),
           child: InkWell(
             onTap: onTap,
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              height: 49,
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFF39424A)),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.graphic_eq_rounded,
-                    color: Colors.white70,
-                    size: 19,
+            borderRadius: BorderRadius.circular(18),
+            child: CustomPaint(
+              foregroundPainter: selectedSound == null
+                  ? const _AddSoundBorderPainter()
+                  : null,
+              child: Container(
+                constraints: const BoxConstraints(minHeight: 60),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 14,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(
+                    color: selectedSound == null
+                        ? Colors.transparent
+                        : const Color(0xFF39424A),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      selectedSound,
-                      style: const TextStyle(color: Colors.white, fontSize: 14),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      selectedSound == null
+                          ? CupertinoIcons.add
+                          : Icons.graphic_eq_rounded,
+                      color: selectedSound == null
+                          ? Colors.white
+                          : Colors.white70,
+                      size: 26,
                     ),
-                  ),
-                  const Icon(
-                    Icons.chevron_right_rounded,
-                    color: AppColors.muted,
-                    size: 22,
-                  ),
-                ],
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        selectedSound ?? 'Add a sound',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 17,
+                          height: 1.3,
+                          letterSpacing: .2,
+                          fontWeight: selectedSound == null
+                              ? FontWeight.w400
+                              : FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    const Icon(
+                      CupertinoIcons.chevron_forward,
+                      color: Colors.white,
+                      size: 22,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -242,6 +301,75 @@ class _SoundEventCard extends StatelessWidget {
   );
 }
 
+class _SoundPlaybackRingPainter extends CustomPainter {
+  const _SoundPlaybackRingPainter({required this.color});
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final bounds = (Offset.zero & size).deflate(1.5);
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.3
+      ..strokeCap = StrokeCap.round;
+    const segmentAngle = math.pi * 2 / 3;
+    const gapAngle = .4;
+
+    for (var segment = 0; segment < 3; segment++) {
+      canvas.drawArc(
+        bounds,
+        -math.pi / 2 + gapAngle / 2 + segment * segmentAngle,
+        segmentAngle - gapAngle,
+        false,
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _SoundPlaybackRingPainter oldDelegate) =>
+      color != oldDelegate.color;
+}
+
+class _AddSoundBorderPainter extends CustomPainter {
+  const _AddSoundBorderPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = Path()
+      ..addRRect(
+        RRect.fromRectAndRadius(
+          (Offset.zero & size).deflate(.5),
+          const Radius.circular(18),
+        ),
+      );
+    final paint = Paint()
+      ..color = AppColors.green.withValues(alpha: .8)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+
+    for (final metric in path.computeMetrics()) {
+      for (var distance = 0.0; distance < metric.length; distance += 11) {
+        canvas.drawPath(
+          metric.extractPath(distance, (distance + 6).clamp(0, metric.length)),
+          paint,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _AddSoundBorderPainter oldDelegate) => false;
+}
+
+class _SoundSelectionResult {
+  const _SoundSelectionResult(this.sound);
+
+  final String? sound;
+}
+
 class _SoundSelectionPage extends StatefulWidget {
   const _SoundSelectionPage({
     required this.title,
@@ -249,13 +377,32 @@ class _SoundSelectionPage extends StatefulWidget {
   });
 
   final String title;
-  final String initialSelection;
+  final String? initialSelection;
 
   @override
   State<_SoundSelectionPage> createState() => _SoundSelectionPageState();
 }
 
 class _SoundSelectionPageState extends State<_SoundSelectionPage> {
+  static const _soundAssets = {
+    'Car Horn': 'assets/sounds/car_horn.wav',
+    'Calling': 'assets/sounds/calling.wav',
+    'I Got This': 'assets/sounds/i_got_this.wav',
+    'Sus Meme': 'assets/sounds/sus_meme.wav',
+    'Hello There': 'assets/sounds/hello_there.wav',
+    'Woooooaah': 'assets/sounds/wooooaah.wav',
+    'Thud': 'assets/sounds/thud.wav',
+    'Alfa Romeo Airlines': 'assets/sounds/alfa_romeo_airlines.wav',
+    'Engine Start': 'assets/sounds/engine_start.wav',
+    'Turbo Boost': 'assets/sounds/turbo_boost.wav',
+    'Air Horn': 'assets/sounds/air_horn.wav',
+    'Retro Chime': 'assets/sounds/retro_chime.wav',
+    'Race Countdown': 'assets/sounds/race_countdown.wav',
+    'Police Siren': 'assets/sounds/police_siren.wav',
+    'Dog Bark': 'assets/sounds/dog_bark.wav',
+    'Notification Bell': 'assets/sounds/notification_bell.wav',
+  };
+
   static const _sounds = [
     'Car Horn',
     'Calling',
@@ -265,10 +412,77 @@ class _SoundSelectionPageState extends State<_SoundSelectionPage> {
     'Woooooaah',
     'Thud',
     'Alfa Romeo Airlines',
+    'Engine Start',
+    'Turbo Boost',
+    'Air Horn',
+    'Retro Chime',
+    'Race Countdown',
+    'Police Siren',
+    'Dog Bark',
+    'Notification Bell',
   ];
 
-  late String _selectedSound = widget.initialSelection;
+  late String? _selectedSound = widget.initialSelection;
   String _query = '';
+  VideoPlayerController? _previewController;
+
+  @override
+  void dispose() {
+    final controller = _previewController;
+    _previewController = null;
+    if (controller != null) unawaited(controller.dispose());
+    super.dispose();
+  }
+
+  Future<void> _playPreview(String sound) async {
+    final asset = _soundAssets[sound];
+    if (asset == null) {
+      _showMessage('Audio preview is not available for this sound yet.');
+      return;
+    }
+
+    final previousController = _previewController;
+    _previewController = null;
+    if (previousController != null) {
+      await previousController.dispose();
+    }
+    if (!mounted) return;
+
+    final controller = VideoPlayerController.asset(asset);
+    _previewController = controller;
+    try {
+      await controller.initialize();
+      if (!mounted || !identical(_previewController, controller)) {
+        await controller.dispose();
+        return;
+      }
+
+      late VoidCallback completionListener;
+      completionListener = () {
+        if (controller.value.isCompleted) {
+          controller.removeListener(completionListener);
+          if (identical(_previewController, controller)) {
+            _previewController = null;
+          }
+          unawaited(controller.dispose());
+        }
+      };
+      controller.addListener(completionListener);
+      await controller.play();
+    } catch (_) {
+      if (identical(_previewController, controller)) {
+        _previewController = null;
+      }
+      await controller.dispose();
+      if (mounted) _showMessage('Unable to play this audio preview.');
+    }
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -321,18 +535,6 @@ class _SoundSelectionPageState extends State<_SoundSelectionPage> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-              child: _CreateCustomSoundButton(
-                onTap: () => ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    const SnackBar(
-                      content: Text('Custom sounds are not available yet.'),
-                    ),
-                  ),
-              ),
-            ),
             const Padding(
               padding: EdgeInsets.fromLTRB(20, 12, 20, 10),
               child: Align(
@@ -342,7 +544,7 @@ class _SoundSelectionPageState extends State<_SoundSelectionPage> {
                   style: TextStyle(
                     color: AppColors.muted,
                     fontSize: 13,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
@@ -364,17 +566,12 @@ class _SoundSelectionPageState extends State<_SoundSelectionPage> {
                         return _SoundChoiceTile(
                           name: sound,
                           selected: _selectedSound == sound,
-                          onSelect: () =>
-                              setState(() => _selectedSound = sound),
-                          onPreview: () => ScaffoldMessenger.of(context)
-                            ..hideCurrentSnackBar()
-                            ..showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Audio preview is not available yet.',
-                                ),
-                              ),
-                            ),
+                          onSelect: () => setState(() {
+                            _selectedSound = _selectedSound == sound
+                                ? null
+                                : sound;
+                          }),
+                          onPreview: () => _playPreview(sound),
                         );
                       },
                     ),
@@ -387,7 +584,9 @@ class _SoundSelectionPageState extends State<_SoundSelectionPage> {
                   width: double.infinity,
                   height: 62,
                   child: FilledButton(
-                    onPressed: () => Navigator.of(context).pop(_selectedSound),
+                    onPressed: () => Navigator.of(
+                      context,
+                    ).pop(_SoundSelectionResult(_selectedSound)),
                     style: FilledButton.styleFrom(
                       backgroundColor: AppColors.green,
                       foregroundColor: AppColors.background,
@@ -411,83 +610,6 @@ class _SoundSelectionPageState extends State<_SoundSelectionPage> {
   }
 }
 
-class _CreateCustomSoundButton extends StatelessWidget {
-  const _CreateCustomSoundButton({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(1),
-    decoration: BoxDecoration(
-      gradient: const LinearGradient(
-        colors: [AppColors.green, Color(0xFF25C8D7)],
-      ),
-      borderRadius: BorderRadius.circular(19),
-    ),
-    child: Material(
-      color: const Color(0xFF072A2C),
-      borderRadius: BorderRadius.circular(18),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
-        child: const SizedBox(
-          height: 88,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 17),
-            child: Row(
-              children: [
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: Color(0xFF063D2C),
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                  ),
-                  child: SizedBox(
-                    width: 48,
-                    height: 48,
-                    child: Icon(
-                      Icons.queue_music_rounded,
-                      color: AppColors.green,
-                      size: 24,
-                    ),
-                  ),
-                ),
-                SizedBox(width: 13),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Create Custom Sound',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(height: 3),
-                      Text(
-                        'Make your own personalized sounds',
-                        style: TextStyle(color: AppColors.muted, fontSize: 12),
-                      ),
-                    ],
-                  ),
-                ),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  color: Colors.white,
-                  size: 25,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
-}
-
 class _SoundChoiceTile extends StatelessWidget {
   const _SoundChoiceTile({
     required this.name,
@@ -508,12 +630,17 @@ class _SoundChoiceTile extends StatelessWidget {
     child: InkWell(
       onTap: onSelect,
       borderRadius: BorderRadius.circular(18),
+      splashFactory: NoSplash.splashFactory,
+      overlayColor: const WidgetStatePropertyAll(Colors.transparent),
       child: Container(
         height: 62,
         padding: const EdgeInsets.symmetric(horizontal: 14),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: const Color(0xFF39424A)),
+          border: Border.all(
+            color: selected ? AppColors.green : const Color(0xFF39424A),
+            width: 1.2,
+          ),
         ),
         child: Row(
           children: [
@@ -528,8 +655,8 @@ class _SoundChoiceTile extends StatelessWidget {
             Expanded(
               child: Text(
                 name,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: selected ? AppColors.green : Colors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
@@ -538,12 +665,12 @@ class _SoundChoiceTile extends StatelessWidget {
             IconButton(
               tooltip: 'Preview $name',
               onPressed: onPreview,
-              icon: const Icon(Icons.play_arrow_rounded, size: 19),
+              icon: const Icon(Icons.play_arrow_rounded, size: 16),
               style: IconButton.styleFrom(
                 backgroundColor: const Color(0xFF87909B),
                 foregroundColor: Colors.white,
-                minimumSize: const Size(29, 29),
-                maximumSize: const Size(29, 29),
+                minimumSize: const Size(24, 24),
+                maximumSize: const Size(24, 24),
                 padding: EdgeInsets.zero,
               ),
             ),

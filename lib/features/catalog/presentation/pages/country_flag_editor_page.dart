@@ -3,6 +3,8 @@ import 'package:carwidget/features/catalog/data/models/country_flag_model.dart';
 import 'package:carwidget/features/catalog/data/models/logo_widget_model.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/country_flag_artwork.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/widget_preview_button.dart';
+import 'package:carwidget/features/settings/presentation/widgets/tutorial_sheet.dart';
 import 'package:flutter/material.dart';
 
 class CountryFlagEditResult {
@@ -82,17 +84,31 @@ class _CountryFlagEditorPageState extends State<CountryFlagEditorPage> {
           ),
           Expanded(
             flex: 2,
-            child: LayoutBuilder(
-              builder: (context, constraints) => Center(
-                child: SizedBox.square(
-                  dimension: editorWidgetPreviewSize(constraints),
-                  child: _FlagPreviewCard(
+            child: Column(
+              children: [
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) => Center(
+                      child: SizedBox.square(
+                        dimension: editorWidgetPreviewSize(constraints),
+                        child: _FlagPreviewCard(
+                          model: widget.model,
+                          gradientIndex: _gradientIndex,
+                          opacity: _borderOpacity,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                WidgetPreviewButton(
+                  previewBuilder: (_) => _FlagPreviewCard(
                     model: widget.model,
                     gradientIndex: _gradientIndex,
                     opacity: _borderOpacity,
                   ),
                 ),
-              ),
+                const SizedBox(height: 8),
+              ],
             ),
           ),
           Expanded(
@@ -221,24 +237,7 @@ class _CountryFlagEditorPageState extends State<CountryFlagEditorPage> {
     }
   }
 
-  void _showInfo() => showDialog<void>(
-    context: context,
-    builder: (context) => AlertDialog(
-      backgroundColor: AppColors.surface,
-      title: const Text('Widget Preview'),
-      content: Text(
-        widget.isEditingSavedWidget
-            ? 'Changes to this flag are saved to My Widgets.'
-            : 'Choose a border style, then add this country flag to My Widgets.',
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Got it'),
-        ),
-      ],
-    ),
-  );
+  void _showInfo() => showTutorialSheet(context);
 }
 
 class _FlagPreviewCard extends StatelessWidget {

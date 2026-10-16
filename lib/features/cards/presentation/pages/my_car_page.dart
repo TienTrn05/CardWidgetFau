@@ -1,6 +1,8 @@
 import 'package:carwidget/app/theme/app_theme.dart';
+import 'package:carwidget/core/storage/local_state_store.dart';
 import 'package:carwidget/features/cards/data/car_catalog.dart';
 import 'package:carwidget/features/cards/presentation/pages/driving_mode_page.dart';
+import 'package:flutter/cupertino.dart' show CupertinoPageRoute;
 import 'package:flutter/material.dart';
 
 class MyCarPage extends StatefulWidget {
@@ -11,11 +13,43 @@ class MyCarPage extends StatefulWidget {
 }
 
 class _MyCarPageState extends State<MyCarPage> {
-  final PageController _garageController = PageController();
+  late final PageController _garageController;
   final List<_GarageCar> _cars = [
     const _GarageCar(brand: 'Acura', bodyStyle: 'SUV', year: '2025'),
   ];
   int _currentCar = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    final saved = LocalStateStore.instance.readMap('garage');
+    if (saved != null) {
+      _cars
+        ..clear()
+        ..addAll(
+          (saved['cars'] as List).map((entry) {
+            final car = Map<String, dynamic>.from(entry as Map);
+            return _GarageCar(
+              brand: car['brand'] as String,
+              bodyStyle: car['bodyStyle'] as String,
+              year: car['year'] as String,
+            );
+          }),
+        );
+      _currentCar = _cars.isEmpty
+          ? 0
+          : (saved['selectedIndex'] as int? ?? 0).clamp(0, _cars.length - 1);
+    }
+    _garageController = PageController(initialPage: _currentCar);
+  }
+
+  void _saveGarage() => LocalStateStore.instance.setValue('garage', {
+    'cars': [
+      for (final car in _cars)
+        {'brand': car.brand, 'bodyStyle': car.bodyStyle, 'year': car.year},
+    ],
+    'selectedIndex': _currentCar,
+  });
 
   @override
   void dispose() {
@@ -75,7 +109,10 @@ class _MyCarPageState extends State<MyCarPage> {
           child: PageView.builder(
             controller: _garageController,
             itemCount: _cars.length,
-            onPageChanged: (index) => setState(() => _currentCar = index),
+            onPageChanged: (index) {
+              setState(() => _currentCar = index);
+              _saveGarage();
+            },
             itemBuilder: (context, index) => _GarageCarCard(
               car: _cars[index],
               onDelete: () => _removeCar(index),
@@ -107,13 +144,14 @@ class _MyCarPageState extends State<MyCarPage> {
 
   Future<void> _addCar() async {
     final car = await Navigator.of(context).push<_GarageCar>(
-      MaterialPageRoute<_GarageCar>(builder: (_) => const _AddCarFlowPage()),
+      CupertinoPageRoute<_GarageCar>(builder: (_) => const _AddCarFlowPage()),
     );
     if (car == null || !mounted) return;
     setState(() {
       _cars.add(car);
       _currentCar = _cars.length - 1;
     });
+    _saveGarage();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_garageController.hasClients && _cars.isNotEmpty) {
         _garageController.animateToPage(
@@ -150,6 +188,7 @@ class _MyCarPageState extends State<MyCarPage> {
       _cars.removeAt(index);
       _currentCar = _cars.isEmpty ? 0 : index.clamp(0, _cars.length - 1);
     });
+    _saveGarage();
     if (_cars.isNotEmpty && _garageController.hasClients) {
       _garageController.jumpToPage(_currentCar);
     }
@@ -437,6 +476,7 @@ class _AddCarFlowPage extends StatefulWidget {
 class _AddCarFlowPageState extends State<_AddCarFlowPage> {
   final _searchController = TextEditingController();
   _AddCarStep _step = _AddCarStep.brand;
+  bool _isGoingBack = false;
   String _query = '';
   String? _selectedBrand;
   String? _selectedModel;
@@ -469,13 +509,19 @@ class _AddCarFlowPageState extends State<_AddCarFlowPage> {
                   icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
                 ),
                 Expanded(
-                  child: Text(
-                    _title,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
+                  child: AnimatedSwitcher(
+                    duration: MediaQuery.disableAnimationsOf(context)
+                        ? Duration.zero
+                        : const Duration(milliseconds: 400),
+                    child: Text(
+                      _title,
+                      key: ValueKey(_step),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ),
@@ -516,14 +562,47 @@ class _AddCarFlowPageState extends State<_AddCarFlowPage> {
               ),
             ),
           ],
-          Expanded(child: _buildOptions()),
+          Expanded(
+            child: ClipRect(
+              child: AnimatedSwitcher(
+                duration: MediaQuery.disableAnimationsOf(context)
+                    ? Duration.zero
+                    : const Duration(milliseconds: 500),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeInCubic,
+                transitionBuilder: (child, animation) {
+                  final incoming = child.key == ValueKey(_step);
+                  final direction = _isGoingBack ? -1.0 : 1.0;
+                  final offset = incoming ? direction : -direction;
+                  return IgnorePointer(
+                    ignoring: !incoming,
+                    child: FadeTransition(
+                      opacity: animation,
+                      child: SlideTransition(
+                        position: Tween<Offset>(
+                          begin: Offset(.12 * offset, 0),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: child,
+                      ),
+                    ),
+                  );
+                },
+                child: KeyedSubtree(
+                  key: ValueKey(_step),
+                  child: _buildOptions(),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     ),
   );
 
   Widget _buildOptions() {
-    if (_step == _AddCarStep.year) {
+    final step = _step;
+    if (step == _AddCarStep.year) {
       return ListView.separated(
         padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
         itemCount: carModelYears.length,
@@ -544,9 +623,7 @@ class _AddCarFlowPageState extends State<_AddCarFlowPage> {
       );
     }
 
-    final options = _step == _AddCarStep.brand
-        ? carBrandNames
-        : carModelOptions;
+    final options = step == _AddCarStep.brand ? carBrandNames : carModelOptions;
     final filteredOptions = options
         .where((option) => option.toLowerCase().contains(_query.toLowerCase()))
         .toList();
@@ -568,12 +645,15 @@ class _AddCarFlowPageState extends State<_AddCarFlowPage> {
         final option = filteredOptions[index];
         return _CarOptionTile(
           label: option,
-          leading: _step == _AddCarStep.brand
+          leading: step == _AddCarStep.brand
               ? _BrandInitialBadge(brand: option)
               : null,
           onTap: () {
+            if (step != _step) return;
+            FocusManager.instance.primaryFocus?.unfocus();
             setState(() {
-              if (_step == _AddCarStep.brand) {
+              _isGoingBack = false;
+              if (step == _AddCarStep.brand) {
                 _selectedBrand = option;
                 _step = _AddCarStep.model;
               } else {
@@ -594,7 +674,9 @@ class _AddCarFlowPageState extends State<_AddCarFlowPage> {
       Navigator.of(context).pop();
       return;
     }
+    FocusManager.instance.primaryFocus?.unfocus();
     setState(() {
+      _isGoingBack = true;
       _step = _step == _AddCarStep.year ? _AddCarStep.model : _AddCarStep.brand;
       _query = '';
       _searchController.clear();

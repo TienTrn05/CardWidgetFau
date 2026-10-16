@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.net.MailTo
 import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -27,6 +28,44 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "carwidget/network_settings_v1")
+            .setMethodCallHandler { call, result ->
+                if (call.method != "openWifiSettings") {
+                    result.notImplemented()
+                    return@setMethodCallHandler
+                }
+                try {
+                    startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
+                    result.success(null)
+                } catch (error: ActivityNotFoundException) {
+                    try {
+                        startActivity(Intent(Settings.ACTION_SETTINGS))
+                        result.success(null)
+                    } catch (fallbackError: ActivityNotFoundException) {
+                        result.error("settings_unavailable", "Could not open Settings.", null)
+                    } catch (fallbackError: SecurityException) {
+                        result.error("settings_unavailable", "Could not open Settings.", null)
+                    }
+                } catch (error: SecurityException) {
+                    result.error("settings_unavailable", "Could not open Settings.", null)
+                }
+            }
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "carwidget/local_storage_v1")
+            .setMethodCallHandler { call, result ->
+                if (call.method != "getSupportDirectory") {
+                    result.notImplemented()
+                    return@setMethodCallHandler
+                }
+                try {
+                    val directory = File(filesDir, "CarWidget")
+                    if (!directory.isDirectory && !directory.mkdirs()) {
+                        throw IllegalStateException("Could not create local storage.")
+                    }
+                    result.success(directory.absolutePath)
+                } catch (error: Exception) {
+                    result.error("storage_error", "Could not open local storage.", null)
+                }
+            }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "carwidget/device_identity")
             .setMethodCallHandler { call, result ->
                 if (call.method != "getOrCreateId") {

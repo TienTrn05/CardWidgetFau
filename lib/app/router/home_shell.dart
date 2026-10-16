@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart' show CupertinoPageRoute;
 import 'package:flutter/material.dart';
 import 'package:carwidget/app/theme/app_theme.dart';
 import 'package:carwidget/core/ui/car_ui.dart';
@@ -16,7 +17,7 @@ class HomeShell extends StatefulWidget {
 class _HomeShellState extends State<HomeShell> {
   final PageController _pageController = PageController();
   int tab = 0;
-  bool settings = false;
+  bool _settingsRouteOpen = false;
 
   @override
   void dispose() {
@@ -33,57 +34,76 @@ class _HomeShellState extends State<HomeShell> {
     );
   }
 
+  Future<void> _openSettings() async {
+    if (_settingsRouteOpen) return;
+    _settingsRouteOpen = true;
+    try {
+      await Navigator.of(context).push<void>(
+        _SettingsRoute(
+          reduceMotion: MediaQuery.disableAnimationsOf(context),
+          builder: (context) => Scaffold(
+            body: SafeArea(
+              child: SettingsPage(onBack: () => Navigator.of(context).pop()),
+            ),
+          ),
+        ),
+      );
+    } finally {
+      _settingsRouteOpen = false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
     body: SafeArea(
-      child: IndexedStack(
-        index: settings ? 1 : 0,
+      child: Column(
         children: [
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 14, 16, 8),
-                child: Row(
-                  children: [
-                    if (tab != 0)
-                      IconButton(
-                        tooltip: 'Settings',
-                        onPressed: () => setState(() => settings = true),
-                        icon: const Icon(Icons.settings_rounded),
-                      )
-                    else ...[
-                      const Brand(),
-                      const Spacer(),
-                      IconButton(
-                        tooltip: 'Settings',
-                        onPressed: () => setState(() => settings = true),
-                        icon: const Icon(Icons.settings_outlined),
-                      ),
-                    ],
-                  ],
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 14, 16, 8),
+            child: Row(
+              children: [
+                if (tab == 0) const Brand(),
+                const Spacer(),
+                IconButton(
+                  tooltip: 'Settings',
+                  onPressed: _openSettings,
+                  icon: const Icon(Icons.settings_outlined),
                 ),
-              ),
-              Expanded(
-                child: PageView(
-                  controller: _pageController,
-                  onPageChanged: (index) => setState(() => tab = index),
-                  children: const [
-                    _KeepAlivePage(child: WidgetsPage()),
-                    _KeepAlivePage(child: SoundsPage()),
-                    _KeepAlivePage(child: MyCarPage()),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-          SettingsPage(onBack: () => setState(() => settings = false)),
+          Expanded(
+            child: PageView(
+              controller: _pageController,
+              onPageChanged: (index) => setState(() => tab = index),
+              children: const [
+                _KeepAlivePage(child: WidgetsPage()),
+                _KeepAlivePage(child: SoundsPage()),
+                _KeepAlivePage(child: MyCarPage()),
+              ],
+            ),
+          ),
         ],
       ),
     ),
-    bottomNavigationBar: settings
-        ? null
-        : _BottomTaskbar(selectedIndex: tab, onDestinationSelected: _selectTab),
+    bottomNavigationBar: _BottomTaskbar(
+      selectedIndex: tab,
+      onDestinationSelected: _selectTab,
+    ),
   );
+}
+
+class _SettingsRoute extends CupertinoPageRoute<void> {
+  _SettingsRoute({required super.builder, required this.reduceMotion});
+
+  final bool reduceMotion;
+
+  @override
+  Duration get transitionDuration =>
+      reduceMotion ? Duration.zero : const Duration(milliseconds: 650);
+
+  @override
+  Duration get reverseTransitionDuration => transitionDuration;
 }
 
 class _KeepAlivePage extends StatefulWidget {
@@ -133,59 +153,36 @@ class _BottomTaskbar extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(18, 5, 18, 4),
           child: SizedBox(
             height: 64,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final itemWidth = constraints.maxWidth / 3;
-                return Stack(
-                  children: [
-                    AnimatedPositioned(
-                      duration: const Duration(milliseconds: 230),
-                      curve: Curves.easeInOutCubic,
-                      left: itemWidth * selectedIndex + (itemWidth - 46) / 2,
-                      top: 3,
-                      width: 46,
-                      height: 32,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: AppColors.green.withValues(alpha: .13),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _TaskbarDestination(
-                            icon: Icons.widgets_outlined,
-                            selectedIcon: Icons.widgets_rounded,
-                            label: 'Widget',
-                            isSelected: selectedIndex == 0,
-                            onTap: () => onDestinationSelected(0),
-                          ),
-                        ),
-                        Expanded(
-                          child: _TaskbarDestination(
-                            icon: Icons.music_note_outlined,
-                            selectedIcon: Icons.music_note_rounded,
-                            label: 'Sound',
-                            isSelected: selectedIndex == 1,
-                            onTap: () => onDestinationSelected(1),
-                          ),
-                        ),
-                        Expanded(
-                          child: _TaskbarDestination(
-                            icon: Icons.directions_car_outlined,
-                            selectedIcon: Icons.directions_car_filled_rounded,
-                            label: 'My Car',
-                            isSelected: selectedIndex == 2,
-                            onTap: () => onDestinationSelected(2),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                );
-              },
+            child: Row(
+              children: [
+                Expanded(
+                  child: _TaskbarDestination(
+                    icon: Icons.widgets_outlined,
+                    selectedIcon: Icons.widgets_rounded,
+                    label: 'Widget',
+                    isSelected: selectedIndex == 0,
+                    onTap: () => onDestinationSelected(0),
+                  ),
+                ),
+                Expanded(
+                  child: _TaskbarDestination(
+                    icon: Icons.music_note_outlined,
+                    selectedIcon: Icons.music_note_rounded,
+                    label: 'Sound',
+                    isSelected: selectedIndex == 1,
+                    onTap: () => onDestinationSelected(1),
+                  ),
+                ),
+                Expanded(
+                  child: _TaskbarDestination(
+                    icon: Icons.directions_car_outlined,
+                    selectedIcon: Icons.directions_car_filled_rounded,
+                    label: 'My Car',
+                    isSelected: selectedIndex == 2,
+                    onTap: () => onDestinationSelected(2),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -219,29 +216,22 @@ class _TaskbarDestination extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            AnimatedScale(
-              scale: isSelected ? 1.05 : 1,
-              duration: const Duration(milliseconds: 220),
-              curve: Curves.easeOut,
-              child: SizedBox(
-                width: 46,
-                height: 32,
-                child: Icon(
-                  isSelected ? selectedIcon : icon,
-                  size: 22,
-                  color: isSelected
-                      ? AppColors.green
-                      : Colors.white.withValues(alpha: .78),
-                ),
+            SizedBox(
+              width: 46,
+              height: 32,
+              child: Icon(
+                isSelected ? selectedIcon : icon,
+                size: 22,
+                color: isSelected
+                    ? AppColors.green
+                    : Colors.white.withValues(alpha: .78),
               ),
             ),
             const SizedBox(height: 6),
             Text(
               label,
               style: TextStyle(
-                color: isSelected
-                    ? AppColors.green
-                    : Colors.white.withValues(alpha: .78),
+                color: Colors.white.withValues(alpha: .78),
                 fontSize: 12,
                 height: 1,
                 fontWeight: FontWeight.w500,

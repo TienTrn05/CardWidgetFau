@@ -2,6 +2,7 @@ import Flutter
 import UIKit
 import Darwin
 import Contacts
+import MediaPlayer
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
@@ -29,6 +30,60 @@ import Contacts
       )
     }
     if let registrar = registry.registrar(forPlugin: "CarWidgetAppChannels") {
+      let networkSettingsChannel = FlutterMethodChannel(
+        name: "carwidget/network_settings_v1",
+        binaryMessenger: registrar.messenger()
+      )
+      networkSettingsChannel.setMethodCallHandler { call, result in
+        guard call.method == "openWifiSettings" else {
+          result(FlutterMethodNotImplemented)
+          return
+        }
+        // iOS has no public URL for the Wi-Fi settings pane.
+        guard let url = URL(string: UIApplication.openSettingsURLString) else {
+          result(FlutterError(
+            code: "settings_unavailable", message: "Could not open Settings.", details: nil
+          ))
+          return
+        }
+        UIApplication.shared.open(url, options: [:]) { opened in
+          DispatchQueue.main.async {
+            if opened {
+              result(nil)
+            } else {
+              result(FlutterError(
+                code: "settings_unavailable", message: "Could not open Settings.", details: nil
+              ))
+            }
+          }
+        }
+      }
+      let storageChannel = FlutterMethodChannel(
+        name: "carwidget/local_storage_v1",
+        binaryMessenger: registrar.messenger()
+      )
+      storageChannel.setMethodCallHandler { call, result in
+        guard call.method == "getSupportDirectory" else {
+          result(FlutterMethodNotImplemented)
+          return
+        }
+        do {
+          let support = try FileManager.default.url(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: true
+          ).appendingPathComponent("CarWidget", isDirectory: true)
+          try FileManager.default.createDirectory(
+            at: support, withIntermediateDirectories: true, attributes: nil
+          )
+          result(support.path)
+        } catch {
+          result(FlutterError(
+            code: "storage_error", message: "Could not open local storage.", details: nil
+          ))
+        }
+      }
       let channel = FlutterMethodChannel(
         name: "carwidget/device_identity",
         binaryMessenger: registrar.messenger()
@@ -155,6 +210,90 @@ import Contacts
               result(FlutterError(code: "app_unavailable", message: "The app is unavailable.", details: app))
             }
           }
+        }
+      }
+      let musicPlayerChannel = FlutterMethodChannel(
+        name: "carwidget/music_player_v1",
+        binaryMessenger: registrar.messenger()
+      )
+      musicPlayerChannel.setMethodCallHandler { call, result in
+        switch call.method {
+        case "openSpotify":
+          guard let url = URL(string: "spotify://") else {
+            result(FlutterError(code: "invalid_url", message: "Could not open Spotify.", details: nil))
+            return
+          }
+          guard UIApplication.shared.canOpenURL(url) else {
+            result(false)
+            return
+          }
+          UIApplication.shared.open(url, options: [:]) { opened in
+            DispatchQueue.main.async {
+              result(opened)
+            }
+          }
+        case "openAppleMusic":
+          let openMusicApp = {
+            guard let url = URL(string: "music://") else {
+              result(FlutterError(code: "invalid_url", message: "Could not open Apple Music.", details: nil))
+              return
+            }
+            UIApplication.shared.open(url, options: [:]) { opened in
+              DispatchQueue.main.async {
+                result(["opened": opened])
+              }
+            }
+          }
+          if MPMediaLibrary.authorizationStatus() == .notDetermined {
+            MPMediaLibrary.requestAuthorization { _ in
+              DispatchQueue.main.async(execute: openMusicApp)
+            }
+          } else {
+            openMusicApp()
+          }
+        case "getNowPlaying":
+          let status = MPMediaLibrary.authorizationStatus()
+          guard status == .authorized else {
+            result(["authorized": false, "isPlaying": false])
+            return
+          }
+          let player = MPMusicPlayerController.systemMusicPlayer
+          let item = player.nowPlayingItem
+          let artworkImage = item?.artwork?.image(at: CGSize(width: 512, height: 512))
+          let artwork = artworkImage?.jpegData(compressionQuality: 0.85)
+          var payload: [String: Any] = [
+            "authorized": true,
+            "isPlaying": player.playbackState == .playing,
+            "title": item?.title ?? "",
+            "artist": item?.artist ?? "",
+            "album": item?.albumTitle ?? "",
+            "duration": item?.playbackDuration ?? 0,
+            "position": player.currentPlaybackTime,
+          ]
+          if let artwork {
+            payload["artwork"] = FlutterStandardTypedData(bytes: artwork)
+          }
+          result(payload)
+        case "play", "pause", "next", "previous", "seek":
+          guard MPMediaLibrary.authorizationStatus() == .authorized else {
+            result(FlutterError(code: "media_access_denied", message: "Allow media library access to control Apple Music.", details: nil))
+            return
+          }
+          let player = MPMusicPlayerController.systemMusicPlayer
+          switch call.method {
+          case "play": player.play()
+          case "pause": player.pause()
+          case "next": player.skipToNextItem()
+          case "previous": player.skipToPreviousItem()
+          case "seek":
+            if let position = call.arguments as? Double {
+              player.currentPlaybackTime = position
+            }
+          default: break
+          }
+          result(nil)
+        default:
+          result(FlutterMethodNotImplemented)
         }
       }
       let contactsChannel = FlutterMethodChannel(

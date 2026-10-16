@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:carwidget/app/theme/app_theme.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
+import 'package:carwidget/features/settings/presentation/widgets/tutorial_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -107,24 +108,7 @@ class _VideoWidgetPreviewPageState extends State<VideoWidgetPreviewPage> {
     Navigator.of(context).pop(true);
   }
 
-  void _showInfo() {
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: const Text('Video preview'),
-        content: const Text(
-          'Preview the selected video segment. Add it to My Widgets when it looks right.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Got it'),
-          ),
-        ],
-      ),
-    );
-  }
+  void _showInfo() => showTutorialSheet(context);
 
   @override
   void dispose() {

@@ -2,10 +2,13 @@ import 'package:carwidget/app/theme/app_theme.dart';
 import 'package:carwidget/features/catalog/data/models/football_team_model.dart';
 import 'package:carwidget/features/catalog/presentation/pages/football_team_editor_page.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/carplay_preview_metrics.dart';
+import 'package:carwidget/features/catalog/presentation/widgets/slide_right_transition.dart';
 import 'package:carwidget/features/catalog/presentation/widgets/football_team_artwork.dart';
 import 'package:carwidget/features/my_widgets/presentation/widgets/my_widgets_section.dart'
     show addFootballTeamToMyWidgets;
 import 'package:flutter/material.dart';
+
+const _previewItemCount = 6;
 
 class FootballTeamsSection extends StatelessWidget {
   const FootballTeamsSection({super.key});
@@ -26,10 +29,13 @@ class FootballTeamsSection extends StatelessWidget {
               ),
             ),
           ),
-          _SeeAllButton(
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => const FootballTeamsPage(),
+          Transform.translate(
+            offset: const Offset(6, 0),
+            child: _SeeAllButton(
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const FootballTeamsPage(),
+                ),
               ),
             ),
           ),
@@ -47,7 +53,9 @@ class FootballTeamsSection extends StatelessWidget {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               clipBehavior: Clip.none,
-              itemCount: footballTeamModels.length,
+              itemCount: footballTeamModels.length < _previewItemCount
+                  ? footballTeamModels.length
+                  : _previewItemCount,
               separatorBuilder: (_, _) => const SizedBox(width: 12),
               itemBuilder: (context, index) => SizedBox.square(
                 dimension: cardSize,
@@ -181,13 +189,13 @@ class _FootballTeamTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Material(
     color: const Color(0xFF252D33),
-    borderRadius: BorderRadius.circular(16),
+    borderRadius: BorderRadius.circular(24),
     child: InkWell(
       onTap: () => _openFootballTeamEditor(context, team),
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(24),
       child: Ink(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(22),
           border: Border.all(color: const Color(0xFF303940)),
         ),
         child: Padding(
@@ -212,7 +220,7 @@ class _FootballTeamGridTile extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: () => _openFootballTeamEditor(context, team),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
         child: Column(
           children: [
             SizedBox.square(
@@ -242,7 +250,7 @@ class _FootballTeamGridTile extends StatelessWidget {
 }
 
 void _openFootballTeamEditor(BuildContext context, FootballTeamModel team) {
-  showDialog<void>(
+  showSlideRightDialog<void>(
     context: context,
     builder: (_) => Dialog.fullscreen(
       backgroundColor: AppColors.background,
@@ -271,12 +279,12 @@ class _SeeAllButton extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(22),
       child: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        padding: EdgeInsets.symmetric(horizontal: 9.5, vertical: 4.5),
         child: Text(
           'See All',
           style: TextStyle(
             color: AppColors.green,
-            fontSize: 12,
+            fontSize: 17,
             fontWeight: FontWeight.w600,
           ),
         ),
